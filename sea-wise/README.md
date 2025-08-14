@@ -1,14 +1,57 @@
-# Vue 3 + TypeScript + Vite
+# SEA-WISE Health Connector
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+A modern Vue.js application that displays health statistics with a demo mode for testing.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## Setup
 
+### Prerequisites
+- Node.js 16+ and npm
 
-#
-To start the project, run:
+### Installation
 
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd sea-wise
+```
+
+2. Install dependencies:
 ```bash
 npm install
+```
+
+3. Set up environment variables:
+```bash
+cp .template .env
+```
+
+4. Start the development server:
+```bash
 npm run dev
 ```
+
+## Usage
+
+The app runs in demo mode by default, displaying simulated health data including:
+- Steps
+- Calories burned
+- Active minutes
+- Heart rate
+
+## Development
+
+- **Build**: `npm run build`
+- **Preview**: `npm run preview`
+
+## Project Structure
+
+```
+src/
+├── components/          # Vue components
+├── services/           # Data services
+└── App.vue            # Main application
+```
+
+## License
+
+MIT License
