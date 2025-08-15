@@ -1,5 +1,5 @@
-import { HealthDataProcessor } from './HealthDataProcessor'
-import { ResponseGenerator } from './ResponseGenerator'
+import { TranslationModel } from './TranslationModel'
+import { ReasoningModel } from './ReasoningModel'
 
 export interface ChatMessage {
   type: 'user' | 'ai'
@@ -7,27 +7,22 @@ export interface ChatMessage {
   timestamp: Date
 }
 
-export interface HealthDataContext {
-  query: string
-  relevantData: any
-  dataType: string
-  timeRange?: string
-}
+// This interface is no longer needed as we're using the simplified pipeline
 
 export class HealthChatService {
-  private dataProcessor: HealthDataProcessor
-  private responseGenerator: ResponseGenerator
+  private translationModel: TranslationModel
+  private reasoningModel: ReasoningModel
   private conversationHistory: ChatMessage[] = []
 
   constructor() {
-    this.dataProcessor = new HealthDataProcessor()
-    this.responseGenerator = new ResponseGenerator()
+    this.translationModel = new TranslationModel()
+    this.reasoningModel = new ReasoningModel()
   }
 
   /**
-   * Send a message through the two-model pipeline
-   * Model A: Process user query and extract health data
-   * Model B: Generate human-readable response
+   * Send a message through the new two-model pipeline
+   * Model B (Translation): Handle user communication and translate queries/responses
+   * Model A (Reasoning): Process health data and generate insights
    */
   async sendMessage(userMessage: string): Promise<string> {
     try {
@@ -38,26 +33,31 @@ export class HealthChatService {
         timestamp: new Date()
       })
 
-      // Model A: Process user query and extract health data
-      const healthDataContext = await this.dataProcessor.processQuery(userMessage)
+      // Step 1: Model B (Translation) - Translate user message into structured query
+      const translatedQuery = await this.translationModel.translateUserInput(userMessage)
       
-      // Model B: Generate response based on processed data
-      const response = await this.responseGenerator.generateResponse(
+      // Step 2: Model A (Reasoning) - Process translated query and analyze health data
+      const healthAnalysis = await this.reasoningModel.processHealthQuery(translatedQuery)
+      
+      // Step 3: Model B (Translation) - Translate technical response into user-friendly language
+      const conversationContext = this.getConversationContext()
+      const translatedResponse = await this.translationModel.translateModelResponse(
+        JSON.stringify(healthAnalysis),
         userMessage,
-        healthDataContext,
-        this.conversationHistory
+        conversationContext,
+        translatedQuery.languageCode
       )
 
       // Add AI response to conversation history
       this.conversationHistory.push({
         type: 'ai',
-        text: response,
+        text: translatedResponse.translatedResponse,
         timestamp: new Date()
       })
 
-      return response
+      return translatedResponse.translatedResponse
     } catch (error) {
-      console.error('Error in chat pipeline:', error)
+      console.error('Error in new chat pipeline:', error)
       throw new Error('Failed to process message')
     }
   }

@@ -5,9 +5,11 @@ This document outlines the technical requirements for implementing an LLM-powere
 
 ## Feature Summary
 - **Chat Interface**: Standard LLM chatbot UI for health data queries
-- **Two-Model Pipeline**: Model A processes user input and accesses health data, Model B generates final responses
+- **Two-Model Pipeline**: Model B (translation) handles all user communication, Model A (reasoning) processes health data and generates insights
 - **Health Data Integration**: Direct access to user health data stored in `/sampledata` directory
 - **Demo Mode Support**: Full functionality in both connected and demo modes
+- **Bidirectional Translation**: Model B translates user queries for Model A and Model A responses for users
+- **SEA-LION Integration**: Translation model powered by SEA-LION for optimized Singapore English and multilingual support
 
 ## 1. User Interface Requirements
 
@@ -31,36 +33,45 @@ This document outlines the technical requirements for implementing an LLM-powere
 
 ## 2. Two-Model Pipeline Architecture
 
-### 2.1 Model A: Health Data Processor
-**Purpose**: Process user queries and extract relevant health data
+### 2.1 Model A: Reasoning Model
+**Purpose**: Process health data queries and generate intelligent responses
 
 **Responsibilities**:
-- Parse natural language health queries
-- Identify relevant health metrics and time ranges
+- Receive translated user queries from Model B
+- Parse and understand health data requirements
 - Access and retrieve data from `/sampledata` directory
-- Format data for Model B consumption
-- Handle data validation and error cases
+- Analyze health data patterns and trends
+- Generate comprehensive health insights and recommendations
+- Handle complex reasoning and data interpretation
+
+**Input**: Translated user query from Model B
+**Output**: Structured health analysis and insights
+
+### 2.2 Model B: Translation Model
+**Purpose**: Handle all user communication and response translation
+
+**Responsibilities**:
+- **Input Processing**: Translate user messages into clear, structured queries for Model A
+- **Response Translation**: Convert Model A's technical outputs into natural, conversational responses
+- **Language Optimization**: Ensure clarity and user-friendly communication
+- **Context Management**: Maintain conversation flow and user engagement
+- **Query Refinement**: Clarify ambiguous user requests before sending to Model A
 
 **Input**: User's natural language query
-**Output**: Structured health data summary with context
-
-### 2.2 Model B: Response Generator
-**Purpose**: Generate human-readable responses based on Model A's output
-
-**Responsibilities**:
-- Receive processed health data from Model A
-- Generate conversational, helpful responses
-- Provide insights and recommendations
-- Maintain conversation context
-- Handle follow-up questions
-
-**Input**: Model A's processed health data
-**Output**: Natural language response to user
+**Output**: Translated query for Model A + Translated response for user
 
 ### 2.3 Pipeline Flow
 ```
-User Message → Model A (Data Processor) → Model B (Response Generator) → User Response
+User Message → Model B (Translation) → Model A (Reasoning) → Model B (Translation) → User Response
 ```
+
+**Detailed Flow**:
+1. **User Input**: User sends message in natural language
+2. **Model B Translation**: Model B translates user message into clear query format
+3. **Model A Processing**: Model A receives translated query and processes health data
+4. **Model A Response**: Model A generates technical analysis and insights
+5. **Model B Translation**: Model B translates technical response into user-friendly language
+6. **User Output**: Final translated response delivered to user
 
 ## 3. Health Data Integration
 
@@ -82,6 +93,9 @@ User Message → Model A (Data Processor) → Model B (Response Generator) → U
 - Time-based data selection
 - Statistical calculations (averages, trends, etc.)
 - Data validation and error handling
+- Advanced pattern recognition and trend analysis
+- Health insights generation and recommendation logic
+- Complex query understanding and data interpretation
 
 **Data Access Patterns**:
 - Daily summaries (steps, calories, sleep)
@@ -112,10 +126,12 @@ Based on existing files in `/sampledata`:
 - **Error Handling**: Graceful fallbacks for API failures
 
 ### 4.3 LLM Integration
-- **Model A**: Health data processing model (e.g., OpenAI GPT-4, Anthropic Claude)
-- **Model B**: Response generation model (e.g., OpenAI GPT-4, Anthropic Claude)
+- **Model A**: Reasoning model for health data analysis (e.g., OpenAI GPT-4, Anthropic Claude)
+- **Model B**: Translation model for user communication (SEA-LION Llama-SEA-LION-v3.5-8B-R)
 - **API Keys**: Secure environment variable management
 - **Fallback Handling**: Offline mode or simplified responses when LLM unavailable
+- **Model Coordination**: Seamless handoff between translation and reasoning models
+- **SEA-LION Integration**: Optimized for Singapore English (Singlish) and multilingual support
 
 ### 4.4 Data Security & Privacy
 - **Local Processing**: Health data remains on user's device
@@ -179,10 +195,10 @@ Based on existing files in `/sampledata`:
 ### 8.1 Environment Variables
 ```bash
 # LLM API Configuration
-VITE_MODEL_A_API_KEY=your_model_a_api_key
-VITE_MODEL_A_ENDPOINT=your_model_a_endpoint
-VITE_MODEL_B_API_KEY=your_model_b_api_key
-VITE_MODEL_B_ENDPOINT=your_model_b_endpoint
+VITE_REASONING_MODEL_API_KEY=your_reasoning_model_api_key
+VITE_REASONING_MODEL_ENDPOINT=your_reasoning_model_endpoint
+VITE_SEA_LION_API_KEY=your_sea_lion_api_key
+VITE_SEA_LION_MODEL=aisingapore/Llama-SEA-LION-v3.5-8B-R
 
 # Feature Flags
 VITE_ENABLE_LLM_CHAT=true
@@ -236,9 +252,10 @@ VITE_CHAT_RATE_LIMIT=100
 - Health data access layer
 
 ### Phase 2: Model Integration (Week 3-4)
-- Model A implementation
-- Model B implementation
-- Pipeline orchestration
+- Translation model (Model B) implementation
+- Reasoning model (Model A) implementation
+- Pipeline orchestration and model coordination
+- Translation layer integration
 
 ### Phase 3: Testing & Refinement (Week 5-6)
 - Comprehensive testing
@@ -256,6 +273,8 @@ VITE_CHAT_RATE_LIMIT=100
 - **LLM API Reliability**: Dependency on external services
 - **Data Processing Complexity**: Large CSV file handling
 - **Performance Impact**: Bundle size and runtime performance
+- **Model Coordination**: Seamless handoff between translation and reasoning models
+- **Translation Accuracy**: Ensuring Model B correctly interprets both user input and Model A output
 
 ### 12.2 Mitigation Strategies
 - **Fallback Mechanisms**: Offline mode and cached responses
