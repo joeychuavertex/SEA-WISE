@@ -21,56 +21,28 @@ export class HealthInsightsService {
   /**
    * Get comprehensive health insights for a metric
    */
-  getHealthInsight(metric: string, value: number, additionalData?: any): HealthInsight {
+  getHealthInsight(metric: string, value: number): HealthInsight {
     switch (metric) {
-      case 'steps':
-        return this.getStepsInsight(value, additionalData)
-      case 'calories':
-        return this.getCaloriesInsight(value, additionalData)
-      case 'sleep':
-        return this.getSleepInsight(value, additionalData)
-      case 'heartRate':
-        return this.getHeartRateInsight(value, additionalData)
-      case 'weight':
-        return this.getWeightInsight(value, additionalData)
-      case 'activity':
-        return this.getActivityInsight(value, additionalData)
-      case 'bmi':
-        return this.getBMIInsight(value, additionalData)
-      default:
-        return this.getDefaultInsight(metric, value)
+      case 'steps': return this.getStepsInsight(value)
+      case 'calories': return this.getCaloriesInsight(value)
+      case 'sleep': return this.getSleepInsight(value)
+      case 'heartRate': return this.getHeartRateInsight(value)
+      case 'weight': return this.getWeightInsight(value)
+      case 'activity': return this.getActivityInsight(value)
+      case 'bmi': return this.getBMIInsight(value)
+      default: return this.getDefaultInsight(metric, value)
     }
   }
 
   /**
-   * Get steps insights with cultural context
+   * Get insights for steps data
    */
-  private getStepsInsight(value: number, additionalData?: any): HealthInsight {
-    let healthStatus: HealthInsight['healthStatus']
-    let fitnessStandard: string
-    let context: string
-
-    if (value >= 10000) {
-      healthStatus = 'excellent'
-      fitnessStandard = 'Meets WHO daily recommendation (10,000+ steps)'
-      context = 'You\'re meeting the global standard for daily physical activity!'
-    } else if (value >= 7500) {
-      healthStatus = 'good'
-      fitnessStandard = 'Good activity level (7,500-9,999 steps)'
-      context = 'You\'re maintaining a healthy activity level.'
-    } else if (value >= 5000) {
-      healthStatus = 'fair'
-      fitnessStandard = 'Moderate activity (5,000-7,499 steps)'
-      context = 'You\'re getting some activity, but could benefit from more movement.'
-    } else if (value >= 2500) {
-      healthStatus = 'poor'
-      fitnessStandard = 'Low activity (2,500-4,999 steps)'
-      context = 'Your activity level is below recommended levels.'
-    } else {
-      healthStatus = 'needs_attention'
-      fitnessStandard = 'Very low activity (<2,500 steps)'
-      context = 'Your activity level needs immediate attention.'
-    }
+  private getStepsInsight(value: number): HealthInsight {
+    const healthStatus = this.getStepsHealthStatus(value)
+    const fitnessStandard = this.getStepsFitnessStandard()
+    const culturalSuggestions = this.getCulturalStepsSuggestions()
+    const generalRecommendations = this.getStepsRecommendations()
+    const context = this.getStepsContext(value)
 
     return {
       metric: 'steps',
@@ -78,37 +50,21 @@ export class HealthInsightsService {
       unit: 'steps',
       healthStatus,
       fitnessStandard,
-      culturalSuggestions: this.getCulturalStepsSuggestions(value),
-      generalRecommendations: this.getStepsRecommendations(value),
+      culturalSuggestions,
+      generalRecommendations,
       context
     }
   }
 
   /**
-   * Get calories insights
+   * Get insights for calories data
    */
-  private getCaloriesInsight(value: number, additionalData?: any): HealthInsight {
-    let healthStatus: HealthInsight['healthStatus']
-    let fitnessStandard: string
-    let context: string
-
-    if (value >= 500) {
-      healthStatus = 'excellent'
-      fitnessStandard = 'High energy expenditure (500+ calories)'
-      context = 'Excellent calorie burn through physical activity!'
-    } else if (value >= 300) {
-      healthStatus = 'good'
-      fitnessStandard = 'Good energy expenditure (300-499 calories)'
-      context = 'Good calorie burn, maintaining healthy energy balance.'
-    } else if (value >= 150) {
-      healthStatus = 'fair'
-      fitnessStandard = 'Moderate energy expenditure (150-299 calories)'
-      context = 'Moderate activity level, room for improvement.'
-    } else {
-      healthStatus = 'poor'
-      fitnessStandard = 'Low energy expenditure (<150 calories)'
-      context = 'Low activity level, consider increasing movement.'
-    }
+  private getCaloriesInsight(value: number): HealthInsight {
+    const healthStatus = this.getCaloriesHealthStatus(value)
+    const fitnessStandard = this.getCaloriesFitnessStandard()
+    const culturalSuggestions = this.getCulturalCaloriesSuggestions()
+    const generalRecommendations = this.getCaloriesRecommendations()
+    const context = this.getCaloriesContext(value)
 
     return {
       metric: 'calories',
@@ -116,37 +72,21 @@ export class HealthInsightsService {
       unit: 'calories',
       healthStatus,
       fitnessStandard,
-      culturalSuggestions: this.getCulturalCaloriesSuggestions(value),
-      generalRecommendations: this.getCaloriesRecommendations(value),
+      culturalSuggestions,
+      generalRecommendations,
       context
     }
   }
 
   /**
-   * Get sleep insights
+   * Get insights for sleep data
    */
-  private getSleepInsight(value: number, additionalData?: any): HealthInsight {
-    let healthStatus: HealthInsight['healthStatus']
-    let fitnessStandard: string
-    let context: string
-
-    if (value >= 8) {
-      healthStatus = 'excellent'
-      fitnessStandard = 'Optimal sleep duration (8+ hours)'
-      context = 'Perfect sleep duration for optimal health and recovery!'
-    } else if (value >= 7) {
-      healthStatus = 'good'
-      fitnessStandard = 'Good sleep duration (7-7.9 hours)'
-      context = 'Good sleep duration, within healthy range.'
-    } else if (value >= 6) {
-      healthStatus = 'fair'
-      fitnessStandard = 'Adequate sleep (6-6.9 hours)'
-      context = 'Adequate sleep, but could benefit from more rest.'
-    } else {
-      healthStatus = 'poor'
-      fitnessStandard = 'Insufficient sleep (<6 hours)'
-      context = 'Sleep duration is below recommended levels.'
-    }
+  private getSleepInsight(value: number): HealthInsight {
+    const healthStatus = this.getSleepHealthStatus(value)
+    const fitnessStandard = this.getSleepFitnessStandard()
+    const culturalSuggestions = this.getCulturalSleepSuggestions()
+    const generalRecommendations = this.getSleepRecommendations()
+    const context = this.getSleepContext(value)
 
     return {
       metric: 'sleep',
@@ -154,83 +94,43 @@ export class HealthInsightsService {
       unit: 'hours',
       healthStatus,
       fitnessStandard,
-      culturalSuggestions: this.getCulturalSleepSuggestions(value),
-      generalRecommendations: this.getSleepRecommendations(value),
+      culturalSuggestions,
+      generalRecommendations,
       context
     }
   }
 
   /**
-   * Get heart rate insights
+   * Get insights for heart rate data
    */
-  private getHeartRateInsight(value: number, additionalData?: any): HealthInsight {
-    let healthStatus: HealthInsight['healthStatus']
-    let fitnessStandard: string
-    let context: string
-
-    if (value < 60) {
-      healthStatus = 'excellent'
-      fitnessStandard = 'Athletic heart rate (<60 BPM)'
-      context = 'Excellent cardiovascular fitness, typical of athletes!'
-    } else if (value < 100) {
-      healthStatus = 'good'
-      fitnessStandard = 'Normal resting heart rate (60-99 BPM)'
-      context = 'Normal resting heart rate, good cardiovascular health.'
-    } else if (value < 120) {
-      healthStatus = 'fair'
-      fitnessStandard = 'Elevated heart rate (100-119 BPM)'
-      context = 'Elevated heart rate, possibly due to recent activity or stress.'
-    } else {
-      healthStatus = 'needs_attention'
-      fitnessStandard = 'High heart rate (120+ BPM)'
-      context = 'High heart rate, consider consulting healthcare provider.'
-    }
+  private getHeartRateInsight(value: number): HealthInsight {
+    const healthStatus = this.getHeartRateHealthStatus(value)
+    const fitnessStandard = this.getHeartRateFitnessStandard()
+    const culturalSuggestions = this.getCulturalHeartRateSuggestions()
+    const generalRecommendations = this.getHeartRateRecommendations()
+    const context = this.getHeartRateContext(value)
 
     return {
       metric: 'heartRate',
       value,
-      unit: 'BPM',
+      unit: 'bpm',
       healthStatus,
       fitnessStandard,
-      culturalSuggestions: this.getCulturalHeartRateSuggestions(value),
-      generalRecommendations: this.getHeartRateRecommendations(value),
+      culturalSuggestions,
+      generalRecommendations,
       context
     }
   }
 
   /**
-   * Get weight insights
+   * Get insights for weight data
    */
-  private getWeightInsight(value: number, additionalData?: any): HealthInsight {
-    let healthStatus: HealthInsight['healthStatus']
-    let fitnessStandard: string
-    let context: string
-
-    // This is a simplified example - in practice, weight should be considered with height, age, gender
-    if (additionalData?.bmi) {
-      const bmi = additionalData.bmi
-      if (bmi >= 18.5 && bmi < 25) {
-        healthStatus = 'excellent'
-        fitnessStandard = 'Healthy BMI range (18.5-24.9)'
-        context = 'Your BMI indicates a healthy weight range.'
-      } else if (bmi >= 25 && bmi < 30) {
-        healthStatus = 'fair'
-        fitnessStandard = 'Overweight BMI (25-29.9)'
-        context = 'Your BMI indicates overweight, focus on healthy lifestyle changes.'
-      } else if (bmi >= 30) {
-        healthStatus = 'needs_attention'
-        fitnessStandard = 'Obese BMI (30+)'
-        context = 'Your BMI indicates obesity, consider professional guidance.'
-      } else {
-        healthStatus = 'needs_attention'
-        fitnessStandard = 'Underweight BMI (<18.5)'
-        context = 'Your BMI indicates underweight, consider nutrition consultation.'
-      }
-    } else {
-      healthStatus = 'fair'
-      fitnessStandard = 'Weight monitoring recommended'
-      context = 'Consider tracking BMI for better health assessment.'
-    }
+  private getWeightInsight(value: number): HealthInsight {
+    const healthStatus = this.getWeightHealthStatus(value)
+    const fitnessStandard = this.getWeightFitnessStandard()
+    const culturalSuggestions = this.getCulturalWeightSuggestions()
+    const generalRecommendations = this.getWeightRecommendations()
+    const context = this.getWeightContext(value)
 
     return {
       metric: 'weight',
@@ -238,37 +138,21 @@ export class HealthInsightsService {
       unit: 'kg',
       healthStatus,
       fitnessStandard,
-      culturalSuggestions: this.getCulturalWeightSuggestions(value, additionalData),
-      generalRecommendations: this.getWeightRecommendations(value, additionalData),
+      culturalSuggestions,
+      generalRecommendations,
       context
     }
   }
 
   /**
-   * Get activity insights
+   * Get insights for activity data
    */
-  private getActivityInsight(value: number, additionalData?: any): HealthInsight {
-    let healthStatus: HealthInsight['healthStatus']
-    let fitnessStandard: string
-    let context: string
-
-    if (value >= 60) {
-      healthStatus = 'excellent'
-      fitnessStandard = 'Meets WHO daily activity goal (60+ minutes)'
-      context = 'Excellent! You\'re meeting the daily physical activity recommendation.'
-    } else if (value >= 30) {
-      healthStatus = 'good'
-      fitnessStandard = 'Good activity level (30-59 minutes)'
-      context = 'Good activity level, close to daily recommendations.'
-    } else if (value >= 15) {
-      healthStatus = 'fair'
-      fitnessStandard = 'Moderate activity (15-29 minutes)'
-      context = 'Moderate activity, room for improvement.'
-    } else {
-      healthStatus = 'poor'
-      fitnessStandard = 'Low activity (<15 minutes)'
-      context = 'Low activity level, consider increasing movement.'
-    }
+  private getActivityInsight(value: number): HealthInsight {
+    const healthStatus = this.getActivityHealthStatus(value)
+    const fitnessStandard = this.getActivityFitnessStandard()
+    const culturalSuggestions = this.getCulturalActivitySuggestions()
+    const generalRecommendations = this.getActivityRecommendations()
+    const context = this.getActivityContext(value)
 
     return {
       metric: 'activity',
@@ -276,46 +160,30 @@ export class HealthInsightsService {
       unit: 'minutes',
       healthStatus,
       fitnessStandard,
-      culturalSuggestions: this.getCulturalActivitySuggestions(value),
-      generalRecommendations: this.getActivityRecommendations(value),
+      culturalSuggestions,
+      generalRecommendations,
       context
     }
   }
 
   /**
-   * Get BMI insights
+   * Get insights for BMI data
    */
-  private getBMIInsight(value: number, additionalData?: any): HealthInsight {
-    let healthStatus: HealthInsight['healthStatus']
-    let fitnessStandard: string
-    let context: string
-
-    if (value >= 18.5 && value < 25) {
-      healthStatus = 'excellent'
-      fitnessStandard = 'Healthy BMI range (18.5-24.9)'
-      context = 'Your BMI indicates a healthy weight range.'
-    } else if (value >= 25 && value < 30) {
-      healthStatus = 'fair'
-      fitnessStandard = 'Overweight BMI (25-29.9)'
-      context = 'Your BMI indicates overweight, focus on healthy lifestyle changes.'
-    } else if (value >= 30) {
-      healthStatus = 'needs_attention'
-      fitnessStandard = 'Obese BMI (30+)'
-      context = 'Your BMI indicates obesity, consider professional guidance.'
-    } else {
-      healthStatus = 'needs_attention'
-      fitnessStandard = 'Underweight BMI (<18.5)'
-      context = 'Your BMI indicates underweight, consider nutrition consultation.'
-    }
+  private getBMIInsight(value: number): HealthInsight {
+    const healthStatus = this.getBMIHealthStatus(value)
+    const fitnessStandard = this.getBMIFitnessStandard()
+    const culturalSuggestions = this.getCulturalBMISuggestions()
+    const generalRecommendations = this.getBMIRecommendations()
+    const context = this.getBMIContext(value)
 
     return {
       metric: 'bmi',
       value,
-      unit: '',
+      unit: 'kg/m²',
       healthStatus,
       fitnessStandard,
-      culturalSuggestions: this.getCulturalBMISuggestions(value),
-      generalRecommendations: this.getBMIRecommendations(value),
+      culturalSuggestions,
+      generalRecommendations,
       context
     }
   }
@@ -327,17 +195,179 @@ export class HealthInsightsService {
     return {
       metric,
       value,
-      unit: '',
-      healthStatus: 'fair',
-      fitnessStandard: 'Metric monitoring recommended',
-      culturalSuggestions: ['Consider consulting local health guidelines'],
-      generalRecommendations: ['Monitor this metric regularly'],
-      context: 'This metric should be monitored for health awareness.'
+      unit: 'units',
+      healthStatus: 'good',
+      fitnessStandard: 'Standard varies by metric',
+      culturalSuggestions: ['Consult local health traditions', 'Seek professional advice'],
+      generalRecommendations: ['Monitor regularly', 'Maintain consistency'],
+      context: `Data for ${metric} metric`
     }
   }
 
+  /**
+   * Get health status for steps
+   */
+  private getStepsHealthStatus(steps: number): HealthInsight['healthStatus'] {
+    if (steps >= 10000) return 'excellent'
+    if (steps >= 8000) return 'good'
+    if (steps >= 6000) return 'fair'
+    if (steps >= 4000) return 'poor'
+    return 'needs_attention'
+  }
+
+  /**
+   * Get health status for calories
+   */
+  private getCaloriesHealthStatus(calories: number): HealthInsight['healthStatus'] {
+    if (calories >= 2000) return 'excellent'
+    if (calories >= 1800) return 'good'
+    if (calories >= 1600) return 'fair'
+    if (calories >= 1400) return 'poor'
+    return 'needs_attention'
+  }
+
+  /**
+   * Get health status for sleep
+   */
+  private getSleepHealthStatus(hours: number): HealthInsight['healthStatus'] {
+    if (hours >= 7 && hours <= 9) return 'excellent'
+    if (hours >= 6 && hours <= 10) return 'good'
+    if (hours >= 5 && hours <= 11) return 'fair'
+    if (hours >= 4 && hours <= 12) return 'poor'
+    return 'needs_attention'
+  }
+
+  /**
+   * Get health status for heart rate
+   */
+  private getHeartRateHealthStatus(bpm: number): HealthInsight['healthStatus'] {
+    if (bpm >= 60 && bpm <= 100) return 'excellent'
+    if (bpm >= 50 && bpm <= 110) return 'good'
+    if (bpm >= 40 && bpm <= 120) return 'fair'
+    if (bpm >= 30 && bpm <= 130) return 'poor'
+    return 'needs_attention'
+  }
+
+  /**
+   * Get health status for weight
+   */
+  private getWeightHealthStatus(weight: number): HealthInsight['healthStatus'] {
+    // This is a simplified example - real weight assessment would consider height, age, gender
+    if (weight >= 45 && weight <= 90) return 'good'
+    if (weight >= 40 && weight <= 100) return 'fair'
+    if (weight >= 35 && weight <= 110) return 'poor'
+    return 'needs_attention'
+  }
+
+  /**
+   * Get health status for activity
+   */
+  private getActivityHealthStatus(minutes: number): HealthInsight['healthStatus'] {
+    if (minutes >= 150) return 'excellent'
+    if (minutes >= 120) return 'good'
+    if (minutes >= 90) return 'fair'
+    if (minutes >= 60) return 'poor'
+    return 'needs_attention'
+  }
+
+  /**
+   * Get health status for BMI
+   */
+  private getBMIHealthStatus(bmi: number): HealthInsight['healthStatus'] {
+    if (bmi >= 18.5 && bmi <= 24.9) return 'excellent'
+    if (bmi >= 17 && bmi <= 26) return 'good'
+    if (bmi >= 16 && bmi <= 27) return 'fair'
+    if (bmi >= 15 && bmi <= 28) return 'poor'
+    return 'needs_attention'
+  }
+
+  // Helper methods for fitness standards
+  private getStepsFitnessStandard(): string {
+    return 'WHO recommends 10,000+ steps daily for optimal health'
+  }
+
+  private getCaloriesFitnessStandard(): string {
+    return 'Aim for 2,000+ calories burned through daily activities'
+  }
+
+  private getSleepFitnessStandard(): string {
+    return '7-9 hours of quality sleep recommended for adults'
+  }
+
+  private getHeartRateFitnessStandard(): string {
+    return 'Normal resting heart rate: 60-100 BPM for adults'
+  }
+
+  private getWeightFitnessStandard(): string {
+    return 'Maintain weight within healthy BMI range (18.5-24.9)'
+  }
+
+  private getActivityFitnessStandard(): string {
+    return 'WHO recommends 150+ minutes of moderate activity weekly'
+  }
+
+  private getBMIFitnessStandard(): string {
+    return 'Healthy BMI range: 18.5-24.9 kg/m²'
+  }
+
+  // Helper methods for context
+  private getStepsContext(steps: number): string {
+    if (steps >= 10000) return 'Excellent! You\'re meeting the global standard for daily physical activity.'
+    if (steps >= 8000) return 'Great job! You\'re maintaining a healthy activity level.'
+    if (steps >= 6000) return 'Good progress! You\'re getting regular movement.'
+    if (steps >= 4000) return 'You\'re getting some activity, but could benefit from more movement.'
+    return 'Your activity level needs attention. Start with small steps to build momentum.'
+  }
+
+  private getCaloriesContext(calories: number): string {
+    if (calories >= 2000) return 'Outstanding calorie burn! You\'re very active.'
+    if (calories >= 1800) return 'Great energy expenditure! You\'re maintaining good activity levels.'
+    if (calories >= 1600) return 'Good calorie burn through your daily activities.'
+    if (calories >= 1400) return 'Moderate activity level with room for improvement.'
+    return 'Consider increasing your daily movement to boost calorie burn.'
+  }
+
+  private getSleepContext(hours: number): string {
+    if (hours >= 7 && hours <= 9) return 'Perfect sleep duration for optimal health and recovery!'
+    if (hours >= 6 && hours <= 10) return 'Good sleep duration within healthy range.'
+    if (hours >= 5 && hours <= 11) return 'Adequate sleep, but could benefit from more rest.'
+    if (hours >= 4 && hours <= 12) return 'Sleep duration is below recommended levels.'
+    return 'Your sleep pattern needs attention for better health outcomes.'
+  }
+
+  private getHeartRateContext(bpm: number): string {
+    if (bpm >= 60 && bpm <= 100) return 'Excellent! Your heart rate is in the healthy range.'
+    if (bpm >= 50 && bpm <= 110) return 'Good heart rate, typical of active individuals.'
+    if (bpm >= 40 && bpm <= 120) return 'Your heart rate is elevated, possibly due to recent activity.'
+    if (bpm >= 30 && bpm <= 130) return 'Heart rate is outside normal range, consider monitoring.'
+    return 'Your heart rate needs attention, consider consulting a healthcare provider.'
+  }
+
+  private getWeightContext(weight: number): string {
+    if (weight >= 45 && weight <= 90) return 'Your weight appears to be in a healthy range.'
+    if (weight >= 40 && weight <= 100) return 'Consider monitoring your weight trends.'
+    if (weight >= 35 && weight <= 110) return 'Your weight may need attention.'
+    return 'Consider professional guidance for weight management.'
+  }
+
+  private getActivityContext(minutes: number): string {
+    if (minutes >= 150) return 'Excellent! You\'re exceeding weekly activity recommendations.'
+    if (minutes >= 120) return 'Great job! You\'re meeting weekly activity goals.'
+    if (minutes >= 90) return 'Good activity level, close to weekly recommendations.'
+    if (minutes >= 60) return 'You\'re getting some activity, but could increase weekly minutes.'
+    return 'Your weekly activity level needs attention for optimal health.'
+  }
+
+  private getBMIContext(bmi: number): string {
+    if (bmi >= 18.5 && bmi <= 24.9) return 'Your BMI indicates a healthy weight range.'
+    if (bmi >= 17 && bmi <= 26) return 'Your BMI is close to the healthy range.'
+    if (bmi >= 16 && bmi <= 27) return 'Your BMI may need attention.'
+    if (bmi >= 15 && bmi <= 28) return 'Your BMI is outside the healthy range.'
+    return 'Consider professional guidance for BMI management.'
+  }
+
   // Cultural suggestions for different metrics
-  private getCulturalStepsSuggestions(steps: number): string[] {
+  private getCulturalStepsSuggestions(): string[] {
     const suggestions = []
     
     // Asian cultural practices
@@ -363,7 +393,7 @@ export class HealthInsightsService {
     return suggestions
   }
 
-  private getCulturalCaloriesSuggestions(calories: number): string[] {
+  private getCulturalCaloriesSuggestions(): string[] {
     const suggestions = []
     
     // Asian cultural practices
@@ -384,7 +414,7 @@ export class HealthInsightsService {
     return suggestions
   }
 
-  private getCulturalSleepSuggestions(hours: number): string[] {
+  private getCulturalSleepSuggestions(): string[] {
     const suggestions = []
     
     // Asian cultural practices
@@ -405,7 +435,7 @@ export class HealthInsightsService {
     return suggestions
   }
 
-  private getCulturalHeartRateSuggestions(bpm: number): string[] {
+  private getCulturalHeartRateSuggestions(): string[] {
     const suggestions = []
     
     // Asian cultural practices
@@ -426,7 +456,7 @@ export class HealthInsightsService {
     return suggestions
   }
 
-  private getCulturalWeightSuggestions(weight: number, additionalData?: any): string[] {
+  private getCulturalWeightSuggestions(): string[] {
     const suggestions = []
     
     // Asian cultural practices
@@ -447,7 +477,7 @@ export class HealthInsightsService {
     return suggestions
   }
 
-  private getCulturalActivitySuggestions(minutes: number): string[] {
+  private getCulturalActivitySuggestions(): string[] {
     const suggestions = []
     
     // Asian cultural practices
@@ -468,7 +498,7 @@ export class HealthInsightsService {
     return suggestions
   }
 
-  private getCulturalBMISuggestions(bmi: number): string[] {
+  private getCulturalBMISuggestions(): string[] {
     const suggestions = []
     
     // Asian cultural practices
@@ -490,248 +520,167 @@ export class HealthInsightsService {
   }
 
   // General recommendations for different metrics
-  private getStepsRecommendations(steps: number): string[] {
+  private getStepsRecommendations(): string[] {
     const recommendations = []
     
-    if (steps < 5000) {
-      recommendations.push('Start with short 10-minute walks')
-      recommendations.push('Take the stairs instead of elevators')
-      recommendations.push('Park further from destinations')
-    } else if (steps < 7500) {
-      recommendations.push('Add a 15-minute evening walk')
-      recommendations.push('Take walking breaks during work')
-      recommendations.push('Join a walking group or club')
-    } else if (steps < 10000) {
-      recommendations.push('Add 5-10 minute walking sessions')
-      recommendations.push('Try power walking for intensity')
-      recommendations.push('Explore new walking routes')
-    }
+    recommendations.push('Start with short 10-minute walks')
+    recommendations.push('Take the stairs instead of elevators')
+    recommendations.push('Park further from destinations')
     
     return recommendations
   }
 
-  private getCaloriesRecommendations(calories: number): string[] {
+  private getCaloriesRecommendations(): string[] {
     const recommendations = []
     
-    if (calories < 150) {
-      recommendations.push('Start with 10-minute exercise sessions')
-      recommendations.push('Take regular movement breaks')
-      recommendations.push('Try gentle yoga or stretching')
-    } else if (calories < 300) {
-      recommendations.push('Add moderate-intensity activities')
-      recommendations.push('Try brisk walking or cycling')
-      recommendations.push('Incorporate strength training')
-    } else if (calories < 500) {
-      recommendations.push('Maintain current activity level')
-      recommendations.push('Add variety to your routine')
-      recommendations.push('Consider high-intensity intervals')
-    }
+    recommendations.push('Start with 10-minute exercise sessions')
+    recommendations.push('Take regular movement breaks')
+    recommendations.push('Try gentle yoga or stretching')
     
     return recommendations
   }
 
-  private getSleepRecommendations(hours: number): string[] {
+  private getSleepRecommendations(): string[] {
     const recommendations = []
     
-    if (hours < 6) {
-      recommendations.push('Establish consistent bedtime routine')
-      recommendations.push('Limit screen time before bed')
-      recommendations.push('Create a dark, quiet sleep environment')
-    } else if (hours < 7) {
-      recommendations.push('Go to bed 30 minutes earlier')
-      recommendations.push('Practice relaxation techniques')
-      recommendations.push('Avoid caffeine after 2 PM')
-    } else if (hours < 8) {
-      recommendations.push('Maintain good sleep hygiene')
-      recommendations.push('Consider adding 15-30 minutes')
-      recommendations.push('Monitor sleep quality')
-    }
+    recommendations.push('Establish consistent bedtime routine')
+    recommendations.push('Limit screen time before bed')
+    recommendations.push('Create a dark, quiet sleep environment')
     
     return recommendations
   }
 
-  private getHeartRateRecommendations(bpm: number): string[] {
+  private getHeartRateRecommendations(): string[] {
     const recommendations = []
     
-    if (bpm >= 120) {
-      recommendations.push('Practice deep breathing exercises')
-      recommendations.push('Consider stress management techniques')
-      recommendations.push('Consult healthcare provider if persistent')
-    } else if (bpm >= 100) {
-      recommendations.push('Engage in relaxation activities')
-      recommendations.push('Monitor stress levels')
-      recommendations.push('Practice mindfulness techniques')
-    } else if (bpm < 60) {
-      recommendations.push('Excellent cardiovascular fitness')
-      recommendations.push('Maintain current activity level')
-      recommendations.push('Regular health checkups')
-    }
+    recommendations.push('Practice deep breathing exercises')
+    recommendations.push('Consider stress management techniques')
+    recommendations.push('Consult healthcare provider if persistent')
     
     return recommendations
   }
 
-  private getWeightRecommendations(weight: number, additionalData?: any): string[] {
+  private getWeightRecommendations(): string[] {
     const recommendations = []
     
-    if (additionalData?.bmi) {
-      const bmi = additionalData.bmi
-      if (bmi >= 25) {
-        recommendations.push('Focus on balanced nutrition')
-        recommendations.push('Increase physical activity gradually')
-        recommendations.push('Consider professional guidance')
-      } else if (bmi < 18.5) {
-        recommendations.push('Focus on nutrient-dense foods')
-        recommendations.push('Gradual strength training')
-        recommendations.push('Consult nutrition professional')
-      } else {
-        recommendations.push('Maintain healthy lifestyle')
-        recommendations.push('Regular health monitoring')
-        recommendations.push('Balanced diet and exercise')
-      }
-    }
+    recommendations.push('Focus on balanced nutrition')
+    recommendations.push('Increase physical activity gradually')
+    recommendations.push('Consider professional guidance')
     
     return recommendations
   }
 
-  private getActivityRecommendations(minutes: number): string[] {
+  private getActivityRecommendations(): string[] {
     const recommendations = []
     
-    if (minutes < 15) {
-      recommendations.push('Start with 5-minute activity sessions')
-      recommendations.push('Take regular movement breaks')
-      recommendations.push('Try gentle stretching exercises')
-    } else if (minutes < 30) {
-      recommendations.push('Add 10-minute exercise sessions')
-      recommendations.push('Incorporate daily walking')
-      recommendations.push('Try beginner fitness classes')
-    } else if (minutes < 60) {
-      recommendations.push('Add moderate-intensity activities')
-      recommendations.push('Try strength training')
-      recommendations.push('Increase workout duration')
-    }
+    recommendations.push('Start with 5-minute activity sessions')
+    recommendations.push('Take regular movement breaks')
+    recommendations.push('Try gentle stretching exercises')
     
     return recommendations
   }
 
-  private getBMIRecommendations(bmi: number): string[] {
+  private getBMIRecommendations(): string[] {
     const recommendations = []
     
-    if (bmi >= 30) {
-      recommendations.push('Consult healthcare provider')
-      recommendations.push('Focus on lifestyle changes')
-      recommendations.push('Consider professional support')
-    } else if (bmi >= 25) {
-      recommendations.push('Balanced diet and exercise')
-      recommendations.push('Gradual weight management')
-      recommendations.push('Regular health monitoring')
-    } else if (bmi < 18.5) {
-      recommendations.push('Focus on healthy weight gain')
-      recommendations.push('Nutrient-dense nutrition')
-      recommendations.push('Professional guidance recommended')
-    } else {
-      recommendations.push('Maintain healthy lifestyle')
-      recommendations.push('Regular health checkups')
-      recommendations.push('Balanced nutrition and activity')
-    }
+    recommendations.push('Consult healthcare provider')
+    recommendations.push('Focus on lifestyle changes')
+    recommendations.push('Consider professional support')
     
     return recommendations
   }
 
   /**
-   * Get cultural health context for different regions
+   * Get cultural health context for a region
    */
-  getCulturalHealthContext(region: string): CulturalHealthContext {
+  getCulturalHealthContext(region: string): CulturalHealthContext | null {
     const contexts: Record<string, CulturalHealthContext> = {
-      'asian': {
+      asian: {
         region: 'Asian',
         traditionalPractices: [
           'Traditional Chinese Medicine (TCM)',
           'Ayurvedic practices',
-          'Mind-body exercises (Tai Chi, Qigong)',
-          'Herbal medicine traditions',
-          'Acupuncture and acupressure'
+          'Mind-body balance through meditation',
+          'Herbal remedies and natural healing'
         ],
         modernAdaptations: [
-          'Integrating traditional and modern medicine',
-          'Mindfulness and meditation apps',
-          'Community-based health programs',
-          'Traditional diet with modern nutrition science'
+          'Integration of TCM with modern medicine',
+          'Mindfulness and stress reduction techniques',
+          'Natural supplement usage',
+          'Holistic wellness approaches'
         ],
         culturalValues: [
-          'Balance and harmony (yin-yang)',
+          'Harmony and balance',
           'Prevention over treatment',
-          'Family and community health',
-          'Holistic wellness approach'
+          'Respect for natural cycles',
+          'Community and family health'
         ]
       },
-      'mediterranean': {
+      mediterranean: {
         region: 'Mediterranean',
         traditionalPractices: [
-          'Mediterranean diet',
-          'Social dining and family meals',
-          'Outdoor activities and walking',
-          'Wine culture in moderation',
-          'Seasonal and local food focus'
+          'Mediterranean diet rich in olive oil, fish, and vegetables',
+          'Social dining and meal sharing',
+          'Outdoor physical activities',
+          'Relaxation and siesta culture'
         ],
         modernAdaptations: [
-          'Mediterranean diet research and guidelines',
-          'Social fitness and wellness programs',
-          'Sustainable and local food movements',
-          'Community health initiatives'
+          'Scientific validation of Mediterranean diet benefits',
+          'Social fitness activities and group sports',
+          'Stress reduction through lifestyle design',
+          'Sustainable and seasonal eating'
         ],
         culturalValues: [
           'Social connection and community',
           'Enjoyment of food and life',
-          'Balance and moderation',
+          'Balance between activity and rest',
           'Connection to nature and seasons'
         ]
       },
-      'nordic': {
+      nordic: {
         region: 'Nordic',
         traditionalPractices: [
-          'Friluftsliv (outdoor life)',
-          'Sauna culture',
-          'Cold exposure therapy',
+          'Outdoor activities in all weather conditions',
+          'Sauna and cold water therapy',
           'Forest bathing and nature connection',
-          'Seasonal outdoor activities'
+          'Simple, functional living'
         ],
         modernAdaptations: [
-          'Forest therapy and ecotherapy',
-          'Cold exposure research and practices',
-          'Outdoor education programs',
-          'Sustainable living practices'
+          'Hygge lifestyle and comfort',
+          'Outdoor sports and recreation',
+          'Environmental consciousness',
+          'Work-life balance and leisure time'
         ],
         culturalValues: [
-          'Connection to nature',
           'Resilience and adaptability',
-          'Sustainability and environmental care',
-          'Community and social responsibility'
+          'Connection to nature',
+          'Simplicity and functionality',
+          'Equality and social welfare'
         ]
       },
-      'latin_american': {
+      latin: {
         region: 'Latin American',
         traditionalPractices: [
-          'Traditional healing practices',
-          'Family and community health',
-          'Dance and movement traditions',
-          'Herbal medicine and natural remedies',
-          'Social and cultural celebrations'
+          'Traditional herbal medicine',
+          'Dance and rhythmic movement',
+          'Family-centered health practices',
+          'Spiritual and religious healing traditions'
         ],
         modernAdaptations: [
-          'Community health programs',
-          'Dance fitness and movement classes',
-          'Traditional medicine integration',
-          'Cultural health awareness'
+          'Integration of traditional and modern medicine',
+          'Dance fitness and cultural movement',
+          'Community health initiatives',
+          'Holistic wellness approaches'
         ],
         culturalValues: [
           'Family and community bonds',
           'Joy and celebration of life',
-          'Connection to cultural heritage',
-          'Natural and holistic approaches'
+          'Spiritual and emotional well-being',
+          'Respect for traditional knowledge'
         ]
       }
     }
-    
-    return contexts[region] || contexts['asian'] // Default to Asian context
+
+    return contexts[region] || null
   }
 }

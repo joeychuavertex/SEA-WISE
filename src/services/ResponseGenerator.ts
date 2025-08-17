@@ -83,7 +83,7 @@ Health Data Context:
 - Recommendations: ${relevantData.recommendations?.join(', ') || 'None provided'}
 
 Detailed Health Data:
-${this.formatDetailedHealthData(relevantData, dataType)}
+${this.formatDetailedHealthData(relevantData)}
 
 Conversation History: ${conversationHistory.slice(-3).map(msg => `${msg.type}: ${msg.text}`).join('\n')}
 
@@ -317,107 +317,83 @@ Respond in a helpful, conversational tone. Be encouraging and provide actionable
   }
 
   /**
-   * Format detailed health data for the AI prompt
+   * Format detailed health data for the system prompt
    */
-  private formatDetailedHealthData(relevantData: any, dataType: string): string {
-    let details = ''
+  private formatDetailedHealthData(data: any): string {
+    if (!data) return 'No detailed data available'
     
-    if (relevantData.steps) {
-      details += `Steps Data:
-- Current: ${relevantData.steps.current?.toLocaleString() || 0} steps
-- Goal: ${relevantData.steps.goal?.toLocaleString() || 10000} steps
-- Average: ${relevantData.steps.average?.toLocaleString() || 'N/A'}
-- Trend: ${relevantData.steps.trend || 'N/A'}
-- Hourly Breakdown: ${relevantData.steps.hourly?.length > 0 ? `${relevantData.steps.hourly.length} hourly records` : 'N/A'}`
-      
-      if (relevantData.steps.total) {
-        details += `\n- Total: ${relevantData.steps.total.toLocaleString()} steps`
-      }
-      if (relevantData.steps.daily && relevantData.steps.daily.length > 0) {
-        details += `\n- Daily Records: ${relevantData.steps.daily.length} days of data`
-      }
-      details += '\n\n'
+    let formatted = ''
+    
+    // Format steps data
+    if (data.steps) {
+      formatted += `Steps:\n`
+      formatted += `  - Today: ${data.steps.total || data.steps}\n`
+      if (data.steps.daily) formatted += `  - Daily Average: ${data.steps.daily}\n`
+      if (data.steps.weeklyAverage) formatted += `  - Weekly Average: ${data.steps.weeklyAverage}\n`
+      if (data.steps.monthlyTotal) formatted += `  - Monthly Total: ${data.steps.monthlyTotal}\n`
+      formatted += '\n'
     }
     
-    if (relevantData.calories) {
-      details += `Calories Data:
-- Current: ${relevantData.calories.current || 0} calories
-- Goal: ${relevantData.calories.goal || 500} calories
-- Average: ${relevantData.calories.average || 'N/A'}
-- Hourly Breakdown: ${relevantData.calories.hourly?.length > 0 ? `${relevantData.calories.hourly.length} hourly records` : 'N/A'}`
-      
-      if (relevantData.calories.total) {
-        details += `\n- Total: ${relevantData.calories.total} calories`
-      }
-      if (relevantData.calories.daily && relevantData.calories.daily.length > 0) {
-        details += `\n- Daily Records: ${relevantData.calories.daily.length} days of data`
-      }
-      details += '\n\n'
+    // Format calories data
+    if (data.calories) {
+      formatted += `Calories:\n`
+      formatted += `  - Today: ${data.calories.total || data.calories}\n`
+      if (data.calories.daily) formatted += `  - Daily Average: ${data.calories.daily}\n`
+      if (data.calories.weeklyAverage) formatted += `  - Weekly Average: ${data.calories.weeklyAverage}\n`
+      if (data.calories.monthlyTotal) formatted += `  - Monthly Total: ${data.calories.monthlyTotal}\n`
+      formatted += '\n'
     }
     
-    if (relevantData.sleep) {
-      details += `Sleep Data:
-- Hours: ${relevantData.sleep.hours?.toFixed(1) || 0} hours
-- Quality: ${relevantData.sleep.quality || 'N/A'}
-- Goal: ${relevantData.sleep.goal || 8} hours
-- Time in Bed: ${relevantData.sleep.timeInBed?.toFixed(1) || 'N/A'} hours
-- Efficiency: ${relevantData.sleep.efficiency || 'N/A'}%`
-      
-      if (relevantData.sleep.weeklyAverage) {
-        details += `\n- Weekly Average: ${relevantData.sleep.weeklyAverage.toFixed(1)} hours`
-      }
-      if (relevantData.sleep.weeklyData && relevantData.sleep.weeklyData.length > 0) {
-        details += `\n- Weekly Records: ${relevantData.sleep.weeklyData.length} days of data`
-      }
-      details += '\n\n'
+    // Format sleep data
+    if (data.sleep) {
+      formatted += `Sleep:\n`
+      formatted += `  - Today: ${data.sleep.total || data.sleep} hours\n`
+      if (data.sleep.daily) formatted += `  - Daily Average: ${data.sleep.daily} hours\n`
+      if (data.sleep.weeklyAverage) formatted += `  - Weekly Average: ${data.sleep.weeklyAverage} hours\n`
+      if (data.sleep.monthlyTotal) formatted += `  - Monthly Total: ${data.sleep.monthlyTotal} hours\n`
+      formatted += '\n'
     }
     
-    if (relevantData.heartRate) {
-      details += `Heart Rate Data:
-- Current: ${relevantData.heartRate.current || 0} BPM
-- Resting: ${relevantData.heartRate.resting || 'N/A'} BPM
-- Max: ${relevantData.heartRate.max || 'N/A'} BPM
-- Average: ${relevantData.heartRate.average || 'N/A'} BPM\n\n`
+    // Format heart rate data
+    if (data.heartRate) {
+      formatted += `Heart Rate:\n`
+      formatted += `  - Today: ${data.heartRate.total || data.heartRate} BPM\n`
+      if (data.heartRate.daily) formatted += `  - Daily Average: ${data.heartRate.daily} BPM\n`
+      if (data.heartRate.weeklyAverage) formatted += `  - Weekly Average: ${data.heartRate.weeklyAverage} BPM\n`
+      if (data.heartRate.monthlyTotal) formatted += `  - Monthly Total: ${data.heartRate.monthlyTotal} BPM\n`
+      formatted += '\n'
     }
     
-    if (relevantData.weight) {
-      details += `Weight Data:
-- Current: ${relevantData.weight.current || 0} kg
-- Trend: ${relevantData.weight.trend || 'N/A'}
-- Goal: ${relevantData.weight.goal || 'N/A'} kg
-- BMI: ${relevantData.weight.bmi || 'N/A'}
-- Body Fat: ${relevantData.weight.fat || 'N/A'}%\n\n`
+    // Format weight data
+    if (data.weight) {
+      formatted += `Weight:\n`
+      formatted += `  - Today: ${data.weight.total || data.weight} kg\n`
+      if (data.weight.daily) formatted += `  - Daily Average: ${data.weight.daily} kg\n`
+      if (data.weight.weeklyAverage) formatted += `  - Weekly Average: ${data.weight.weeklyAverage} kg\n`
+      if (data.weight.monthlyTotal) formatted += `  - Monthly Total: ${data.weight.monthlyTotal} kg\n`
+      formatted += '\n'
     }
     
-    if (relevantData.activity) {
-      details += `Activity Data:
-- Active Minutes: ${relevantData.activity.activeMinutes || 0} minutes
-- Goal: ${relevantData.activity.goal || 60} minutes
-- Intensity: ${relevantData.activity.intensity || 'N/A'}
-- Very Active: ${relevantData.activity.veryActive || 0} minutes
-- Fairly Active: ${relevantData.activity.fairlyActive || 0} minutes
-- Lightly Active: ${relevantData.activity.lightlyActive || 0} minutes
-- Sedentary: ${relevantData.activity.sedentary || 0} minutes
-- Total Distance: ${relevantData.activity.totalDistance || 0} km`
-      
-      if (relevantData.activity.weeklyTotal) {
-        details += `\n- Weekly Total: ${relevantData.activity.weeklyTotal} minutes`
-      }
-      if (relevantData.activity.weeklyAverage) {
-        details += `\n- Weekly Average: ${relevantData.activity.weeklyAverage} minutes`
-      }
-      if (relevantData.activity.monthlyTotal) {
-        details += `\n- Monthly Total: ${relevantData.activity.monthlyTotal} minutes`
-      }
-      if (relevantData.activity.monthlyAverage) {
-        details += `\n- Monthly Average: ${relevantData.activity.monthlyAverage} minutes`
-      }
-      if (relevantData.activity.daily && relevantData.activity.daily.length > 0) {
-        details += `\n- Daily Records: ${relevantData.activity.daily.length} days of data`
-      }
-      details += '\n\n'
+    // Format activity data
+    if (data.activity) {
+      formatted += `Active Minutes:\n`
+      formatted += `  - Today: ${data.activity.total || data.activity} minutes\n`
+      if (data.activity.daily) formatted += `  - Daily Average: ${data.activity.daily} minutes\n`
+      if (data.activity.weeklyAverage) formatted += `  - Weekly Average: ${data.activity.weeklyAverage} minutes\n`
+      if (data.activity.monthlyTotal) formatted += `  - Monthly Total: ${data.activity.monthlyTotal} minutes\n`
+      formatted += '\n'
     }
     
-    return details || 'No detailed health data available.'
+    // Format BMI data
+    if (data.bmi) {
+      formatted += `BMI:\n`
+      formatted += `  - Today: ${data.bmi.total || data.bmi} kg/m²\n`
+      if (data.bmi.daily) formatted += `  - Daily Average: ${data.bmi.daily} kg/m²\n`
+      if (data.bmi.weeklyAverage) formatted += `  - Weekly Average: ${data.bmi.weeklyAverage} kg/m²\n`
+      if (data.bmi.monthlyTotal) formatted += `  - Monthly Total: ${data.bmi.monthlyTotal} kg/m²\n`
+      formatted += '\n'
+    }
+    
+    return formatted.trim()
   }
 } 

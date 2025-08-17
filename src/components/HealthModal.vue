@@ -117,7 +117,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { HealthInsight, CulturalHealthContext } from '../services/HealthInsightsService'
 import { HealthInsightsService } from '../services/HealthInsightsService'
 
