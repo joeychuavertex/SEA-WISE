@@ -44,7 +44,6 @@
 
     <!-- Health Data Display -->
     <div v-if="isConnected" class="health-data">
-      <h3>Your Health Data</h3>
 
       <div class="chat-section">
         <button @click="openChat" class="chat-btn" type="button">
