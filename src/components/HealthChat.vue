@@ -7,9 +7,6 @@
         <h3>Health Assistant</h3>
       </div>
       <div class="chat-controls">
-        <button @click="toggleChat" class="toggle-btn">
-          {{ isOpen ? '−' : '+' }}
-        </button>
         <button @click="closeChat" class="close-btn">
           ×
         </button>
@@ -120,11 +117,6 @@ const initializeChat = () => {
   }]
 }
 
-// Toggle chat visibility
-const toggleChat = () => {
-  isOpen.value = !isOpen.value
-}
-
 // Close chat
 const closeChat = () => {
   isOpen.value = false
@@ -225,6 +217,8 @@ initializeChat()
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  justify-content: flex-end;
+  min-height: 28px;
 }
 
 .chat-title {
@@ -243,24 +237,6 @@ initializeChat()
   font-weight: 600;
 }
 
-.toggle-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: bold;
-  transition: all 0.2s ease;
-}
-
-.toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
-}
-
 .close-btn {
   background: rgba(239, 68, 68, 0.8);
   border: none;
@@ -269,9 +245,13 @@ initializeChat()
   height: 28px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .close-btn:hover {
