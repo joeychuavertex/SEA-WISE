@@ -127,7 +127,7 @@
           
           <div 
             class="data-card tooltip-enabled"
-            @click="openModal('sleep', getMetricValue('sleep'), getAdditionalData('sleep'))"
+            @click="openModal('sleep', getMetricValue('sleep'))"
           >
             <div class="data-icon">🌙</div>
             <div class="data-content">
@@ -153,7 +153,7 @@
         <div class="data-grid">
           <div 
             class="data-card tooltip-enabled"
-            @click="openModal('weight', getMetricValue('weight'), getAdditionalData('weight'))"
+            @click="openModal('weight', getMetricValue('weight'))"
           >
             <div class="data-icon">⚖️</div>
             <div class="data-content">
@@ -181,7 +181,7 @@
           
           <div 
             class="data-card tooltip-enabled"
-            @click="openModal('bmi', getMetricValue('bmi'), getAdditionalData('bmi'))"
+            @click="openModal('bmi', getMetricValue('bmi'))"
           >
             <div class="data-icon">📈</div>
             <div class="data-content">
@@ -510,10 +510,10 @@ const openChat = () => {
 }
 
 // Modal methods
-const openModal = (metric: string, value: number, additionalData?: any) => {
-  console.log('openModal called:', { metric, value, additionalData })
+const openModal = (metric: string, value: number) => {
+  console.log('openModal called:', { metric, value })
   
-  const insight = healthInsightsService.getHealthInsight(metric, value, additionalData)
+  const insight = healthInsightsService.getHealthInsight(metric, value)
   console.log('Generated insight:', insight)
   
   modalState.value = {
@@ -544,23 +544,6 @@ const getMetricValue = (metric: string): number => {
     case 'activity': return healthData.value.activeMinutes || 0
     case 'bmi': return healthData.value.bmi || 0
     default: return 0
-  }
-}
-
-const getAdditionalData = (metric: string): any => {
-  switch (metric) {
-    case 'weight':
-    case 'bmi':
-      return {
-        bmi: healthData.value.bmi,
-        fat: healthData.value.fat
-      }
-    case 'sleep':
-      return {
-        timeInBed: (healthData.value.totalTimeInBed || 0) / 60
-      }
-    default:
-      return {}
   }
 }
 
