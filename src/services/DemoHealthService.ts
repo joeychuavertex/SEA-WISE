@@ -163,19 +163,15 @@ export class DemoHealthService {
       if (hour >= 7 && hour <= 9) { // Morning commute
         stepMultiplier = 0.8
         calorieMultiplier = 0.7
-        intensityMultiplier = 0.6
       } else if (hour >= 12 && hour <= 14) { // Lunch break
         stepMultiplier = 0.5
         calorieMultiplier = 0.4
-        intensityMultiplier = 0.3
       } else if (hour >= 17 && hour <= 19) { // Evening activity
         stepMultiplier = 0.9
         calorieMultiplier = 0.8
-        intensityMultiplier = 0.7
       } else if (hour >= 22 || hour <= 6) { // Sleep hours
         stepMultiplier = 0.05
         calorieMultiplier = 0.05
-        intensityMultiplier = 0.05
       }
 
       const hourLabel = `${hour.toString().padStart(2, '0')}:00`

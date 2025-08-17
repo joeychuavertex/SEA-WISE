@@ -388,14 +388,6 @@ const connectService = async () => {
   }
 }
 
-// Handle user selection change
-const onUserChange = async () => {
-  if (isSampleDataMode.value && isConnected.value) {
-    sampleDataService.setCurrentUser(selectedUserId.value)
-    await syncHealthData()
-  }
-}
-
 // Disconnect from current service
 const disconnectService = async () => {
   try {
@@ -466,12 +458,6 @@ const openChat = () => {
   console.log('Current isChatOpen value:', isChatOpen.value)
   isChatOpen.value = true
   console.log('New isChatOpen value:', isChatOpen.value)
-}
-
-// Test function for debugging
-const testClick = () => {
-  console.log('Test button clicked!')
-  alert('Test button is working!')
 }
 
 // Helper to format time (e.g., 300 minutes to "5:00")
@@ -887,28 +873,6 @@ const formatTime = (minutes: number) => {
 .instructions h4:first-child {
   margin-top: 0;
 }
-
-.test-btn {
-  background: #10b981;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  margin-bottom: 1rem;
-  display: block;
-  width: 100%;
-  max-width: 200px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.test-btn:hover {
-  background: #059669;
-}
-
 
 @media (max-width: 768px) {
   .data-grid {

@@ -84,7 +84,7 @@ export class SampleDataService {
       const row: any = {}
       
       headers.forEach((header, index) => {
-        let value = values[index] || ''
+        let value: string | number = values[index] || ''
         // Try to parse numbers
         if (!isNaN(Number(value)) && value !== '') {
           value = Number(value)
