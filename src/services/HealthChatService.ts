@@ -7,7 +7,12 @@ export interface ChatMessage {
   timestamp: Date
 }
 
-// This interface is no longer needed as we're using the simplified pipeline
+export interface HealthDataContext {
+  query: string
+  relevantData: any
+  dataType: string
+  timeRange: string
+}
 
 export class HealthChatService {
   private translationModel: TranslationModel

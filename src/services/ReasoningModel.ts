@@ -14,7 +14,6 @@ export interface HealthAnalysis {
 
 export class ReasoningModel {
   private openAIService: OpenAIService
-  private healthDataCache: Map<string, any> = new Map()
 
   constructor() {
     try {
@@ -77,9 +76,10 @@ Respond with JSON:
 
     try {
       const analysis = JSON.parse(response.content)
+      const insights = analysis.insights || []
       return {
         dataSummary: analysis.dataSummary || 'Data analysis completed',
-        insights: analysis.insights || [],
+        insights,
         trends: analysis.trends || [],
         recommendations: analysis.recommendations || [],
         technicalDetails: analysis.technicalDetails || {}
@@ -125,7 +125,7 @@ Respond with JSON:
   private async extractHealthData(translatedQuery: TranslatedQuery): Promise<any> {
     // This would integrate with the existing health data processing logic
     // For now, return a mock structure
-    return {
+    const relevantData = {
       metrics: [
         { type: translatedQuery.dataType, value: 100, unit: 'count', timestamp: new Date().toISOString() }
       ],
@@ -133,6 +133,7 @@ Respond with JSON:
       trends: [`${translatedQuery.dataType} shows consistent patterns`],
       recommendations: [`Consider monitoring ${translatedQuery.dataType} regularly`]
     }
+    return relevantData
   }
 
   /**
@@ -142,7 +143,7 @@ Respond with JSON:
     dataType: string,
     timeRange: string,
     intent: string,
-    relevantData: any
+    _relevantData: any
   ): string[] {
     const insights: string[] = []
     
@@ -169,7 +170,7 @@ Respond with JSON:
   /**
    * Identify basic trends in the data
    */
-  private identifyBasicTrends(dataType: string, relevantData: any): string[] {
+  private identifyBasicTrends(dataType: string, _relevantData: any): string[] {
     const trends: string[] = []
     
     if (dataType === 'steps') {
@@ -186,7 +187,7 @@ Respond with JSON:
   /**
    * Generate basic health recommendations
    */
-  private generateBasicRecommendations(dataType: string, insights: string[]): string[] {
+  private generateBasicRecommendations(dataType: string, _insights: string[]): string[] {
     const recommendations: string[] = []
     
     if (dataType === 'steps') {

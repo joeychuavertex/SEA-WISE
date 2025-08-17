@@ -17,7 +17,6 @@ export interface ProcessedHealthData {
 }
 
 export class HealthDataProcessor {
-  private healthDataCache: Map<string, any> = new Map()
   private openAIService: OpenAIService
 
   constructor() {
@@ -168,7 +167,6 @@ export class HealthDataProcessor {
    * In production, this would read actual CSV files from sampledata
    */
   private generateSimulatedHealthData(dataType: string, timeRange: string, metrics: string[]): any {
-    const now = new Date()
     const data: any = {}
 
     // Generate data based on data type and time range

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { format, startOfDay, endOfDay } from 'date-fns'
+import { startOfDay, endOfDay } from 'date-fns'
 
 export interface HealthData {
   steps: number
@@ -10,14 +10,12 @@ export interface HealthData {
 
 export class GoogleFitService {
   private clientId: string
-  private apiKey: string
   private accessToken: string | null = null
   private refreshToken: string | null = null
   
   constructor() {
     // These would typically come from environment variables
     this.clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
-    this.apiKey = import.meta.env.VITE_GOOGLE_API_KEY || ''
     
     // Check for existing tokens in localStorage
     this.accessToken = localStorage.getItem('googleFit_accessToken')
@@ -444,13 +442,14 @@ export class GoogleFitService {
   /**
    * Revoke the access token with Google (optional)
    */
-  private async revokeToken(): Promise<void> {
-    if (!this.accessToken) return
-    
-    try {
-      await axios.get(`https://oauth2.googleapis.com/revoke?token=${this.accessToken}`)
-    } catch (error) {
-      console.error('Error revoking token:', error)
-    }
-  }
+  // private async revokeToken(): Promise<void> {
+  //   if (!this.accessToken) return
+  //   
+  //   try {
+  //     await axios.get(`https://oauth2.googleapis.com/revoke?token=${this.accessToken}`)
+  //     console.log('Token revoked successfully')
+  //   } catch (error) {
+  //     console.error('Error revoking token:', error)
+  //   }
+  // }
 } 

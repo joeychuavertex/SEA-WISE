@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { format, startOfDay, endOfDay } from 'date-fns'
+import { startOfDay, endOfDay } from 'date-fns'
 
 export interface HealthData {
   steps: number
@@ -410,13 +410,14 @@ export class GoogleHealthConnectService {
   /**
    * Revoke the access token with Google (optional)
    */
-  private async revokeToken(): Promise<void> {
-    if (!this.accessToken) return
-    
-    try {
-      await axios.get(`https://oauth2.googleapis.com/revoke?token=${this.accessToken}`)
-    } catch (error) {
-      console.error('Error revoking token:', error)
-    }
-  }
+  // private async revokeToken(): Promise<void> {
+  //   if (!this.accessToken) return
+  //   
+  //   try {
+  //     await axios.get(`https://oauth2.googleapis.com/revoke?token=${this.accessToken}`)
+  //     console.log('Token revoked successfully')
+  //   } catch (error {
+  //     console.error('Error revoking token:', error)
+  //   }
+  // }
 } 

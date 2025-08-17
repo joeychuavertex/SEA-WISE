@@ -290,7 +290,7 @@ Translate this into clear, helpful, conversational language in the target langua
    */
   private translateResponseLocally(
     originalResponse: string,
-    userQuery: string
+    _userQuery: string
   ): TranslatedResponse {
     // Simple local translation - just return the original for now
     // In a real implementation, this could have basic text processing
