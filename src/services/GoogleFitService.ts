@@ -6,6 +6,29 @@ export interface HealthData {
   calories: number
   activeMinutes: number
   heartRate: number
+  // Sleep metrics
+  totalSleepRecords?: number
+  totalMinutesAsleep?: number
+  totalTimeInBed?: number
+  // Weight and body metrics
+  weightKg?: number
+  weightPounds?: number
+  fat?: number
+  bmi?: number
+  // Detailed activity metrics
+  totalDistance?: number
+  veryActiveDistance?: number
+  moderatelyActiveDistance?: number
+  lightActiveDistance?: number
+  sedentaryActiveDistance?: number
+  veryActiveMinutes?: number
+  fairlyActiveMinutes?: number
+  lightlyActiveMinutes?: number
+  sedentaryMinutes?: number
+  // Hourly patterns
+  hourlySteps?: { hour: string; steps: number }[]
+  hourlyCalories?: { hour: string; calories: number }[]
+  hourlyIntensities?: { hour: string; intensity: number }[]
 }
 
 export class GoogleFitService {
