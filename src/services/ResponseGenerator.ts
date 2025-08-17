@@ -82,9 +82,12 @@ Health Data Context:
 - Trends: ${relevantData.trends?.join(', ') || 'None detected'}
 - Recommendations: ${relevantData.recommendations?.join(', ') || 'None provided'}
 
+Detailed Health Data:
+${this.formatDetailedHealthData(relevantData, dataType)}
+
 Conversation History: ${conversationHistory.slice(-3).map(msg => `${msg.type}: ${msg.text}`).join('\n')}
 
-Respond in a helpful, conversational tone. Be encouraging and provide actionable insights when possible.`
+Respond in a helpful, conversational tone. Be encouraging and provide actionable insights when possible. Use the specific health data values to give personalized responses.`
 
       const response = await this.openAIService.sendMessage([
         { role: 'system', content: systemPrompt },
@@ -311,5 +314,110 @@ Respond in a helpful, conversational tone. Be encouraging and provide actionable
       default:
         return "Your health data provides valuable insights into your wellness journey."
     }
+  }
+
+  /**
+   * Format detailed health data for the AI prompt
+   */
+  private formatDetailedHealthData(relevantData: any, dataType: string): string {
+    let details = ''
+    
+    if (relevantData.steps) {
+      details += `Steps Data:
+- Current: ${relevantData.steps.current?.toLocaleString() || 0} steps
+- Goal: ${relevantData.steps.goal?.toLocaleString() || 10000} steps
+- Average: ${relevantData.steps.average?.toLocaleString() || 'N/A'}
+- Trend: ${relevantData.steps.trend || 'N/A'}
+- Hourly Breakdown: ${relevantData.steps.hourly?.length > 0 ? `${relevantData.steps.hourly.length} hourly records` : 'N/A'}`
+      
+      if (relevantData.steps.total) {
+        details += `\n- Total: ${relevantData.steps.total.toLocaleString()} steps`
+      }
+      if (relevantData.steps.daily && relevantData.steps.daily.length > 0) {
+        details += `\n- Daily Records: ${relevantData.steps.daily.length} days of data`
+      }
+      details += '\n\n'
+    }
+    
+    if (relevantData.calories) {
+      details += `Calories Data:
+- Current: ${relevantData.calories.current || 0} calories
+- Goal: ${relevantData.calories.goal || 500} calories
+- Average: ${relevantData.calories.average || 'N/A'}
+- Hourly Breakdown: ${relevantData.calories.hourly?.length > 0 ? `${relevantData.calories.hourly.length} hourly records` : 'N/A'}`
+      
+      if (relevantData.calories.total) {
+        details += `\n- Total: ${relevantData.calories.total} calories`
+      }
+      if (relevantData.calories.daily && relevantData.calories.daily.length > 0) {
+        details += `\n- Daily Records: ${relevantData.calories.daily.length} days of data`
+      }
+      details += '\n\n'
+    }
+    
+    if (relevantData.sleep) {
+      details += `Sleep Data:
+- Hours: ${relevantData.sleep.hours?.toFixed(1) || 0} hours
+- Quality: ${relevantData.sleep.quality || 'N/A'}
+- Goal: ${relevantData.sleep.goal || 8} hours
+- Time in Bed: ${relevantData.sleep.timeInBed?.toFixed(1) || 'N/A'} hours
+- Efficiency: ${relevantData.sleep.efficiency || 'N/A'}%`
+      
+      if (relevantData.sleep.weeklyAverage) {
+        details += `\n- Weekly Average: ${relevantData.sleep.weeklyAverage.toFixed(1)} hours`
+      }
+      if (relevantData.sleep.weeklyData && relevantData.sleep.weeklyData.length > 0) {
+        details += `\n- Weekly Records: ${relevantData.sleep.weeklyData.length} days of data`
+      }
+      details += '\n\n'
+    }
+    
+    if (relevantData.heartRate) {
+      details += `Heart Rate Data:
+- Current: ${relevantData.heartRate.current || 0} BPM
+- Resting: ${relevantData.heartRate.resting || 'N/A'} BPM
+- Max: ${relevantData.heartRate.max || 'N/A'} BPM
+- Average: ${relevantData.heartRate.average || 'N/A'} BPM\n\n`
+    }
+    
+    if (relevantData.weight) {
+      details += `Weight Data:
+- Current: ${relevantData.weight.current || 0} kg
+- Trend: ${relevantData.weight.trend || 'N/A'}
+- Goal: ${relevantData.weight.goal || 'N/A'} kg
+- BMI: ${relevantData.weight.bmi || 'N/A'}
+- Body Fat: ${relevantData.weight.fat || 'N/A'}%\n\n`
+    }
+    
+    if (relevantData.activity) {
+      details += `Activity Data:
+- Active Minutes: ${relevantData.activity.activeMinutes || 0} minutes
+- Goal: ${relevantData.activity.goal || 60} minutes
+- Intensity: ${relevantData.activity.intensity || 'N/A'}
+- Very Active: ${relevantData.activity.veryActive || 0} minutes
+- Fairly Active: ${relevantData.activity.fairlyActive || 0} minutes
+- Lightly Active: ${relevantData.activity.lightlyActive || 0} minutes
+- Sedentary: ${relevantData.activity.sedentary || 0} minutes
+- Total Distance: ${relevantData.activity.totalDistance || 0} km`
+      
+      if (relevantData.activity.weeklyTotal) {
+        details += `\n- Weekly Total: ${relevantData.activity.weeklyTotal} minutes`
+      }
+      if (relevantData.activity.weeklyAverage) {
+        details += `\n- Weekly Average: ${relevantData.activity.weeklyAverage} minutes`
+      }
+      if (relevantData.activity.monthlyTotal) {
+        details += `\n- Monthly Total: ${relevantData.activity.monthlyTotal} minutes`
+      }
+      if (relevantData.activity.monthlyAverage) {
+        details += `\n- Monthly Average: ${relevantData.activity.monthlyAverage} minutes`
+      }
+      if (relevantData.activity.daily && relevantData.activity.daily.length > 0) {
+        details += `\n- Daily Records: ${relevantData.activity.daily.length} days of data`
+      }
+      details += '\n\n'
+    }
+    
+    return details || 'No detailed health data available.'
   }
 } 

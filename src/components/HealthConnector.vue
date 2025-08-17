@@ -58,36 +58,56 @@
       <!-- Basic Metrics -->
       <div class="metrics-section">
         <h4>Today's Activity</h4>
+        <p class="section-description">
+          💡 <strong>Click on the highlighted cards</strong> to see detailed health insights, 
+          fitness standards, and culturally relevant health suggestions from around the world.
+        </p>
         <div class="data-grid">
-          <div class="data-card">
+          <div 
+            class="data-card tooltip-enabled"
+            @click="openModal('steps', getMetricValue('steps'))"
+          >
             <div class="data-icon">🚶</div>
             <div class="data-content">
               <h4>Steps Today</h4>
               <p class="data-value">{{ healthData.steps || '0' }}</p>
+              <small class="tooltip-hint">Click for detailed insights</small>
             </div>
           </div>
           
-          <div class="data-card">
+          <div 
+            class="data-card tooltip-enabled"
+            @click="openModal('calories', getMetricValue('calories'))"
+          >
             <div class="data-icon">🔥</div>
             <div class="data-content">
               <h4>Calories Burned</h4>
               <p class="data-value">{{ healthData.calories || '0' }}</p>
+              <small class="tooltip-hint">Click for detailed insights</small>
             </div>
           </div>
           
-          <div class="data-card">
+          <div 
+            class="data-card tooltip-enabled"
+            @click="openModal('activity', getMetricValue('activity'))"
+          >
             <div class="data-icon">⏱️</div>
             <div class="data-content">
               <h4>Active Minutes</h4>
               <p class="data-value">{{ healthData.activeMinutes || '0' }}</p>
+              <small class="tooltip-hint">Click for detailed insights</small>
             </div>
           </div>
           
-          <div class="data-card">
+          <div 
+            class="data-card tooltip-enabled"
+            @click="openModal('heartRate', getMetricValue('heartRate'))"
+          >
             <div class="data-icon">💓</div>
             <div class="data-content">
               <h4>Heart Rate</h4>
               <p class="data-value">{{ healthData.heartRate || '--' }} BPM</p>
+              <small class="tooltip-hint">Click for detailed insights</small>
             </div>
           </div>
         </div>
@@ -105,11 +125,15 @@
             </div>
           </div>
           
-          <div class="data-card">
+          <div 
+            class="data-card tooltip-enabled"
+            @click="openModal('sleep', getMetricValue('sleep'), getAdditionalData('sleep'))"
+          >
             <div class="data-icon">🌙</div>
             <div class="data-content">
               <h4>Time Asleep</h4>
               <p class="data-value">{{ formatTime(healthData.totalMinutesAsleep || 0) }}</p>
+              <small class="tooltip-hint">Click for detailed insights</small>
             </div>
           </div>
           
@@ -127,11 +151,15 @@
       <div class="metrics-section">
         <h4>Body Metrics</h4>
         <div class="data-grid">
-          <div class="data-card">
+          <div 
+            class="data-card tooltip-enabled"
+            @click="openModal('weight', getMetricValue('weight'), getAdditionalData('weight'))"
+          >
             <div class="data-icon">⚖️</div>
             <div class="data-content">
               <h4>Weight (kg)</h4>
               <p class="data-value">{{ (healthData.weightKg || 0).toFixed(1) }}</p>
+              <small class="tooltip-hint">Click for detailed insights</small>
             </div>
           </div>
           
@@ -151,11 +179,15 @@
             </div>
           </div>
           
-          <div class="data-card">
+          <div 
+            class="data-card tooltip-enabled"
+            @click="openModal('bmi', getMetricValue('bmi'), getAdditionalData('bmi'))"
+          >
             <div class="data-icon">📈</div>
             <div class="data-content">
               <h4>BMI</h4>
               <p class="data-value">{{ (healthData.bmi || 0).toFixed(1) }}</p>
+              <small class="tooltip-hint">Click for detailed insights</small>
             </div>
           </div>
         </div>
@@ -295,6 +327,14 @@
       :isConnected="isConnected"
       @close="isChatOpen = false"
     />
+
+    <!-- Health Modal -->
+    <HealthModal
+      :is-visible="modalState.isVisible"
+      :insight="modalState.insight"
+      @close="closeModal"
+      @openChat="openModalChat"
+    />
   </div>
 </template>
 
@@ -302,8 +342,11 @@
 import { ref, onMounted } from 'vue'
 import { DemoHealthService } from '../services/DemoHealthService'
 import { SampleDataService } from '../services/SampleDataService'
+import { HealthInsightsService } from '../services/HealthInsightsService'
 import type { HealthData } from '../services/GoogleFitService'
+import type { HealthInsight } from '../services/HealthInsightsService'
 import HealthChat from './HealthChat.vue'
+import HealthModal from './HealthModal.vue'
 
 // Reactive state
 const isConnected = ref(false)
@@ -339,9 +382,16 @@ const healthData = ref<HealthData>({
   hourlyIntensities: []
 })
 
+// Modal state
+const modalState = ref({
+  isVisible: false,
+  insight: null as HealthInsight | null
+})
+
 // Health service instances
 const demoService = new DemoHealthService()
 const sampleDataService = new SampleDataService()
+const healthInsightsService = new HealthInsightsService()
 let currentService = demoService // Default to demo mode
 
 // Check connection status on mount
@@ -457,6 +507,61 @@ const openChat = () => {
   console.log('Current isChatOpen value:', isChatOpen.value)
   isChatOpen.value = true
   console.log('New isChatOpen value:', isChatOpen.value)
+}
+
+// Modal methods
+const openModal = (metric: string, value: number, additionalData?: any) => {
+  console.log('openModal called:', { metric, value, additionalData })
+  
+  const insight = healthInsightsService.getHealthInsight(metric, value, additionalData)
+  console.log('Generated insight:', insight)
+  
+  modalState.value = {
+    isVisible: true,
+    insight
+  }
+  
+  console.log('Modal state updated:', modalState.value)
+}
+
+const closeModal = () => {
+  console.log('closeModal called')
+  modalState.value.isVisible = false
+}
+
+const openModalChat = () => {
+  closeModal()
+  openChat()
+}
+
+const getMetricValue = (metric: string): number => {
+  switch (metric) {
+    case 'steps': return healthData.value.steps || 0
+    case 'calories': return healthData.value.calories || 0
+    case 'sleep': return (healthData.value.totalMinutesAsleep || 0) / 60
+    case 'heartRate': return healthData.value.heartRate || 0
+    case 'weight': return healthData.value.weightKg || 0
+    case 'activity': return healthData.value.activeMinutes || 0
+    case 'bmi': return healthData.value.bmi || 0
+    default: return 0
+  }
+}
+
+const getAdditionalData = (metric: string): any => {
+  switch (metric) {
+    case 'weight':
+    case 'bmi':
+      return {
+        bmi: healthData.value.bmi,
+        fat: healthData.value.fat
+      }
+    case 'sleep':
+      return {
+        timeInBed: (healthData.value.totalTimeInBed || 0) / 60
+      }
+    default:
+      return {}
+  }
 }
 
 // Helper to format time (e.g., 300 minutes to "5:00")
@@ -779,6 +884,53 @@ const formatTime = (minutes: number) => {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
+.data-card.tooltip-enabled {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.data-card.tooltip-enabled::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.data-card.tooltip-enabled:hover::before {
+  left: 100%;
+}
+
+.data-card.tooltip-enabled:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(59, 130, 246, 0.6);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.data-card.tooltip-enabled::after {
+  content: '📊';
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.75rem;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.data-card.tooltip-enabled:hover::after {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
 .data-icon {
   font-size: 2.5rem;
   margin-bottom: 1rem;
@@ -798,6 +950,39 @@ const formatTime = (minutes: number) => {
   font-size: 1.5rem;
   font-weight: 700;
   color: #f8fafc;
+}
+
+.tooltip-hint {
+  display: block;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: #475569;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.25rem 0.5rem;
+  background: rgba(71, 85, 105, 0.15);
+  border-radius: 12px;
+  border: 1px solid rgba(71, 85, 105, 0.3);
+}
+
+.data-card.tooltip-enabled:hover .tooltip-hint {
+  opacity: 1;
+  color: #1e293b;
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
+  font-weight: 700;
+}
+
+.section-description {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  padding: 0 1rem; /* Add some padding for better spacing */
 }
 
 .chart-container {

@@ -242,6 +242,219 @@ export class SampleDataService {
   }
 
   /**
+   * Get data for a specific date range
+   */
+  getDataForDateRange(startDate: string, endDate: string): any {
+    if (!this.sampleData || !this.currentUserId) return null
+
+    try {
+      const start = new Date(startDate)
+      const end = new Date(endDate)
+
+      const userActivity = this.sampleData.dailyActivity
+        .filter(row => {
+          if (row.Id !== this.currentUserId) return false
+          const activityDate = new Date(row.ActivityDate)
+          return activityDate >= start && activityDate <= end
+        })
+        .sort((a, b) => new Date(a.ActivityDate).getTime() - new Date(b.ActivityDate).getTime())
+
+      const userSleep = this.sampleData.sleepData
+        .filter(row => {
+          if (row.Id !== this.currentUserId) return false
+          const sleepDate = new Date(row.SleepDay)
+          return sleepDate >= start && sleepDate <= end
+        })
+        .sort((a, b) => new Date(a.SleepDay).getTime() - new Date(b.SleepDay).getTime())
+
+      const userWeight = this.sampleData.weightData
+        .filter(row => {
+          if (row.Id !== this.currentUserId) return false
+          const weightDate = new Date(row.Date)
+          return weightDate >= start && weightDate <= end
+        })
+        .sort((a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime())
+
+      return {
+        activity: userActivity,
+        sleep: userSleep,
+        weight: userWeight,
+        dateRange: { start: startDate, end: endDate }
+      }
+    } catch (error) {
+      console.error('Error getting data for date range:', error)
+      return null
+    }
+  }
+
+  /**
+   * Get weekly summary data
+   */
+  getWeeklySummary(): any {
+    if (!this.sampleData || !this.currentUserId) return null
+
+    try {
+      const endDate = new Date()
+      const startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000)
+      
+      const weeklyData = this.getDataForDateRange(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0])
+      
+      if (!weeklyData || !weeklyData.activity || weeklyData.activity.length === 0) return null
+
+      const totalSteps = weeklyData.activity.reduce((sum: number, day: any) => sum + (day.TotalSteps || 0), 0)
+      const totalCalories = weeklyData.activity.reduce((sum: number, day: any) => sum + (day.Calories || 0), 0)
+      const totalActiveMinutes = weeklyData.activity.reduce((sum: number, day: any) => 
+        sum + (day.VeryActiveMinutes || 0) + (day.FairlyActiveMinutes || 0) + (day.LightlyActiveMinutes || 0), 0)
+      
+      const avgSteps = Math.floor(totalSteps / weeklyData.activity.length)
+      const avgCalories = Math.floor(totalCalories / weeklyData.activity.length)
+      const avgActiveMinutes = Math.floor(totalActiveMinutes / weeklyData.activity.length)
+
+      return {
+        totalSteps,
+        totalCalories,
+        totalActiveMinutes,
+        averageSteps: avgSteps,
+        averageCalories: avgCalories,
+        averageActiveMinutes: avgActiveMinutes,
+        daysTracked: weeklyData.activity.length,
+        dateRange: weeklyData.dateRange
+      }
+    } catch (error) {
+      console.error('Error getting weekly summary:', error)
+      return null
+    }
+  }
+
+  /**
+   * Get monthly summary data
+   */
+  getMonthlySummary(): any {
+    if (!this.sampleData || !this.currentUserId) return null
+
+    try {
+      const endDate = new Date()
+      const startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000)
+      
+      const monthlyData = this.getDataForDateRange(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0])
+      
+      if (!monthlyData || !monthlyData.activity || monthlyData.activity.length === 0) return null
+
+      const totalSteps = monthlyData.activity.reduce((sum: number, day: any) => sum + (day.TotalSteps || 0), 0)
+      const totalCalories = monthlyData.activity.reduce((sum: number, day: any) => sum + (day.Calories || 0), 0)
+      const totalActiveMinutes = monthlyData.activity.reduce((sum: number, day: any) => 
+        sum + (day.VeryActiveMinutes || 0) + (day.FairlyActiveMinutes || 0) + (day.LightlyActiveMinutes || 0), 0)
+      
+      const avgSteps = Math.floor(totalSteps / monthlyData.activity.length)
+      const avgCalories = Math.floor(totalCalories / monthlyData.activity.length)
+      const avgActiveMinutes = Math.floor(totalActiveMinutes / monthlyData.activity.length)
+
+      // Calculate trends
+      const firstWeek = monthlyData.activity.slice(0, 7)
+      const lastWeek = monthlyData.activity.slice(-7)
+      
+      const firstWeekAvg = firstWeek.reduce((sum: number, day: any) => sum + (day.TotalSteps || 0), 0) / firstWeek.length
+      const lastWeekAvg = lastWeek.reduce((sum: number, day: any) => sum + (day.TotalSteps || 0), 0) / lastWeek.length
+      
+      let trend = 'stable'
+      if (lastWeekAvg > firstWeekAvg * 1.1) trend = 'improving'
+      else if (lastWeekAvg < firstWeekAvg * 0.9) trend = 'declining'
+
+      return {
+        totalSteps,
+        totalCalories,
+        totalActiveMinutes,
+        averageSteps: avgSteps,
+        averageCalories: avgCalories,
+        averageActiveMinutes: avgActiveMinutes,
+        daysTracked: monthlyData.activity.length,
+        trend,
+        dateRange: monthlyData.dateRange
+      }
+    } catch (error) {
+      console.error('Error getting monthly summary:', error)
+      return null
+    }
+  }
+
+  /**
+   * Get specific metric data for a user
+   */
+  getMetricData(metric: string, userId?: string): any[] {
+    if (!this.sampleData) return []
+    
+    const targetUserId = userId || this.currentUserId
+    if (!targetUserId) return []
+
+    try {
+      let data: any[] = []
+      
+      switch (metric) {
+        case 'steps':
+          data = this.sampleData.dailyActivity
+            .filter(row => row.Id === targetUserId)
+            .map(row => ({
+              date: row.ActivityDate,
+              value: row.TotalSteps || 0,
+              goal: 10000
+            }))
+          break
+          
+        case 'calories':
+          data = this.sampleData.dailyActivity
+            .filter(row => row.Id === targetUserId)
+            .map(row => ({
+              date: row.ActivityDate,
+              value: row.Calories || 0,
+              goal: 500
+            }))
+          break
+          
+        case 'sleep':
+          data = this.sampleData.sleepData
+            .filter(row => row.Id === targetUserId)
+            .map(row => ({
+              date: row.SleepDay,
+              value: (row.TotalMinutesAsleep || 0) / 60,
+              goal: 8,
+              timeInBed: (row.TotalTimeInBed || 0) / 60
+            }))
+          break
+          
+        case 'weight':
+          data = this.sampleData.weightData
+            .filter(row => row.Id === targetUserId)
+            .map(row => ({
+              date: row.Date,
+              value: row.WeightKg || 0,
+              bmi: row.BMI || 0,
+              fat: row.Fat || 0
+            }))
+          break
+          
+        case 'activity':
+          data = this.sampleData.dailyActivity
+            .filter(row => row.Id === targetUserId)
+            .map(row => ({
+              date: row.ActivityDate,
+              value: (row.VeryActiveMinutes || 0) + (row.FairlyActiveMinutes || 0) + (row.LightlyActiveMinutes || 0),
+              goal: 60,
+              veryActive: row.VeryActiveMinutes || 0,
+              fairlyActive: row.FairlyActiveMinutes || 0,
+              lightlyActive: row.LightlyActiveMinutes || 0,
+              sedentary: row.SedentaryMinutes || 0
+            }))
+          break
+      }
+      
+      return data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    } catch (error) {
+      console.error(`Error getting ${metric} data:`, error)
+      return []
+    }
+  }
+
+  /**
    * Check if sample data is loaded
    */
   isDataLoaded(): boolean {
