@@ -157,7 +157,6 @@ export class DemoHealthService {
     for (let hour = 0; hour < 24; hour++) {
       let stepMultiplier = 0.1
       let calorieMultiplier = 0.1
-      let intensityMultiplier = 0.1
 
       // Peak activity during typical active hours
       if (hour >= 7 && hour <= 9) { // Morning commute
