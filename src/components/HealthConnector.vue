@@ -45,6 +45,16 @@
     <!-- Health Data Display -->
     <div v-if="isConnected" class="health-data">
       <h3>Your Health Data</h3>
+
+      <div class="chat-section">
+        <button @click="openChat" class="chat-btn" type="button">
+          <span class="chat-icon">💬</span>
+          Chat with Your Health Data
+        </button>
+        <p class="chat-description">
+          Ask questions about your health metrics, get insights, and track your progress
+        </p>
+      </div>
       
       <!-- Basic Metrics -->
       <div class="metrics-section">
@@ -253,15 +263,12 @@
       </button>
 
       <!-- Chat with Health Data Button -->
-      <div class="chat-section">
-        <button @click="openChat" class="chat-btn">
-          <span class="chat-icon">💬</span>
-          Chat with Your Health Data
-        </button>
-        <p class="chat-description">
-          Ask questions about your health metrics, get insights, and track your progress
-        </p>
-      </div>
+      <HealthChat 
+        v-if="isConnected && isChatOpen"
+        v-model="isChatOpen" 
+        :isConnected="isConnected"
+        @close="isChatOpen = false"
+      />
     </div>
 
 
@@ -284,7 +291,8 @@
 
     <!-- Health Chat Component -->
     <HealthChat 
-      v-if="isChatOpen" 
+      v-if="isConnected && isChatOpen"
+      v-model="isChatOpen" 
       :isConnected="isConnected"
       @close="isChatOpen = false"
     />
@@ -454,7 +462,16 @@ const syncHealthData = async () => {
 
 // Open chat interface
 const openChat = () => {
+  console.log('Chat button clicked!')
+  console.log('Current isChatOpen value:', isChatOpen.value)
   isChatOpen.value = true
+  console.log('New isChatOpen value:', isChatOpen.value)
+}
+
+// Test function for debugging
+const testClick = () => {
+  console.log('Test button clicked!')
+  alert('Test button is working!')
 }
 
 // Helper to format time (e.g., 300 minutes to "5:00")
@@ -675,10 +692,13 @@ const formatTime = (minutes: number) => {
 .chat-section {
   text-align: center;
   margin-top: 2rem;
+  margin-bottom: 2rem;
   padding: 2rem;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 5;
 }
 
 .chat-btn {
@@ -695,11 +715,23 @@ const formatTime = (minutes: number) => {
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
+  pointer-events: auto;
+  z-index: 10;
+  position: relative;
 }
 
 .chat-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+}
+
+.chat-btn:focus {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
+}
+
+.chat-btn:active {
+  transform: translateY(0);
 }
 
 .chat-icon {
@@ -854,6 +886,27 @@ const formatTime = (minutes: number) => {
 
 .instructions h4:first-child {
   margin-top: 0;
+}
+
+.test-btn {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.test-btn:hover {
+  background: #059669;
 }
 
 

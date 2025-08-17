@@ -71,15 +71,24 @@
 import { ref, nextTick, watch } from 'vue'
 import { HealthChatService } from '../services/HealthChatService'
 
+// Props
+interface Props {
+  isConnected: boolean
+  modelValue: boolean // for v-model support
+}
+
+const props = defineProps<Props>()
+
 // Emits
 interface Emits {
   (e: 'close'): void
+  (e: 'update:modelValue', value: boolean): void
 }
 
 const emit = defineEmits<Emits>()
 
 // Reactive state
-const isOpen = ref(false)
+const isOpen = ref(props.modelValue)
 const messages = ref<Array<{
   type: 'user' | 'ai'
   text: string
@@ -88,6 +97,16 @@ const messages = ref<Array<{
 const userInput = ref('')
 const isLoading = ref(false)
 const messagesContainer = ref<HTMLElement>()
+
+// Watch for prop changes
+watch(() => props.modelValue, (newValue) => {
+  isOpen.value = newValue
+})
+
+// Watch for local changes
+watch(isOpen, (newValue) => {
+  emit('update:modelValue', newValue)
+})
 
 // Chat service
 const chatService = new HealthChatService()
@@ -104,12 +123,9 @@ const initializeChat = () => {
 // Toggle chat visibility
 const toggleChat = () => {
   isOpen.value = !isOpen.value
-  if (isOpen.value && messages.value.length === 0) {
-    initializeChat()
-  }
 }
 
-// Close chat and emit close event
+// Close chat
 const closeChat = () => {
   isOpen.value = false
   emit('close')
@@ -186,7 +202,7 @@ initializeChat()
 <style scoped>
 .health-chat {
   position: fixed;
-  bottom: 2rem;
+  top: 2rem;
   right: 2rem;
   width: 400px;
   z-index: 1000;
