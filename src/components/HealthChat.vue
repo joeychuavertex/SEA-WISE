@@ -194,28 +194,31 @@ initializeChat()
 <style scoped>
 .health-chat {
   position: fixed;
-  top: 2rem;
-  right: 2rem;
-  width: 400px;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  width: clamp(320px, 90vw, 400px);
+  max-height: calc(100vh - 4rem);
   z-index: 1000;
   background: rgba(0, 0, 0, 0.85);
   border-radius: 16px;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
 .chat-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
+  padding: var(--spacing-md) var(--spacing-lg);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 }
 
 .chat-controls {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
   align-items: center;
   justify-content: flex-end;
   min-height: 28px;
@@ -224,25 +227,32 @@ initializeChat()
 .chat-title {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
+  flex: 1;
+  min-width: 0;
 }
 
 .chat-icon {
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  flex-shrink: 0;
 }
 
 .chat-title h3 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
   font-weight: 600;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .close-btn {
   background: rgba(239, 68, 68, 0.8);
   border: none;
   color: white;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   cursor: pointer;
   font-size: 1rem;
@@ -252,6 +262,8 @@ initializeChat()
   align-items: center;
   justify-content: center;
   line-height: 1;
+  flex-shrink: 0;
+  min-height: 44px;
 }
 
 .close-btn:hover {
@@ -259,24 +271,32 @@ initializeChat()
   transform: scale(1.05);
 }
 
+.close-btn:focus {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
+}
+
 .chat-interface {
-  height: 500px;
+  height: clamp(300px, 60vh, 500px);
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .messages-container {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem;
+  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--spacing-md);
+  min-height: 0;
 }
 
 .message {
   display: flex;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-sm);
 }
 
 .message.user {
@@ -288,10 +308,11 @@ initializeChat()
 }
 
 .message-content {
-  max-width: 80%;
-  padding: 0.75rem 1rem;
+  max-width: 85%;
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: 18px;
   position: relative;
+  word-wrap: break-word;
 }
 
 .message.user .message-content {
@@ -307,13 +328,13 @@ initializeChat()
 }
 
 .message-text {
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--spacing-xs);
   line-height: 1.4;
-  word-wrap: break-word;
+  font-size: clamp(0.875rem, 2.5vw, 0.9rem);
 }
 
 .message-time {
-  font-size: 0.75rem;
+  font-size: clamp(0.7rem, 2vw, 0.75rem);
   opacity: 0.7;
   text-align: right;
 }
@@ -328,21 +349,23 @@ initializeChat()
 
 .input-area {
   display: flex;
-  gap: 0.5rem;
-  padding: 1rem;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 }
 
 .message-input {
   flex: 1;
-  padding: 0.75rem 1rem;
+  padding: var(--spacing-sm) var(--spacing-md);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 25px;
   background: rgba(255, 255, 255, 0.2);
   color: white;
-  font-size: 0.9rem;
+  font-size: clamp(0.875rem, 2.5vw, 0.9rem);
   outline: none;
   transition: all 0.2s ease;
+  min-height: 44px;
 }
 
 .message-input::placeholder {
@@ -361,8 +384,8 @@ initializeChat()
 }
 
 .send-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: none;
   border-radius: 50%;
   background: rgba(99, 102, 241, 0.9);
@@ -372,12 +395,18 @@ initializeChat()
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .send-btn:hover:not(:disabled) {
   background: rgba(99, 102, 241, 1);
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.send-btn:focus {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
 }
 
 .send-btn:disabled {
@@ -393,7 +422,7 @@ initializeChat()
 /* Typing indicator */
 .typing-indicator {
   display: flex;
-  gap: 0.25rem;
+  gap: var(--spacing-xs);
   align-items: center;
 }
 
@@ -443,16 +472,183 @@ initializeChat()
   background: rgba(255, 255, 255, 0.5);
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+/* Mobile-first responsive design */
+@media (max-width: 480px) {
   .health-chat {
-    width: calc(100vw - 2rem);
-    right: 1rem;
-    bottom: 1rem;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    left: var(--spacing-sm);
+    width: auto;
+    max-height: calc(100vh - 2rem);
+  }
+  
+  .chat-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .chat-title h3 {
+    font-size: 0.9rem;
+  }
+  
+  .close-btn {
+    width: 28px;
+    height: 28px;
+    min-height: 28px;
   }
   
   .chat-interface {
-    height: 400px;
+    height: clamp(250px, 50vh, 400px);
+  }
+  
+  .messages-container {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+  
+  .message-content {
+    max-width: 90%;
+    padding: var(--spacing-sm);
+  }
+  
+  .input-area {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+  
+  .message-input {
+    padding: var(--spacing-sm);
+    font-size: 0.875rem;
+  }
+  
+  .send-btn {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .health-chat {
+    width: clamp(350px, 85vw, 400px);
+    right: var(--spacing-md);
+    top: var(--spacing-md);
+  }
+  
+  .chat-interface {
+    height: clamp(350px, 55vh, 450px);
+  }
+}
+
+@media (min-width: 769px) {
+  .health-chat {
+    width: 400px;
+    right: var(--spacing-lg);
+    top: var(--spacing-lg);
+  }
+  
+  .chat-interface {
+    height: 500px;
+  }
+}
+
+/* Landscape orientation adjustments for mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .health-chat {
+    top: var(--spacing-sm);
+    bottom: var(--spacing-sm);
+    max-height: calc(100vh - 2rem);
+  }
+  
+  .chat-interface {
+    height: clamp(200px, 40vh, 300px);
+  }
+  
+  .chat-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .messages-container {
+    padding: var(--spacing-sm);
+  }
+  
+  .input-area {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .close-btn:hover,
+  .send-btn:hover {
+    transform: none;
+  }
+  
+  .close-btn:active,
+  .send-btn:active {
+    transform: scale(0.95);
+  }
+  
+  .message-input {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .health-chat {
+    border-width: 2px;
+  }
+  
+  .chat-header {
+    border-bottom-width: 2px;
+  }
+  
+  .input-area {
+    border-top-width: 2px;
+  }
+  
+  .close-btn,
+  .send-btn {
+    border: 2px solid white;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .health-chat,
+  .close-btn,
+  .send-btn {
+    transition: none;
+  }
+  
+  .typing-indicator span {
+    animation: none;
+    opacity: 0.8;
+  }
+}
+
+/* Print styles */
+@media print {
+  .health-chat {
+    position: static;
+    width: 100%;
+    max-height: none;
+    background: white;
+    color: black;
+    border: 1px solid #ccc;
+    box-shadow: none;
+  }
+  
+  .chat-header,
+  .input-area {
+    display: none;
+  }
+  
+  .chat-interface {
+    height: auto;
+  }
+  
+  .messages-container {
+    overflow: visible;
   }
 }
 </style> 

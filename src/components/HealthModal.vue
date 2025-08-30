@@ -231,64 +231,77 @@ onMounted(() => {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 2rem 1rem 1rem 1rem;
+  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md) var(--spacing-md);
   animation: modalFadeIn 0.3s ease-out;
+  overflow-y: auto;
 }
 
 .health-modal {
   background: #1e293b;
-  border-radius: 20px;
-  max-width: 600px;
+  border-radius: clamp(16px, 4vw, 20px);
+  max-width: min(600px, 95vw);
   width: 100%;
-  max-height: 85vh;
+  max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
   border: 2px solid rgba(59, 130, 246, 0.3);
   animation: modalSlideIn 0.3s ease-out;
-  margin-top: 2rem;
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
+  padding: var(--spacing-lg) var(--spacing-xl);
   border-bottom: 2px solid rgba(59, 130, 246, 0.2);
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
 }
 
 .modal-title {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--spacing-md);
+  flex: 1;
+  min-width: 0;
 }
 
 .metric-icon {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 5vw, 2rem);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  flex-shrink: 0;
 }
 
 .modal-title h2 {
   margin: 0;
   color: #f8fafc;
-  font-size: 1.5rem;
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
   font-weight: 700;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .close-btn {
   background: none;
   border: none;
   color: #94a3b8;
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
   cursor: pointer;
-  padding: 0.5rem;
+  padding: var(--spacing-sm);
   border-radius: 50%;
   transition: all 0.2s ease;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  min-height: 44px;
 }
 
 .close-btn:hover {
@@ -296,19 +309,24 @@ onMounted(() => {
   color: #ef4444;
 }
 
+.close-btn:focus {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
+}
+
 .modal-content {
-  padding: 2rem;
+  padding: var(--spacing-lg);
 }
 
 .status-section {
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-xl);
 }
 
 .status-card {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
   border: 2px solid rgba(59, 130, 246, 0.3);
   border-radius: 16px;
-  padding: 1.5rem;
+  padding: var(--spacing-lg);
   position: relative;
   overflow: hidden;
 }
@@ -346,31 +364,40 @@ onMounted(() => {
 .status-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
 }
 
 .status-icon {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 5vw, 2rem);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  flex-shrink: 0;
+}
+
+.status-info {
+  flex: 1;
+  min-width: 0;
 }
 
 .status-info h3 {
-  margin: 0 0 0.25rem 0;
+  margin: 0 0 var(--spacing-xs) 0;
   color: #f8fafc;
-  font-size: 1.25rem;
+  font-size: clamp(1rem, 3vw, 1.25rem);
   font-weight: 700;
+  line-height: 1.3;
 }
 
 .status-description {
   margin: 0;
   color: #cbd5e1;
-  font-size: 0.9rem;
+  font-size: clamp(0.875rem, 2.5vw, 0.9rem);
+  line-height: 1.5;
 }
 
 .metric-display {
   text-align: center;
-  padding: 1rem;
+  padding: var(--spacing-md);
   background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -378,42 +405,45 @@ onMounted(() => {
 
 .metric-value {
   display: block;
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 6vw, 2.5rem);
   font-weight: 800;
   color: #60a5fa;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-sm);
+  line-height: 1.2;
 }
 
 .metric-label {
   display: block;
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 2.5vw, 0.9rem);
   color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .info-section {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-lg);
   background: rgba(148, 163, 184, 0.05);
   border-radius: 12px;
   border: 1px solid rgba(148, 163, 184, 0.1);
 }
 
 .info-section h3 {
-  margin: 0 0 1rem 0;
+  margin: 0 0 var(--spacing-md) 0;
   color: #f1f5f9;
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 3vw, 1.1rem);
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
+  line-height: 1.3;
 }
 
 .fitness-info p {
-  margin: 0 0 1rem 0;
+  margin: 0 0 var(--spacing-md) 0;
   color: #e2e8f0;
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
 }
 
 .progress-bar {
@@ -434,13 +464,16 @@ onMounted(() => {
 .region-selector {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
 }
 
 .region-selector label {
   color: #cbd5e1;
   font-weight: 500;
+  font-size: clamp(0.875rem, 2.5vw, 0.9rem);
+  flex-shrink: 0;
 }
 
 .region-select {
@@ -448,10 +481,13 @@ onMounted(() => {
   border: 1px solid rgba(59, 130, 246, 0.4);
   border-radius: 8px;
   color: #f8fafc;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: clamp(0.875rem, 2.5vw, 0.9rem);
   cursor: pointer;
   transition: all 0.2s ease;
+  min-height: 44px;
+  flex: 1;
+  min-width: 0;
 }
 
 .region-select:hover {
@@ -467,82 +503,87 @@ onMounted(() => {
 
 .cultural-practices {
   display: grid;
-  gap: 0.75rem;
+  gap: var(--spacing-sm);
 }
 
 .cultural-practice {
   background: rgba(59, 130, 246, 0.1);
   color: #93c5fd;
-  padding: 1rem;
+  padding: var(--spacing-md);
   border-radius: 8px;
   border-left: 4px solid #3b82f6;
-  font-size: 0.9rem;
+  font-size: clamp(0.875rem, 2.5vw, 0.9rem);
   line-height: 1.4;
 }
 
 .recommendations {
   display: grid;
-  gap: 0.75rem;
+  gap: var(--spacing-sm);
 }
 
 .recommendation {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--spacing-sm);
   background: rgba(34, 197, 94, 0.1);
   color: #86efac;
-  padding: 1rem;
+  padding: var(--spacing-md);
   border-radius: 8px;
   border-left: 4px solid #22c55e;
-  font-size: 0.9rem;
+  font-size: clamp(0.875rem, 2.5vw, 0.9rem);
   line-height: 1.4;
 }
 
 .recommendation-icon {
   color: #22c55e;
   font-weight: bold;
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 3vw, 1.1rem);
+  flex-shrink: 0;
 }
 
 .cultural-context {
   display: grid;
-  gap: 1.5rem;
+  gap: var(--spacing-lg);
 }
 
 .context-group h4 {
-  margin: 0 0 0.75rem 0;
+  margin: 0 0 var(--spacing-sm) 0;
   color: #e2e8f0;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
   font-weight: 600;
 }
 
 .context-group ul {
   margin: 0;
-  padding-left: 1.25rem;
+  padding-left: var(--spacing-lg);
   color: #cbd5e1;
 }
 
 .context-group li {
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+  margin-bottom: var(--spacing-sm);
+  font-size: clamp(0.875rem, 2.5vw, 0.9rem);
+  line-height: 1.5;
 }
 
 .modal-actions {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-md);
   justify-content: flex-end;
-  padding-top: 1.5rem;
+  padding-top: var(--spacing-lg);
   border-top: 2px solid rgba(148, 163, 184, 0.2);
+  flex-wrap: wrap;
 }
 
 .btn-secondary, .btn-primary {
-  padding: 0.75rem 1.5rem;
+  padding: var(--spacing-sm) var(--spacing-lg);
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: clamp(0.875rem, 2.5vw, 0.9rem);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
+  min-height: 44px;
+  min-width: 120px;
 }
 
 .btn-secondary {
@@ -556,6 +597,11 @@ onMounted(() => {
   color: #e2e8f0;
 }
 
+.btn-secondary:focus {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
+}
+
 .btn-primary {
   background: linear-gradient(135deg, #3b82f6, #60a5fa);
   color: white;
@@ -566,6 +612,11 @@ onMounted(() => {
   background: linear-gradient(135deg, #2563eb, #3b82f6);
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.btn-primary:focus {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
 }
 
 @keyframes modalFadeIn {
@@ -588,31 +639,280 @@ onMounted(() => {
   }
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+/* Mobile-first responsive design */
+@media (max-width: 480px) {
   .health-modal-overlay {
-    padding: 1rem 0.5rem 0.5rem 0.5rem;
+    padding: var(--spacing-sm);
   }
   
   .health-modal {
-    margin: 1rem 0.5rem;
-    max-height: 90vh;
+    margin: var(--spacing-sm) 0;
+    max-height: 95vh;
+    border-radius: 12px;
   }
   
   .modal-header {
-    padding: 1rem 1.5rem;
+    padding: var(--spacing-md);
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+  
+  .modal-title {
+    justify-content: center;
+  }
+  
+  .close-btn {
+    align-self: flex-end;
+    width: 36px;
+    height: 36px;
+    min-height: 36px;
   }
   
   .modal-content {
-    padding: 1.5rem;
+    padding: var(--spacing-md);
+  }
+  
+  .status-card {
+    padding: var(--spacing-md);
+  }
+  
+  .status-header {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-sm);
+  }
+  
+  .info-section {
+    padding: var(--spacing-md);
+  }
+  
+  .region-selector {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+  
+  .region-select {
+    width: 100%;
   }
   
   .modal-actions {
     flex-direction: column;
+    gap: var(--spacing-sm);
   }
   
   .btn-secondary, .btn-primary {
     width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .health-modal-overlay {
+    padding: var(--spacing-md);
+  }
+  
+  .health-modal {
+    margin: var(--spacing-md) 0;
+    max-height: 90vh;
+  }
+  
+  .modal-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+  
+  .modal-content {
+    padding: var(--spacing-lg);
+  }
+  
+  .status-card {
+    padding: var(--spacing-lg);
+  }
+  
+  .info-section {
+    padding: var(--spacing-lg);
+  }
+  
+  .region-selector {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+  
+  .region-select {
+    width: 100%;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .btn-secondary, .btn-primary {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (min-width: 769px) {
+  .health-modal-overlay {
+    padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md) var(--spacing-md);
+  }
+  
+  .health-modal {
+    margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+    max-height: 85vh;
+  }
+  
+  .modal-header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+  }
+  
+  .modal-content {
+    padding: var(--spacing-xl);
+  }
+  
+  .status-card {
+    padding: var(--spacing-lg);
+  }
+  
+  .info-section {
+    padding: var(--spacing-lg);
+  }
+  
+  .modal-actions {
+    flex-direction: row;
+    gap: var(--spacing-md);
+  }
+  
+  .btn-secondary, .btn-primary {
+    width: auto;
+    min-width: 120px;
+  }
+}
+
+/* Landscape orientation adjustments for mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .health-modal-overlay {
+    padding: var(--spacing-sm);
+  }
+  
+  .health-modal {
+    margin: var(--spacing-sm) 0;
+    max-height: 95vh;
+  }
+  
+  .modal-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .modal-content {
+    padding: var(--spacing-md);
+  }
+  
+  .status-card {
+    padding: var(--spacing-md);
+  }
+  
+  .info-section {
+    padding: var(--spacing-md);
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .close-btn:hover,
+  .btn-secondary:hover,
+  .btn-primary:hover {
+    transform: none;
+  }
+  
+  .close-btn:active,
+  .btn-secondary:active,
+  .btn-primary:active {
+    transform: scale(0.95);
+  }
+  
+  .region-select {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .health-modal {
+    border-width: 3px;
+  }
+  
+  .modal-header {
+    border-bottom-width: 3px;
+  }
+  
+  .status-card {
+    border-width: 3px;
+  }
+  
+  .info-section {
+    border-width: 2px;
+  }
+  
+  .modal-actions {
+    border-top-width: 3px;
+  }
+  
+  .close-btn,
+  .btn-secondary,
+  .btn-primary {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .health-modal-overlay,
+  .health-modal,
+  .close-btn,
+  .btn-secondary,
+  .btn-primary,
+  .progress-fill {
+    animation: none;
+    transition: none;
+  }
+  
+  .modalSlideIn {
+    animation: none;
+  }
+  
+  .modalFadeIn {
+    animation: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .health-modal-overlay {
+    position: static;
+    background: white;
+    padding: 0;
+  }
+  
+  .health-modal {
+    background: white;
+    color: black;
+    border: 1px solid #ccc;
+    box-shadow: none;
+    max-height: none;
+    margin: 0;
+  }
+  
+  .close-btn,
+  .modal-actions {
+    display: none;
+  }
+  
+  .modal-content {
+    padding: var(--spacing-md);
   }
 }
 </style>

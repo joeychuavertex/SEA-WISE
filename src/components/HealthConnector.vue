@@ -1041,13 +1041,145 @@ const formatTime = (minutes: number) => {
   margin-top: 0;
 }
 
-@media (max-width: 768px) {
-  .data-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 480px) {
+  .health-connector {
+    padding: var(--spacing-md);
+    border-radius: 12px;
   }
   
+  .status-card {
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+  
+  .status-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
+  
+  .data-card {
+    padding: var(--spacing-md);
+    min-height: 100px;
+  }
+  
+  .metrics-section {
+    padding: var(--spacing-md);
+  }
+  
+  .chat-section {
+    padding: var(--spacing-md);
+  }
+  
+  .instructions {
+    padding: var(--spacing-md);
+  }
+  
+  .connect-btn,
+  .disconnect-btn,
+  .sync-btn {
+    min-width: 140px;
+    padding: var(--spacing-sm) var(--spacing-lg);
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
   .health-connector {
-    padding: 1rem;
+    padding: var(--spacing-lg);
+  }
+  
+  .data-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .status-card {
+    padding: var(--spacing-lg);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  .health-connector {
+    padding: var(--spacing-lg);
+  }
+  
+  .data-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .status-card {
+    padding: var(--spacing-lg);
+  }
+}
+
+/* Landscape orientation adjustments for mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .app-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+  
+  .status-card {
+    padding: var(--spacing-md);
+  }
+  
+  .data-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .data-card.tooltip-enabled:hover {
+    transform: none;
+  }
+  
+  .data-card.tooltip-enabled:hover::before {
+    display: none;
+  }
+  
+  .hourly-bar:hover {
+    transform: none;
+  }
+  
+  .hour-label {
+    display: none;
+  }
+  
+  .connect-btn:hover,
+  .disconnect-btn:hover,
+  .sync-btn:hover,
+  .chat-btn:hover {
+    transform: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .data-card {
+    border-width: 2px;
+  }
+  
+  .status-card {
+    border-width: 2px;
+  }
+  
+  .metrics-section {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .data-card,
+  .connect-btn,
+  .disconnect-btn,
+  .sync-btn,
+  .chat-btn,
+  .hourly-bar {
+    transition: none;
+  }
+  
+  .data-card.tooltip-enabled::before {
+    display: none;
   }
 }
 </style> 
