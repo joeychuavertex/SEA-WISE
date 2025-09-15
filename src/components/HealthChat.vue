@@ -47,6 +47,8 @@
           v-model="userInput"
           @keyup.enter="sendMessage"
           @keyup.esc="clearInput"
+          @focus="onInputFocus"
+          @blur="onInputBlur"
           type="text"
           placeholder="Ask about your health data..."
           class="message-input"
@@ -80,6 +82,7 @@ const props = defineProps<Props>()
 interface Emits {
   (e: 'close'): void
   (e: 'update:modelValue', value: boolean): void
+  (e: 'generateTips', sessionId?: string): void
 }
 
 const emit = defineEmits<Emits>()
@@ -105,8 +108,8 @@ watch(isOpen, (newValue) => {
   emit('update:modelValue', newValue)
 })
 
-// Chat service
-const chatService = new HealthChatService()
+// Chat service with analytics enabled
+const chatService = new HealthChatService(true)
 
 // Initialize with welcome message
 const initializeChat = () => {
@@ -118,15 +121,31 @@ const initializeChat = () => {
 }
 
 // Close chat
-const closeChat = () => {
+const closeChat = async () => {
+  // Log user interaction analytics
+  await chatService.logUserInteraction('button_click', 'close-btn', 'button')
+  
+  // Get current session ID for tips generation
+  const sessionInfo = chatService.getAnalyticsSession()
+  const sessionId = sessionInfo?.sessionId
+  
   isOpen.value = false
   emit('close')
+  
+  // Trigger health tips generation
+  if (sessionId) {
+    console.log('HealthChat: Triggering health tips generation for session:', sessionId)
+    emit('generateTips', sessionId)
+  }
 }
 
 // Send message
 const sendMessage = async () => {
   const message = userInput.value.trim()
   if (!message || isLoading.value) return
+
+  // Log user interaction analytics
+  await chatService.logUserInteraction('button_click', 'send-btn', 'button')
 
   // Add user message
   messages.value.push({
@@ -166,6 +185,16 @@ const sendMessage = async () => {
 // Clear input
 const clearInput = () => {
   userInput.value = ''
+}
+
+// Input focus handler
+const onInputFocus = async () => {
+  await chatService.logUserInteraction('input_focus', 'message-input', 'input')
+}
+
+// Input blur handler
+const onInputBlur = async () => {
+  await chatService.logUserInteraction('input_blur', 'message-input', 'input')
 }
 
 // Scroll to bottom of messages

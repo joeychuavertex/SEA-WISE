@@ -55,6 +55,12 @@
         </p>
       </div>
       
+      <!-- Health Tips Panel -->
+      <HealthTipsPanel 
+        ref="healthTipsPanel"
+        @refresh="refreshHealthTips"
+      />
+
       <!-- Basic Metrics -->
       <div class="metrics-section">
         <h4>Today's Activity</h4>
@@ -299,6 +305,7 @@
         v-model="isChatOpen" 
         :isConnected="isConnected"
         @close="isChatOpen = false"
+        @generateTips="handleGenerateTips"
       />
     </div>
 
@@ -347,6 +354,7 @@ import type { HealthData } from '../services/GoogleFitService'
 import type { HealthInsight } from '../services/HealthInsightsService'
 import HealthChat from './HealthChat.vue'
 import HealthModal from './HealthModal.vue'
+import HealthTipsPanel from './HealthTipsPanel.vue'
 
 // Reactive state
 const isConnected = ref(false)
@@ -356,6 +364,7 @@ const isChatOpen = ref(false)
 const isSampleDataMode = ref(false)
 const selectedUserId = ref('')
 const availableUsers = ref<string[]>([])
+const healthTipsPanel = ref<InstanceType<typeof HealthTipsPanel> | null>(null)
 const healthData = ref<HealthData>({
   steps: 0,
   calories: 0,
@@ -532,6 +541,21 @@ const closeModal = () => {
 const openModalChat = () => {
   closeModal()
   openChat()
+}
+
+// Health tips methods
+const handleGenerateTips = async (sessionId?: string) => {
+  console.log('HealthConnector: Generating health tips for session:', sessionId)
+  if (healthTipsPanel.value) {
+    await healthTipsPanel.value.loadTips()
+  }
+}
+
+const refreshHealthTips = async () => {
+  console.log('HealthConnector: Refreshing health tips')
+  if (healthTipsPanel.value) {
+    await healthTipsPanel.value.refreshTips()
+  }
 }
 
 const getMetricValue = (metric: string): number => {
