@@ -31,6 +31,9 @@ export interface ChatAnalysis {
 export class HealthTipsService {
   private openAIService: OpenAIService
   private currentUserId: string
+  private cache: Map<string, { tips: HealthTip[], timestamp: number }> = new Map()
+  private readonly CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+  private pendingRequests: Map<string, Promise<HealthTip[]>> = new Map()
 
   constructor(userId: string = 'default-user') {
     this.currentUserId = userId
@@ -46,30 +49,109 @@ export class HealthTipsService {
    * Generate health tips based on recent chat history
    */
   async generateHealthTips(sessionId?: string): Promise<HealthTip[]> {
+    const cacheKey = sessionId || 'default'
+    
+    // Check cache first
+    const cached = this.cache.get(cacheKey)
+    if (cached && (Date.now() - cached.timestamp) < this.CACHE_DURATION) {
+      console.log('HealthTipsService: Returning cached tips')
+      return cached.tips
+    }
+    
+    // Check if request is already pending
+    if (this.pendingRequests.has(cacheKey)) {
+      console.log('HealthTipsService: Request already pending, returning existing promise')
+      return this.pendingRequests.get(cacheKey)!
+    }
+    
+    // Create new request
+    const requestPromise = this.generateTipsInternal(sessionId)
+    this.pendingRequests.set(cacheKey, requestPromise)
+    
+    try {
+      const tips = await requestPromise
+      this.cache.set(cacheKey, { tips, timestamp: Date.now() })
+      return tips
+    } finally {
+      this.pendingRequests.delete(cacheKey)
+    }
+  }
+
+  /**
+   * Internal method to generate tips
+   */
+  private async generateTipsInternal(sessionId?: string): Promise<HealthTip[]> {
     try {
       console.log('HealthTipsService: Generating health tips...')
       
-      // Get recent chat history
-      const chatHistory = await this.getRecentChatHistory(sessionId)
+      // Run operations in parallel for better performance
+      const [chatHistory, healthContext] = await Promise.all([
+        this.getRecentChatHistory(sessionId),
+        this.getHealthDataContext()
+      ])
+      
       console.log('HealthTipsService: Retrieved chat history:', chatHistory.length, 'messages')
       
       // Analyze chat content
       const analysis = await this.analyzeChatHistory(chatHistory)
       console.log('HealthTipsService: Chat analysis:', analysis)
       
-      // Get health data context
-      const healthContext = await this.getHealthDataContext()
-      console.log('HealthTipsService: Health context:', healthContext)
-      
-      // Generate tips using LLM
+      // Generate tips using LLM (with fallback)
       const tips = await this.generateTipsWithLLM(analysis, healthContext)
       console.log('HealthTipsService: Generated tips:', tips.length)
       
       return tips
     } catch (error) {
       console.error('HealthTipsService: Failed to generate health tips:', error)
-      return this.getDefaultTips(analysis)
+      // Return default tips immediately on error
+      return this.getDefaultTips()
     }
+  }
+
+  /**
+   * Clear cache for a specific session or all sessions
+   */
+  clearCache(sessionId?: string): void {
+    if (sessionId) {
+      this.cache.delete(sessionId)
+    } else {
+      this.cache.clear()
+    }
+  }
+
+  /**
+   * Get immediate fallback tips for instant display
+   */
+  getImmediateTips(): HealthTip[] {
+    return [
+      {
+        id: 'immediate_hydration',
+        title: 'Stay Hydrated',
+        description: 'Drink at least 8 glasses of water throughout the day to maintain proper hydration.',
+        category: 'hydration',
+        priority: 'high',
+        basedOn: ['General health recommendation'],
+        timestamp: new Date()
+      },
+      {
+        id: 'immediate_sleep',
+        title: 'Get Quality Sleep',
+        description: 'Aim for 7-9 hours of sleep per night for optimal health and recovery.',
+        category: 'sleep',
+        priority: 'high',
+        basedOn: ['General health recommendation'],
+        timestamp: new Date()
+      },
+      {
+        id: 'immediate_breaks',
+        title: 'Take Regular Breaks',
+        description: 'Take short breaks every hour to stretch and rest your eyes.',
+        category: 'general',
+        priority: 'medium',
+        basedOn: ['General health recommendation'],
+        timestamp: new Date()
+      }
+    ]
   }
 
   /**
@@ -223,11 +305,23 @@ export class HealthTipsService {
         return this.getDefaultTips(analysis)
       }
 
+      // Skip LLM if no meaningful chat history
+      if (analysis.messageCount < 2 || analysis.topics.length === 0) {
+        console.log('HealthTipsService: Insufficient chat data, using contextual default tips')
+        return this.getDefaultTips(analysis)
+      }
+
       const prompt = this.buildPrompt(analysis, healthContext)
-      const response = await this.openAIService.sendMessage([
+      
+      // Set a timeout for LLM requests
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('LLM request timeout')), 10000) // 10 second timeout
+      })
+      
+      const llmPromise = this.openAIService.sendMessage([
         {
           role: 'system',
-          content: 'You are a health advisor. Provide personalized health tips based on chat history and health data. Always respond with valid JSON format.'
+          content: 'You are a health advisor. Provide personalized health tips based on chat history and health data. Always respond with valid JSON format. Keep responses concise.'
         },
         {
           role: 'user',
@@ -235,6 +329,7 @@ export class HealthTipsService {
         }
       ])
       
+      const response = await Promise.race([llmPromise, timeoutPromise])
       return this.parseLLMResponse(response.content)
     } catch (error) {
       console.error('HealthTipsService: LLM generation failed:', error)

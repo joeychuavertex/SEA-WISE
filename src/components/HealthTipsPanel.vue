@@ -4,8 +4,9 @@
       <div class="tips-title">
         <span class="tips-icon">💡</span>
         <h3>Personalized Health Tips</h3>
+        <span v-if="isGenerating" class="generating-indicator">Generating...</span>
       </div>
-      <button @click="refreshTips" class="refresh-btn" :disabled="isLoading">
+      <button @click="debouncedRefreshTips" class="refresh-btn" :disabled="isLoading">
         <span class="refresh-icon" :class="{ spinning: isLoading }">🔄</span>
       </button>
     </div>
@@ -53,6 +54,15 @@
 import { ref, onMounted } from 'vue'
 import { HealthTipsService, HealthTip } from '../services/HealthTipsService'
 
+// Debouncing utility
+const debounce = (func: Function, delay: number) => {
+  let timeoutId: NodeJS.Timeout
+  return (...args: any[]) => {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => func.apply(null, args), delay)
+  }
+}
+
 // Props
 interface Props {
   sessionId?: string
@@ -66,26 +76,39 @@ const props = withDefaults(defineProps<Props>(), {
 // State
 const tips = ref<HealthTip[]>([])
 const isLoading = ref(false)
+const isGenerating = ref(false)
 const healthTipsService = new HealthTipsService()
 
 // Methods
 const loadTips = async () => {
   isLoading.value = true
+  isGenerating.value = true
+  
   try {
     console.log('HealthTipsPanel: Loading health tips...')
+    
+    // Show immediate tips first for better UX
+    tips.value = healthTipsService.getImmediateTips()
+    
+    // Then generate personalized tips in the background
     const generatedTips = await healthTipsService.generateHealthTips(props.sessionId)
     tips.value = generatedTips
     console.log('HealthTipsPanel: Loaded tips:', generatedTips.length)
   } catch (error) {
     console.error('HealthTipsPanel: Failed to load tips:', error)
+    // Keep the immediate tips on error
   } finally {
     isLoading.value = false
+    isGenerating.value = false
   }
 }
 
 const refreshTips = async () => {
   await loadTips()
 }
+
+// Debounced refresh to prevent multiple rapid clicks
+const debouncedRefreshTips = debounce(refreshTips, 1000)
 
 const formatCategory = (category: string): string => {
   const categoryMap: Record<string, string> = {
@@ -119,10 +142,16 @@ onMounted(() => {
   }
 })
 
+// Clear cache method
+const clearCache = () => {
+  healthTipsService.clearCache(props.sessionId)
+}
+
 // Expose methods for parent components
 defineExpose({
   loadTips,
-  refreshTips
+  refreshTips,
+  clearCache
 })
 </script>
 
@@ -155,8 +184,13 @@ defineExpose({
 
 .tips-title h3 {
   margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
+}
+
+.generating-indicator {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-left: 0.5rem;
+  font-style: italic;
 }
 
 .refresh-btn {
