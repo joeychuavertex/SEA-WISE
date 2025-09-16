@@ -58,7 +58,7 @@ describe('HealthGoalService', () => {
 
   describe('generatePersonalizedPlan', () => {
     it('should generate a personalized plan based on goal and health data', async () => {
-      const goal = 'I want to lose 10 pounds in 3 months'
+      const goal = 'I want to lose 10kg in 3 months'
       
       const plan = await service.generatePersonalizedPlan(goal, mockHealthData)
       

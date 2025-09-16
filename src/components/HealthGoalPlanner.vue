@@ -15,7 +15,7 @@
           @keyup.enter.ctrl="generatePlan"
           @focus="onInputFocus"
           @blur="onInputBlur"
-          placeholder="e.g., I want to lose 10 pounds in 3 months, improve my sleep quality, increase my daily steps to 10,000, or build muscle..."
+          placeholder="e.g., I want to lose 10kg in 3 months, improve my sleep quality, increase my daily steps to 10,000, or build muscle..."
           class="goal-input"
           :disabled="isGenerating"
           rows="3"

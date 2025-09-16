@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import HealthConnector from './components/HealthConnector.vue'
+import PersonalInfoPanel from './components/PersonalInfoPanel.vue'
 import { onMounted, ref } from 'vue'
 
 // Connection state
@@ -95,10 +96,17 @@ const disconnectService = () => {
     
     <main id="main-content" class="app-main" role="main" tabindex="-1">
       <div class="container container-xl">
-        <HealthConnector 
-          ref="healthConnectorRef"
-          @connection-changed="handleConnectionChanged"
-        />
+        <div class="main-layout">
+          <div class="sidebar">
+            <PersonalInfoPanel />
+          </div>
+          <div class="main-content">
+            <HealthConnector 
+              ref="healthConnectorRef"
+              @connection-changed="handleConnectionChanged"
+            />
+          </div>
+        </div>
       </div>
     </main>
   </div>
@@ -195,6 +203,45 @@ const disconnectService = () => {
   width: 100%;
 }
 
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-lg);
+  align-items: start;
+}
+
+.main-content {
+  min-width: 0; /* Prevents grid overflow */
+}
+
+.sidebar {
+  width: 100%;
+}
+
+/* Desktop layout - sidebar on the left */
+@media (min-width: 1024px) {
+  .main-layout {
+    grid-template-columns: 350px 1fr;
+    gap: var(--spacing-xl);
+  }
+  
+  .sidebar {
+    width: 350px;
+  }
+}
+
+/* Large desktop layout - wider sidebar */
+@media (min-width: 1400px) {
+  .main-layout {
+    grid-template-columns: 400px 1fr;
+    gap: var(--spacing-2xl);
+  }
+  
+  .sidebar {
+    width: 400px;
+  }
+}
+
 /* Mobile-first responsive adjustments */
 @media (max-width: 480px) {
   .app-header {
@@ -227,6 +274,10 @@ const disconnectService = () => {
   
   .app-main {
     padding: var(--spacing-md) var(--spacing-sm);
+  }
+  
+  .main-layout {
+    gap: var(--spacing-md);
   }
   
   .header-connect-btn, .header-disconnect-btn {
