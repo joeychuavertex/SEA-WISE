@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import HealthConnector from './components/HealthConnector.vue'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+
+// Connection state
+const isConnected = ref(false)
+const isConnecting = ref(false)
+const healthConnectorRef = ref()
 
 // Handle OAuth callback from Google
 onMounted(() => {
@@ -30,6 +35,25 @@ onMounted(() => {
     }
   }
 })
+
+// Handle connection state changes from HealthConnector
+const handleConnectionChanged = (connectionState: { isConnected: boolean, isConnecting: boolean }) => {
+  isConnected.value = connectionState.isConnected
+  isConnecting.value = connectionState.isConnecting
+}
+
+// Connection methods
+const connectService = () => {
+  if (healthConnectorRef.value) {
+    healthConnectorRef.value.connectService()
+  }
+}
+
+const disconnectService = () => {
+  if (healthConnectorRef.value) {
+    healthConnectorRef.value.disconnectService()
+  }
+}
 </script>
 
 <template>
@@ -39,14 +63,42 @@ onMounted(() => {
     
     <header class="app-header" role="banner">
       <div class="container container-xl">
-        <h1>SEA-WISE Health Connector</h1>
-        <p>Connect your health devices and sync your wellness data</p>
+        <div class="header-content">
+          <div class="header-text">
+            <h1>SEA-WISE Health Connector</h1>
+            <p>Connect your health devices and sync your wellness data</p>
+          </div>
+          <div class="header-actions">
+            <button 
+              v-if="!isConnected" 
+              @click="connectService" 
+              class="header-connect-btn"
+              :disabled="isConnecting"
+              :aria-describedby="isConnecting ? 'connecting-status' : undefined"
+              aria-label="Connect to health data service"
+            >
+              <span v-if="!isConnecting">Connect</span>
+              <span v-else id="connecting-status">Connecting...</span>
+            </button>
+            <button 
+              v-else
+              @click="disconnectService" 
+              class="header-disconnect-btn"
+              aria-label="Disconnect from health data service"
+            >
+              Disconnect
+            </button>
+          </div>
+        </div>
       </div>
     </header>
     
     <main id="main-content" class="app-main" role="main" tabindex="-1">
       <div class="container container-xl">
-        <HealthConnector />
+        <HealthConnector 
+          ref="healthConnectorRef"
+          @connection-changed="handleConnectionChanged"
+        />
       </div>
     </main>
   </div>
@@ -61,11 +113,64 @@ onMounted(() => {
 }
 
 .app-header {
-  text-align: center;
   padding: var(--spacing-lg) var(--spacing-md);
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.header-text {
+  flex: 1;
+  text-align: left;
+}
+
+.header-actions {
+  flex-shrink: 0;
+}
+
+.header-connect-btn, .header-disconnect-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.header-connect-btn {
+  background: var(--primary-color);
+  color: white;
+}
+
+.header-connect-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  background: var(--primary-hover);
+}
+
+.header-connect-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.header-disconnect-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.header-disconnect-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 .app-header h1 {
@@ -96,6 +201,21 @@ onMounted(() => {
     padding: var(--spacing-md) var(--spacing-sm);
   }
   
+  .header-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .header-text {
+    text-align: center;
+  }
+  
+  .header-actions {
+    display: flex;
+    justify-content: center;
+  }
+  
   .app-header h1 {
     font-size: 1.75rem;
   }
@@ -107,6 +227,12 @@ onMounted(() => {
   
   .app-main {
     padding: var(--spacing-md) var(--spacing-sm);
+  }
+  
+  .header-connect-btn, .header-disconnect-btn {
+    min-width: 100px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
   }
 }
 

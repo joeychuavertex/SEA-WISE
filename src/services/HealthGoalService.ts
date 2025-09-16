@@ -155,7 +155,7 @@ Make the plan actionable, safe, and motivating. Focus on sustainable changes tha
     } catch (error) {
       console.error('Error parsing plan response:', error)
       // Return a fallback plan if parsing fails
-      return this.createFallbackPlan()
+      return this.createFallbackPlan('General health improvement', {} as HealthData)
     }
   }
 
@@ -183,7 +183,7 @@ Make the plan actionable, safe, and motivating. Focus on sustainable changes tha
   /**
    * Create a fallback plan if LLM response parsing fails
    */
-  private createFallbackPlan(goal: string, healthData: HealthData): PersonalizedPlan {
+  private createFallbackPlan(goal: string, _healthData: HealthData): PersonalizedPlan {
     // Create a basic personalized plan based on the goal
     const isWeightLoss = goal.toLowerCase().includes('lose') || goal.toLowerCase().includes('weight')
     const isMuscleGain = goal.toLowerCase().includes('muscle') || goal.toLowerCase().includes('strength')

@@ -1,7 +1,7 @@
 <template>
   <div class="health-connector">
     <!-- Connection Status -->
-    <section class="status-card" :class="{ connected: isConnected }" role="status" aria-live="polite">
+    <section v-if="showStatusCard" class="status-card" :class="{ connected: isConnected }" role="status" aria-live="polite">
       <div class="status-icon" aria-hidden="true">
         <span v-if="isConnected">✓</span>
         <span v-else>⚡</span>
@@ -18,34 +18,6 @@
       </div>
     </section>
 
-    <!-- Connect Buttons -->
-    <section class="connect-section" v-if="!isConnected" aria-labelledby="connection-actions">
-      <h3 id="connection-actions" class="sr-only">Connection Actions</h3>
-      <div class="button-group">
-        <button 
-          @click="connectService" 
-          class="connect-btn"
-          :disabled="isConnecting"
-          :aria-describedby="isConnecting ? 'connecting-status' : undefined"
-          aria-label="Connect to health data service"
-        >
-          <span v-if="!isConnecting">Connect</span>
-          <span v-else id="connecting-status">Connecting...</span>
-        </button>
-      </div>
-    </section>
-    
-    <!-- Disconnect Button -->
-    <section class="connect-section" v-else aria-labelledby="disconnect-actions">
-      <h3 id="disconnect-actions" class="sr-only">Disconnect Actions</h3>
-      <button 
-        @click="disconnectService" 
-        class="disconnect-btn"
-        aria-label="Disconnect from health data service"
-      >
-        Disconnect
-      </button>
-    </section>
 
     <!-- Health Data Display -->
     <div v-if="isConnected" class="health-data">
@@ -408,7 +380,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineExpose, defineEmits } from 'vue'
+
+// Define emits
+const emit = defineEmits<{
+  'connection-changed': [connectionState: { isConnected: boolean, isConnecting: boolean }]
+}>()
 import { DemoHealthService } from '../services/DemoHealthService'
 import { SampleDataService } from '../services/SampleDataService'
 import { HealthInsightsService } from '../services/HealthInsightsService'
@@ -470,6 +447,14 @@ const healthInsightsService = new HealthInsightsService()
 const pdfExportService = new PDFExportService()
 let currentService = demoService // Default to demo mode
 
+// Function to emit connection state changes
+const emitConnectionState = () => {
+  emit('connection-changed', {
+    isConnected: isConnected.value,
+    isConnecting: isConnecting.value
+  })
+}
+
 // Check connection status on mount
 onMounted(async () => {
   // Start with demo service by default
@@ -485,12 +470,16 @@ onMounted(async () => {
   if (isConnected.value) {
     await syncHealthData()
   }
+  
+  // Emit initial connection state
+  emitConnectionState()
 })
 
 // Connect to service (toggles between demo and sample data)
 const connectService = async () => {
   try {
     isConnecting.value = true
+    emitConnectionState()
     
     // If sample data is available and user has selected a profile, use sample data
     if (sampleDataService.isDataLoaded() && selectedUserId.value) {
@@ -503,11 +492,11 @@ const connectService = async () => {
       await demoService.connect()
       isConnected.value = true
       
-      // Hide status card after 10 seconds for demo mode
+      // Hide status card after 3 seconds for demo mode
       showStatusCard.value = true
       setTimeout(() => {
         showStatusCard.value = false
-      }, 10000)
+      }, 3000)
     }
     
     await syncHealthData()
@@ -516,6 +505,7 @@ const connectService = async () => {
     alert('Failed to connect. Please try again.')
   } finally {
     isConnecting.value = false
+    emitConnectionState()
   }
 }
 
@@ -552,6 +542,7 @@ const disconnectService = async () => {
       hourlyCalories: [],
       hourlyIntensities: []
     }
+    emitConnectionState()
   } catch (error) {
     console.error('Failed to disconnect:', error)
   }
@@ -686,6 +677,12 @@ const formatTime = (minutes: number) => {
   const remainingMinutes = minutes % 60;
   return `${hours}:${remainingMinutes < 10 ? '0' : ''}${remainingMinutes}`;
 };
+
+// Expose methods to parent component
+defineExpose({
+  connectService,
+  disconnectService
+})
 </script>
 
 <style scoped>
@@ -743,43 +740,6 @@ const formatTime = (minutes: number) => {
   color: #6b7280;
 }
 
-.connect-section {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.button-group {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.connect-btn {
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 180px;
-  background: var(--primary-color);
-  color: white;
-}
-
-.connect-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
-  background: var(--primary-hover);
-}
-
-.connect-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
 
 .user-selector {
   display: flex;
@@ -821,7 +781,7 @@ const formatTime = (minutes: number) => {
   color: #000000;
 }
 
-.disconnect-btn, .sync-btn {
+.sync-btn {
   padding: 1rem 2rem;
   border: none;
   border-radius: 12px;
@@ -830,16 +790,6 @@ const formatTime = (minutes: number) => {
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 180px;
-}
-
-.disconnect-btn {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-}
-
-.disconnect-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
 }
 
 .action-buttons {
@@ -1246,8 +1196,6 @@ const formatTime = (minutes: number) => {
     padding: var(--spacing-md);
   }
   
-  .connect-btn,
-  .disconnect-btn,
   .sync-btn,
   .export-btn {
     min-width: 140px;
@@ -1321,8 +1269,6 @@ const formatTime = (minutes: number) => {
     display: none;
   }
   
-  .connect-btn:hover,
-  .disconnect-btn:hover,
   .sync-btn:hover,
   .export-btn:hover,
   .chat-btn:hover {
@@ -1361,8 +1307,6 @@ const formatTime = (minutes: number) => {
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .data-card,
-  .connect-btn,
-  .disconnect-btn,
   .sync-btn,
   .export-btn,
   .chat-btn,
