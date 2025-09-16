@@ -330,7 +330,7 @@ export class HealthTipsService {
       ])
       
       const response = await Promise.race([llmPromise, timeoutPromise])
-      return this.parseLLMResponse(response.content)
+      return this.parseLLMResponse(response.content, analysis)
     } catch (error) {
       console.error('HealthTipsService: LLM generation failed:', error)
       return this.getDefaultTips(analysis)
@@ -376,7 +376,7 @@ Focus on actionable, specific advice based on what the user discussed. If they m
   /**
    * Parse LLM response into HealthTip objects
    */
-  private parseLLMResponse(response: string): HealthTip[] {
+  private parseLLMResponse(response: string, analysis?: ChatAnalysis): HealthTip[] {
     try {
       // Extract JSON from response
       const jsonMatch = response.match(/\[[\s\S]*\]/)

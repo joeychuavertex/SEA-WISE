@@ -52,11 +52,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { HealthTipsService, HealthTip } from '../services/HealthTipsService'
+import { HealthTipsService, type HealthTip } from '../services/HealthTipsService'
 
 // Debouncing utility
 const debounce = (func: Function, delay: number) => {
-  let timeoutId: NodeJS.Timeout
+  let timeoutId: number
   return (...args: any[]) => {
     clearTimeout(timeoutId)
     timeoutId = setTimeout(() => func.apply(null, args), delay)
