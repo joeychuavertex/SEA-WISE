@@ -593,41 +593,45 @@ const formatTime = (minutes: number) => {
   align-items: center;
   gap: 1rem;
   padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--primary-light);
   border-radius: 12px;
   margin-bottom: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
 }
 
 .status-card.connected {
-  background: rgba(34, 197, 94, 0.2);
-  border-color: rgba(34, 197, 94, 0.4);
+  background: #f0fdf4;
+  border-color: #22c55e;
 }
 
 .status-icon {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  background: #f3f4f6;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
   font-weight: bold;
+  color: #6b7280;
 }
 
 .status-card.connected .status-icon {
-  background: rgba(34, 197, 94, 0.3);
+  background: #dcfce7;
+  color: #22c55e;
 }
 
 .status-content h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.25rem;
+  color: #000000;
 }
 
 .status-content p {
   margin: 0;
-  opacity: 0.8;
+  color: #6b7280;
 }
 
 .connect-section {
@@ -652,13 +656,14 @@ const formatTime = (minutes: number) => {
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 180px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--primary-color);
   color: white;
 }
 
 .connect-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+  background: var(--primary-hover);
 }
 
 .connect-btn:disabled {
@@ -674,37 +679,37 @@ const formatTime = (minutes: number) => {
   gap: 0.5rem;
   margin-top: 1rem;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--primary-light);
   border-radius: 12px;
-  backdrop-filter: blur(10px);
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
 }
 
 .user-selector label {
-  color: #e2e8f0;
+  color: #374151;
   font-weight: 500;
   font-size: 0.9rem;
 }
 
 .user-select {
   padding: 0.5rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: #ffffff;
+  color: #000000;
   font-size: 0.9rem;
   cursor: pointer;
-  backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
 
 .user-select:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--primary-color);
+  background: #ffffff;
 }
 
 .user-select option {
-  background: #1e293b;
-  color: white;
+  background: #ffffff;
+  color: #000000;
 }
 
 .disconnect-btn, .sync-btn {
@@ -748,22 +753,23 @@ const formatTime = (minutes: number) => {
 .instructions {
   margin-top: 2rem;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--primary-light);
   border-radius: 15px;
-  backdrop-filter: blur(10px);
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
 }
 
 .instructions h3 {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: #f8fafc;
+  color: #000000;
 }
 
 .instructions ol {
   text-align: left;
   margin: 0;
   padding-left: 1.5rem;
-  color: #e2e8f0;
+  color: #374151;
   line-height: 1.6;
 }
 
@@ -791,15 +797,16 @@ const formatTime = (minutes: number) => {
   margin-top: 2rem;
   margin-bottom: 2rem;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--primary-light);
   border-radius: 15px;
-  backdrop-filter: blur(10px);
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
   position: relative;
   z-index: 5;
 }
 
 .chat-btn {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  background: var(--primary-color);
   color: white;
   border: none;
   padding: 1rem 2rem;
@@ -837,7 +844,7 @@ const formatTime = (minutes: number) => {
 
 .chat-description {
   margin: 0;
-  color: #e2e8f0;
+  color: #000000;
   font-size: 0.9rem;
   line-height: 1.5;
 }
@@ -854,17 +861,18 @@ const formatTime = (minutes: number) => {
 
 .metrics-section {
   margin-bottom: 2rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--primary-light);
   border-radius: 15px;
   padding: 1.5rem;
-  backdrop-filter: blur(10px);
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
 }
 
 .metrics-section h4 {
   text-align: center;
   margin-bottom: 1.5rem;
   font-size: 1.25rem;
-  color: #f8fafc;
+  color: #000000;
   font-weight: 600;
 }
 
@@ -876,19 +884,20 @@ const formatTime = (minutes: number) => {
 }
 
 .data-card {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--primary-light);
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
   transition: all 0.3s ease;
 }
 
 .data-card:hover {
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  background: #ffffff;
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+  border-color: var(--primary-hover);
 }
 
 .data-card.tooltip-enabled {
@@ -916,11 +925,11 @@ const formatTime = (minutes: number) => {
 .data-card.tooltip-enabled:hover {
   transform: translateY(-4px) scale(1.02);
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(59, 130, 246, 0.3),
+    0 20px 40px rgba(37, 99, 235, 0.4),
+    0 0 0 1px var(--primary-color),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  border-color: rgba(59, 130, 246, 0.6);
-  background: rgba(255, 255, 255, 0.25);
+  border-color: var(--primary-color);
+  background: #ffffff;
 }
 
 .data-card.tooltip-enabled::after {
@@ -946,7 +955,7 @@ const formatTime = (minutes: number) => {
 .data-content h4 {
   margin: 0 0 0.5rem 0;
   font-size: 0.9rem;
-  color: #e2e8f0;
+  color: #000000;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -956,29 +965,29 @@ const formatTime = (minutes: number) => {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #f8fafc;
+  color: #000000;
 }
 
 .tooltip-hint {
   display: block;
   margin-top: 0.75rem;
   font-size: 0.75rem;
-  color: #475569;
+  color: #374151;
   opacity: 0.9;
   transition: all 0.3s ease;
   font-weight: 600;
   text-align: center;
   padding: 0.25rem 0.5rem;
-  background: rgba(71, 85, 105, 0.15);
+  background: rgba(37, 99, 235, 0.1);
   border-radius: 12px;
   border: 1px solid rgba(71, 85, 105, 0.3);
 }
 
 .data-card.tooltip-enabled:hover .tooltip-hint {
   opacity: 1;
-  color: #1e293b;
-  background: rgba(59, 130, 246, 0.2);
-  border-color: rgba(59, 130, 246, 0.4);
+  color: #000000;
+  background: rgba(37, 99, 235, 0.2);
+  border-color: var(--primary-color);
   transform: translateY(-2px);
   font-weight: 700;
 }
@@ -986,7 +995,7 @@ const formatTime = (minutes: number) => {
 .section-description {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: #e2e8f0;
+  color: #000000;
   font-size: 0.9rem;
   line-height: 1.5;
   padding: 0 1rem; /* Add some padding for better spacing */

@@ -228,11 +228,10 @@ initializeChat()
   width: clamp(320px, 90vw, 400px);
   max-height: calc(100vh - 4rem);
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.85);
+  background: var(--primary-light);
   border-radius: 16px;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.3);
   transition: all 0.3s ease;
 }
 
@@ -241,7 +240,7 @@ initializeChat()
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-md) var(--spacing-lg);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--primary-color);
   flex-shrink: 0;
 }
 
@@ -274,6 +273,7 @@ initializeChat()
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: #000000;
 }
 
 .close-btn {
@@ -345,14 +345,14 @@ initializeChat()
 }
 
 .message.user .message-content {
-  background: rgba(99, 102, 241, 0.9);
+  background: var(--primary-color);
   color: white;
   border-bottom-right-radius: 4px;
 }
 
 .message.ai .message-content {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
+  background: #f3f4f6;
+  color: #000000;
   border-bottom-left-radius: 4px;
 }
 
@@ -380,17 +380,17 @@ initializeChat()
   display: flex;
   gap: var(--spacing-sm);
   padding: var(--spacing-md);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid var(--primary-color);
   flex-shrink: 0;
 }
 
 .message-input {
   flex: 1;
   padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid #d1d5db;
   border-radius: 25px;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: #ffffff;
+  color: #000000;
   font-size: clamp(0.875rem, 2.5vw, 0.9rem);
   outline: none;
   transition: all 0.2s ease;
@@ -398,13 +398,13 @@ initializeChat()
 }
 
 .message-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: #9ca3af;
 }
 
 .message-input:focus {
-  border-color: rgba(99, 102, 241, 0.8);
-  background: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  border-color: var(--primary-color);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
 .message-input:disabled {
@@ -417,7 +417,7 @@ initializeChat()
   height: 44px;
   border: none;
   border-radius: 50%;
-  background: rgba(99, 102, 241, 0.9);
+  background: var(--primary-color);
   color: white;
   cursor: pointer;
   display: flex;
@@ -428,7 +428,7 @@ initializeChat()
 }
 
 .send-btn:hover:not(:disabled) {
-  background: rgba(99, 102, 241, 1);
+  background: var(--primary-hover);
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
 }

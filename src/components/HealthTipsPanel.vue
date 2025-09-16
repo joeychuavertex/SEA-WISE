@@ -157,12 +157,13 @@ defineExpose({
 
 <style scoped>
 .health-tips-panel {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--primary-light);
   border-radius: 16px;
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-lg);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  color: white;
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.2);
+  color: #000000;
 }
 
 .tips-header {
@@ -170,6 +171,11 @@ defineExpose({
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
 }
 
 .tips-title {
@@ -184,17 +190,19 @@ defineExpose({
 
 .tips-title h3 {
   margin: 0;
+  color: #000000;
+  font-weight: 600;
 }
 
 .generating-indicator {
   font-size: 0.8rem;
-  opacity: 0.8;
+  color: #6b7280;
   margin-left: 0.5rem;
   font-style: italic;
 }
 
 .refresh-btn {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--primary-color);
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -207,7 +215,7 @@ defineExpose({
 }
 
 .refresh-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--primary-hover);
   transform: scale(1.05);
 }
 
@@ -237,11 +245,11 @@ defineExpose({
 }
 
 .tip-card {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--primary-light);
   border-radius: 12px;
   padding: var(--spacing-md);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
   transition: all 0.3s ease;
 }
 
@@ -275,6 +283,7 @@ defineExpose({
   font-weight: 600;
   flex: 1;
   margin-right: var(--spacing-sm);
+  color: #000000;
 }
 
 .tip-meta {
@@ -285,11 +294,12 @@ defineExpose({
 }
 
 .tip-category {
-  background: rgba(255, 255, 255, 0.2);
+  background: #f3f4f6;
   padding: 2px 8px;
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 500;
+  color: #374151;
 }
 
 .tip-priority {
@@ -313,7 +323,7 @@ defineExpose({
 .tip-description {
   margin: 0 0 var(--spacing-sm) 0;
   line-height: 1.5;
-  opacity: 0.9;
+  color: #374151;
 }
 
 .tip-footer {
@@ -321,7 +331,7 @@ defineExpose({
   justify-content: space-between;
   align-items: center;
   font-size: 0.8rem;
-  opacity: 0.7;
+  color: #6b7280;
 }
 
 .tip-basis {
@@ -349,33 +359,45 @@ defineExpose({
 .tips-note {
   margin: 0;
   font-size: 0.85rem;
-  opacity: 0.8;
+  color: #6b7280;
   font-style: italic;
 }
 
 /* Category-specific styling */
 .tip-card.category-exercise {
-  background: linear-gradient(135deg, rgba(255, 107, 107, 0.2) 0%, rgba(255, 107, 107, 0.1) 100%);
+  background: #fef2f2;
+  border-left: 4px solid #ef4444;
+  border: 1px solid #ef4444;
 }
 
 .tip-card.category-nutrition {
-  background: linear-gradient(135deg, rgba(255, 217, 61, 0.2) 0%, rgba(255, 217, 61, 0.1) 100%);
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  border: 1px solid #f59e0b;
 }
 
 .tip-card.category-sleep {
-  background: linear-gradient(135deg, rgba(107, 207, 127, 0.2) 0%, rgba(107, 207, 127, 0.1) 100%);
+  background: #f0fdf4;
+  border-left: 4px solid #22c55e;
+  border: 1px solid #22c55e;
 }
 
 .tip-card.category-stress {
-  background: linear-gradient(135deg, rgba(155, 89, 182, 0.2) 0%, rgba(155, 89, 182, 0.1) 100%);
+  background: #faf5ff;
+  border-left: 4px solid #a855f7;
+  border: 1px solid #a855f7;
 }
 
 .tip-card.category-hydration {
-  background: linear-gradient(135deg, rgba(52, 152, 219, 0.2) 0%, rgba(52, 152, 219, 0.1) 100%);
+  background: #eff6ff;
+  border-left: 4px solid #3b82f6;
+  border: 1px solid #3b82f6;
 }
 
 .tip-card.category-general {
-  background: linear-gradient(135deg, rgba(149, 165, 166, 0.2) 0%, rgba(149, 165, 166, 0.1) 100%);
+  background: var(--primary-light);
+  border-left: 4px solid var(--primary-color);
+  border: 1px solid var(--primary-color);
 }
 
 /* Responsive design */

@@ -237,14 +237,14 @@ onMounted(() => {
 }
 
 .health-modal {
-  background: #1e293b;
+  background: #ffffff;
   border-radius: clamp(16px, 4vw, 20px);
   max-width: min(600px, 95vw);
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-  border: 2px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 25px 50px -12px rgba(37, 99, 235, 0.3);
+  border: 2px solid var(--primary-color);
   animation: modalSlideIn 0.3s ease-out;
   margin-top: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
@@ -255,8 +255,8 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-lg) var(--spacing-xl);
-  border-bottom: 2px solid rgba(59, 130, 246, 0.2);
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+  border-bottom: 2px solid var(--primary-color);
+  background: var(--primary-light);
   flex-wrap: wrap;
   gap: var(--spacing-md);
 }
@@ -277,7 +277,7 @@ onMounted(() => {
 
 .modal-title h2 {
   margin: 0;
-  color: #f8fafc;
+  color: #000000;
   font-size: clamp(1.25rem, 4vw, 1.5rem);
   font-weight: 700;
   line-height: 1.2;
@@ -287,9 +287,9 @@ onMounted(() => {
 }
 
 .close-btn {
-  background: none;
+  background: var(--primary-color);
   border: none;
-  color: #94a3b8;
+  color: #ffffff;
   font-size: clamp(1.5rem, 4vw, 2rem);
   cursor: pointer;
   padding: var(--spacing-sm);
@@ -305,8 +305,8 @@ onMounted(() => {
 }
 
 .close-btn:hover {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
+  background: var(--primary-hover);
+  color: #ffffff;
 }
 
 .close-btn:focus {
@@ -323,8 +323,8 @@ onMounted(() => {
 }
 
 .status-card {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
-  border: 2px solid rgba(59, 130, 246, 0.3);
+  background: var(--primary-light);
+  border: 2px solid var(--primary-color);
   border-radius: 16px;
   padding: var(--spacing-lg);
   position: relative;
@@ -382,7 +382,7 @@ onMounted(() => {
 
 .status-info h3 {
   margin: 0 0 var(--spacing-xs) 0;
-  color: #f8fafc;
+  color: #000000;
   font-size: clamp(1rem, 3vw, 1.25rem);
   font-weight: 700;
   line-height: 1.3;
@@ -390,7 +390,7 @@ onMounted(() => {
 
 .status-description {
   margin: 0;
-  color: #cbd5e1;
+  color: #374151;
   font-size: clamp(0.875rem, 2.5vw, 0.9rem);
   line-height: 1.5;
 }
@@ -407,8 +407,8 @@ onMounted(() => {
   display: block;
   font-size: clamp(2rem, 6vw, 2.5rem);
   font-weight: 800;
-  color: #60a5fa;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: var(--primary-color);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: var(--spacing-sm);
   line-height: 1.2;
 }
@@ -416,7 +416,7 @@ onMounted(() => {
 .metric-label {
   display: block;
   font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-  color: #94a3b8;
+  color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -424,14 +424,14 @@ onMounted(() => {
 .info-section {
   margin-bottom: var(--spacing-xl);
   padding: var(--spacing-lg);
-  background: rgba(148, 163, 184, 0.05);
+  background: #f9fafb;
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid #e5e7eb;
 }
 
 .info-section h3 {
   margin: 0 0 var(--spacing-md) 0;
-  color: #f1f5f9;
+  color: #000000;
   font-size: clamp(1rem, 3vw, 1.1rem);
   font-weight: 600;
   display: flex;
@@ -442,14 +442,14 @@ onMounted(() => {
 
 .fitness-info p {
   margin: 0 0 var(--spacing-md) 0;
-  color: #e2e8f0;
+  color: #374151;
   font-size: clamp(0.875rem, 2.5vw, 1rem);
 }
 
 .progress-bar {
   width: 100%;
   height: 8px;
-  background: rgba(148, 163, 184, 0.2);
+  background: #e5e7eb;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -470,17 +470,17 @@ onMounted(() => {
 }
 
 .region-selector label {
-  color: #cbd5e1;
+  color: #374151;
   font-weight: 500;
   font-size: clamp(0.875rem, 2.5vw, 0.9rem);
   flex-shrink: 0;
 }
 
 .region-select {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(59, 130, 246, 0.4);
+  background: #ffffff;
+  border: 1px solid var(--primary-color);
   border-radius: 8px;
-  color: #f8fafc;
+  color: #000000;
   padding: var(--spacing-sm) var(--spacing-md);
   font-size: clamp(0.875rem, 2.5vw, 0.9rem);
   cursor: pointer;
@@ -548,7 +548,7 @@ onMounted(() => {
 
 .context-group h4 {
   margin: 0 0 var(--spacing-sm) 0;
-  color: #e2e8f0;
+  color: #000000;
   font-size: clamp(0.9rem, 2.5vw, 1rem);
   font-weight: 600;
 }
@@ -556,7 +556,7 @@ onMounted(() => {
 .context-group ul {
   margin: 0;
   padding-left: var(--spacing-lg);
-  color: #cbd5e1;
+  color: #374151;
 }
 
 .context-group li {
@@ -587,14 +587,14 @@ onMounted(() => {
 }
 
 .btn-secondary {
-  background: rgba(148, 163, 184, 0.2);
-  color: #cbd5e1;
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
 }
 
 .btn-secondary:hover {
-  background: rgba(148, 163, 184, 0.3);
-  color: #e2e8f0;
+  background: #e5e7eb;
+  color: #000000;
 }
 
 .btn-secondary:focus {

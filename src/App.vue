@@ -51,17 +51,17 @@ onMounted(() => {
 <style scoped>
 .app {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #f5f5f5;
+  color: #000000;
   width: 100%;
 }
 
 .app-header {
   text-align: center;
   padding: var(--spacing-lg) var(--spacing-md);
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .app-header h1 {
@@ -69,12 +69,13 @@ onMounted(() => {
   font-size: clamp(1.75rem, 6vw, 2.5rem);
   font-weight: 700;
   line-height: 1.2;
+  color: var(--primary-color);
 }
 
 .app-header p {
   margin: 0;
   font-size: clamp(0.875rem, 3vw, 1.1rem);
-  opacity: 0.9;
+  color: #374151;
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.5;
@@ -162,7 +163,7 @@ onMounted(() => {
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .app {
-    background: #667eea;
+    background: #f5f5f5;
   }
 }
 </style>
