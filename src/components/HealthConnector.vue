@@ -1,59 +1,71 @@
 <template>
   <div class="health-connector">
     <!-- Connection Status -->
-    <div class="status-card" :class="{ connected: isConnected }">
-      <div class="status-icon">
+    <section class="status-card" :class="{ connected: isConnected }" role="status" aria-live="polite">
+      <div class="status-icon" aria-hidden="true">
         <span v-if="isConnected">✓</span>
         <span v-else>⚡</span>
       </div>
       <div class="status-content">
-        <h3 v-if="isConnected">
+        <h2 v-if="isConnected" id="connection-status">
           {{ isSampleDataMode ? 'Connected to Sample Data' : 'Connected to Demo Mode' }}
-        </h3>
-        <h3 v-else>Not Connected</h3>
-        <p v-if="isConnected">
+        </h2>
+        <h2 v-else id="connection-status">Not Connected</h2>
+        <p v-if="isConnected" aria-describedby="connection-status">
           {{ isSampleDataMode ? `Viewing real health data for User ${selectedUserId}` : 'Your health data is syncing automatically' }}
         </p>
-        <p v-else>Connect to demo mode or sample data to see health metrics</p>
+        <p v-else aria-describedby="connection-status">Connect to demo mode or sample data to see health metrics</p>
       </div>
-    </div>
+    </section>
 
     <!-- Connect Buttons -->
-    <div class="connect-section" v-if="!isConnected">
+    <section class="connect-section" v-if="!isConnected" aria-labelledby="connection-actions">
+      <h3 id="connection-actions" class="sr-only">Connection Actions</h3>
       <div class="button-group">
         <button 
           @click="connectService" 
           class="connect-btn"
           :disabled="isConnecting"
+          :aria-describedby="isConnecting ? 'connecting-status' : undefined"
+          aria-label="Connect to health data service"
         >
           <span v-if="!isConnecting">Connect</span>
-          <span v-else>Connecting...</span>
+          <span v-else id="connecting-status">Connecting...</span>
         </button>
       </div>
-    </div>
+    </section>
     
     <!-- Disconnect Button -->
-    <div class="connect-section" v-else>
+    <section class="connect-section" v-else aria-labelledby="disconnect-actions">
+      <h3 id="disconnect-actions" class="sr-only">Disconnect Actions</h3>
       <button 
         @click="disconnectService" 
         class="disconnect-btn"
+        aria-label="Disconnect from health data service"
       >
         Disconnect
       </button>
-    </div>
+    </section>
 
     <!-- Health Data Display -->
     <div v-if="isConnected" class="health-data">
 
-      <div class="chat-section">
-        <button @click="openChat" class="chat-btn" type="button">
-          <span class="chat-icon">💬</span>
+      <section class="chat-section" aria-labelledby="chat-heading">
+        <h3 id="chat-heading" class="sr-only">Health Data Chat</h3>
+        <button 
+          @click="openChat" 
+          class="chat-btn" 
+          type="button"
+          aria-label="Open chat with health data assistant"
+          aria-describedby="chat-description"
+        >
+          <span class="chat-icon" aria-hidden="true">💬</span>
           Chat with Your Health Data
         </button>
-        <p class="chat-description">
+        <p id="chat-description" class="chat-description">
           Ask questions about your health metrics, get insights, and track your progress
         </p>
-      </div>
+      </section>
       
       <!-- Health Tips Panel -->
       <HealthTipsPanel 
@@ -62,62 +74,86 @@
       />
 
       <!-- Basic Metrics -->
-      <div class="metrics-section">
-        <h4>Today's Activity</h4>
+      <section class="metrics-section" aria-labelledby="activity-heading">
+        <h3 id="activity-heading">Today's Activity</h3>
         <p class="section-description">
-          💡 <strong>Click on the highlighted cards</strong> to see detailed health insights, 
+          <span aria-hidden="true">💡</span> <strong>Click on the highlighted cards</strong> to see detailed health insights, 
           fitness standards, and culturally relevant health suggestions from around the world.
         </p>
-        <div class="data-grid">
+        <div class="data-grid" role="grid" aria-label="Health metrics grid">
           <div 
             class="data-card tooltip-enabled"
             @click="openModal('steps', getMetricValue('steps'))"
+            @keydown.enter="openModal('steps', getMetricValue('steps'))"
+            @keydown.space.prevent="openModal('steps', getMetricValue('steps'))"
+            role="gridcell"
+            tabindex="0"
+            :aria-label="`Steps Today: ${healthData.steps || '0'}. Click for detailed insights.`"
+            :aria-describedby="`steps-description`"
           >
-            <div class="data-icon">🚶</div>
+            <div class="data-icon" aria-hidden="true">🚶</div>
             <div class="data-content">
               <h4>Steps Today</h4>
-              <p class="data-value">{{ healthData.steps || '0' }}</p>
-              <small class="tooltip-hint">Click for detailed insights</small>
+              <p class="data-value" :id="`steps-value`">{{ healthData.steps || '0' }}</p>
+              <small class="tooltip-hint" id="steps-description">Click for detailed insights</small>
             </div>
           </div>
           
           <div 
             class="data-card tooltip-enabled"
             @click="openModal('calories', getMetricValue('calories'))"
+            @keydown.enter="openModal('calories', getMetricValue('calories'))"
+            @keydown.space.prevent="openModal('calories', getMetricValue('calories'))"
+            role="gridcell"
+            tabindex="0"
+            :aria-label="`Calories Burned: ${healthData.calories || '0'}. Click for detailed insights.`"
+            :aria-describedby="`calories-description`"
           >
-            <div class="data-icon">🔥</div>
+            <div class="data-icon" aria-hidden="true">🔥</div>
             <div class="data-content">
               <h4>Calories Burned</h4>
               <p class="data-value">{{ healthData.calories || '0' }}</p>
-              <small class="tooltip-hint">Click for detailed insights</small>
+              <small class="tooltip-hint" id="calories-description">Click for detailed insights</small>
             </div>
           </div>
           
           <div 
             class="data-card tooltip-enabled"
             @click="openModal('activity', getMetricValue('activity'))"
+            @keydown.enter="openModal('activity', getMetricValue('activity'))"
+            @keydown.space.prevent="openModal('activity', getMetricValue('activity'))"
+            role="gridcell"
+            tabindex="0"
+            :aria-label="`Active Minutes: ${healthData.activeMinutes || '0'}. Click for detailed insights.`"
+            :aria-describedby="`activity-description`"
           >
-            <div class="data-icon">⏱️</div>
+            <div class="data-icon" aria-hidden="true">⏱️</div>
             <div class="data-content">
               <h4>Active Minutes</h4>
               <p class="data-value">{{ healthData.activeMinutes || '0' }}</p>
-              <small class="tooltip-hint">Click for detailed insights</small>
+              <small class="tooltip-hint" id="activity-description">Click for detailed insights</small>
             </div>
           </div>
           
           <div 
             class="data-card tooltip-enabled"
             @click="openModal('heartRate', getMetricValue('heartRate'))"
+            @keydown.enter="openModal('heartRate', getMetricValue('heartRate'))"
+            @keydown.space.prevent="openModal('heartRate', getMetricValue('heartRate'))"
+            role="gridcell"
+            tabindex="0"
+            :aria-label="`Heart Rate: ${healthData.heartRate || '--'} BPM. Click for detailed insights.`"
+            :aria-describedby="`heartrate-description`"
           >
-            <div class="data-icon">💓</div>
+            <div class="data-icon" aria-hidden="true">💓</div>
             <div class="data-content">
               <h4>Heart Rate</h4>
               <p class="data-value">{{ healthData.heartRate || '--' }} BPM</p>
-              <small class="tooltip-hint">Click for detailed insights</small>
+              <small class="tooltip-hint" id="heartrate-description">Click for detailed insights</small>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Sleep Metrics -->
       <div class="metrics-section">
@@ -294,17 +330,28 @@
       </div>
 
       <!-- Action Buttons -->
-      <div class="action-buttons">
-        <button @click="syncHealthData" class="sync-btn" :disabled="isSyncing">
+      <section class="action-buttons" aria-labelledby="action-heading">
+        <h3 id="action-heading" class="sr-only">Data Actions</h3>
+        <button 
+          @click="syncHealthData" 
+          class="sync-btn" 
+          :disabled="isSyncing"
+          :aria-label="isSyncing ? 'Syncing health data' : 'Sync latest health data'"
+        >
           <span v-if="!isSyncing">Sync Latest Data</span>
           <span v-else>Syncing...</span>
         </button>
         
-        <button @click="exportToPDF" class="export-btn" :disabled="isExporting">
-          <span v-if="!isExporting">📄 Export as PDF</span>
+        <button 
+          @click="exportToPDF" 
+          class="export-btn" 
+          :disabled="isExporting"
+          :aria-label="isExporting ? 'Exporting PDF' : 'Export health data as PDF'"
+        >
+          <span v-if="!isExporting"><span aria-hidden="true">📄</span> Export as PDF</span>
           <span v-else>Exporting...</span>
         </button>
-      </div>
+      </section>
 
       <!-- Chat with Health Data Button -->
       <HealthChat 
@@ -1268,6 +1315,19 @@ const formatTime = (minutes: number) => {
   .metrics-section {
     border: 2px solid rgba(255, 255, 255, 0.3);
   }
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Reduced motion support */

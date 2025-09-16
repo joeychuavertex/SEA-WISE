@@ -34,13 +34,17 @@ onMounted(() => {
 
 <template>
   <div class="app">
-    <header class="app-header">
+    <!-- Skip to main content link for keyboard users -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <header class="app-header" role="banner">
       <div class="container container-xl">
         <h1>SEA-WISE Health Connector</h1>
         <p>Connect your health devices and sync your wellness data</p>
       </div>
     </header>
-    <main class="app-main">
+    
+    <main id="main-content" class="app-main" role="main" tabindex="-1">
       <div class="container container-xl">
         <HealthConnector />
       </div>

@@ -1,48 +1,56 @@
 <template>
-  <div v-if="isVisible" class="health-modal-overlay" @click="closeModal">
-    <div class="health-modal" @click.stop>
+  <div v-if="isVisible" class="health-modal-overlay" @click="closeModal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="health-modal" @click.stop role="document">
       <!-- Modal Header -->
-      <div class="modal-header">
+      <header class="modal-header">
         <div class="modal-title">
-          <span class="metric-icon">{{ getMetricIcon(insight?.metric) }}</span>
-          <h2>{{ getMetricTitle(insight?.metric) }}</h2>
+          <span class="metric-icon" aria-hidden="true">{{ getMetricIcon(insight?.metric) }}</span>
+          <h2 id="modal-title">{{ getMetricTitle(insight?.metric) }}</h2>
         </div>
-        <button @click="closeModal" class="close-btn">×</button>
-      </div>
+        <button 
+          @click="closeModal" 
+          class="close-btn"
+          aria-label="Close modal"
+          type="button"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
 
       <!-- Modal Content -->
       <div class="modal-content">
         <!-- Health Status Overview -->
-        <div class="status-section">
-          <div class="status-card" :class="`status-${insight?.healthStatus}`">
+        <section class="status-section" aria-labelledby="status-heading">
+          <h3 id="status-heading" class="sr-only">Health Status</h3>
+          <div class="status-card" :class="`status-${insight?.healthStatus}`" role="status" aria-live="polite">
             <div class="status-header">
-              <span class="status-icon">{{ getStatusIcon(insight?.healthStatus) }}</span>
+              <span class="status-icon" aria-hidden="true">{{ getStatusIcon(insight?.healthStatus) }}</span>
               <div class="status-info">
-                <h3>{{ getStatusText(insight?.healthStatus) }}</h3>
+                <h4>{{ getStatusText(insight?.healthStatus) }}</h4>
                 <p class="status-description">{{ insight?.context }}</p>
               </div>
             </div>
             <div class="metric-display">
-              <span class="metric-value">{{ insight?.value }}{{ insight?.unit ? ` ${insight?.unit}` : '' }}</span>
+              <span class="metric-value" :aria-label="`Current value: ${insight?.value}${insight?.unit ? ` ${insight?.unit}` : ''}`">{{ insight?.value }}{{ insight?.unit ? ` ${insight?.unit}` : '' }}</span>
               <span class="metric-label">{{ insight?.metric }}</span>
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- Fitness Standards -->
-        <div class="info-section">
-          <h3>🏆 Fitness Standards</h3>
+        <section class="info-section" aria-labelledby="fitness-heading">
+          <h3 id="fitness-heading"><span aria-hidden="true">🏆</span> Fitness Standards</h3>
           <div class="fitness-info">
             <p><strong>Current Level:</strong> {{ insight?.fitnessStandard }}</p>
-            <div class="progress-bar">
+            <div class="progress-bar" role="progressbar" :aria-valuenow="getProgressPercentage()" aria-valuemin="0" aria-valuemax="100" :aria-label="`Progress: ${getProgressPercentage()}%`">
               <div class="progress-fill" :style="{ width: getProgressPercentage() + '%' }"></div>
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- Cultural Health Practices -->
-        <div class="info-section" v-if="insight?.culturalSuggestions?.length">
-          <h3>🌍 Cultural Health Practices</h3>
+        <section class="info-section" v-if="insight?.culturalSuggestions?.length" aria-labelledby="cultural-heading">
+          <h3 id="cultural-heading"><span aria-hidden="true">🌍</span> Cultural Health Practices</h3>
           <div class="region-selector">
             <label for="region-select">View practices from:</label>
             <select 
@@ -50,12 +58,14 @@
               v-model="selectedRegion" 
               @change="updateCulturalContext"
               class="region-select"
+              aria-describedby="region-help"
             >
               <option value="asian">Asian Traditions</option>
               <option value="mediterranean">Mediterranean</option>
               <option value="nordic">Nordic</option>
               <option value="latin_american">Latin American</option>
             </select>
+            <div id="region-help" class="sr-only">Select a region to view cultural health practices</div>
           </div>
           <div class="cultural-practices">
             <div 
@@ -66,7 +76,7 @@
               {{ suggestion }}
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- Recommendations -->
         <div class="info-section" v-if="insight?.generalRecommendations?.length">
@@ -107,10 +117,24 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="modal-actions">
-          <button @click="closeModal" class="btn-secondary">Close</button>
-          <button @click="openChat" class="btn-primary">Ask AI Health Assistant</button>
-        </div>
+        <footer class="modal-actions">
+          <button 
+            @click="closeModal" 
+            class="btn-secondary"
+            aria-label="Close modal and return to health data"
+            type="button"
+          >
+            Close
+          </button>
+          <button 
+            @click="openChat" 
+            class="btn-primary"
+            aria-label="Open chat with AI health assistant"
+            type="button"
+          >
+            Ask AI Health Assistant
+          </button>
+        </footer>
       </div>
     </div>
   </div>
@@ -887,6 +911,19 @@ onMounted(() => {
   .modalFadeIn {
     animation: none;
   }
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Print styles */

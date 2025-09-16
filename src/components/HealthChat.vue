@@ -1,49 +1,64 @@
 <template>
-  <div class="health-chat">
+  <div class="health-chat" role="dialog" aria-labelledby="chat-title" aria-describedby="chat-description">
     <!-- Chat Header -->
-    <div class="chat-header">
+    <header class="chat-header">
       <div class="chat-title">
-        <span class="chat-icon">💬</span>
-        <h3>Health Assistant</h3>
+        <span class="chat-icon" aria-hidden="true">💬</span>
+        <h3 id="chat-title">Health Assistant</h3>
       </div>
       <div class="chat-controls">
-        <button @click="closeChat" class="close-btn">
-          ×
+        <button 
+          @click="closeChat" 
+          class="close-btn"
+          aria-label="Close chat"
+          type="button"
+        >
+          <span aria-hidden="true">×</span>
         </button>
       </div>
-    </div>
+    </header>
 
     <!-- Chat Interface -->
     <div v-if="isOpen" class="chat-interface">
       <!-- Messages Container -->
-      <div class="messages-container" ref="messagesContainer">
+      <div 
+        class="messages-container" 
+        ref="messagesContainer"
+        role="log"
+        aria-live="polite"
+        aria-label="Chat messages"
+      >
         <div 
           v-for="(message, index) in messages" 
           :key="index" 
           class="message"
           :class="message.type"
+          :role="message.type === 'user' ? 'user-message' : 'assistant-message'"
         >
           <div class="message-content">
             <div class="message-text">{{ message.text }}</div>
-            <div class="message-time">{{ formatTime(message.timestamp) }}</div>
+            <div class="message-time" aria-label="Message sent at {{ formatTime(message.timestamp) }}">{{ formatTime(message.timestamp) }}</div>
           </div>
         </div>
         
         <!-- Loading indicator -->
-        <div v-if="isLoading" class="message ai">
+        <div v-if="isLoading" class="message ai" role="status" aria-label="AI is typing">
           <div class="message-content">
-            <div class="typing-indicator">
+            <div class="typing-indicator" aria-hidden="true">
               <span></span>
               <span></span>
               <span></span>
             </div>
+            <span class="sr-only">AI is typing a response...</span>
           </div>
         </div>
       </div>
 
       <!-- Input Area -->
       <div class="input-area">
+        <label for="chat-input" class="sr-only">Type your message</label>
         <input
+          id="chat-input"
           v-model="userInput"
           @keyup.enter="sendMessage"
           @keyup.esc="clearInput"
@@ -53,14 +68,18 @@
           placeholder="Ask about your health data..."
           class="message-input"
           :disabled="isLoading"
+          aria-describedby="input-help"
         />
         <button 
           @click="sendMessage" 
           class="send-btn"
           :disabled="!userInput.trim() || isLoading"
+          :aria-label="isLoading ? 'Sending message' : 'Send message'"
+          type="button"
         >
-          <span class="send-icon">➤</span>
+          <span class="send-icon" aria-hidden="true">➤</span>
         </button>
+        <div id="input-help" class="sr-only">Press Enter to send or Escape to clear</div>
       </div>
     </div>
   </div>
@@ -653,6 +672,19 @@ initializeChat()
     animation: none;
     opacity: 0.8;
   }
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Print styles */
