@@ -293,11 +293,18 @@
         </div>
       </div>
 
-      <!-- Sync Button -->
-      <button @click="syncHealthData" class="sync-btn" :disabled="isSyncing">
-        <span v-if="!isSyncing">Sync Latest Data</span>
-        <span v-else>Syncing...</span>
-      </button>
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button @click="syncHealthData" class="sync-btn" :disabled="isSyncing">
+          <span v-if="!isSyncing">Sync Latest Data</span>
+          <span v-else>Syncing...</span>
+        </button>
+        
+        <button @click="exportToPDF" class="export-btn" :disabled="isExporting">
+          <span v-if="!isExporting">📄 Export as PDF</span>
+          <span v-else>Exporting...</span>
+        </button>
+      </div>
 
       <!-- Chat with Health Data Button -->
       <HealthChat 
@@ -350,6 +357,7 @@ import { ref, onMounted } from 'vue'
 import { DemoHealthService } from '../services/DemoHealthService'
 import { SampleDataService } from '../services/SampleDataService'
 import { HealthInsightsService } from '../services/HealthInsightsService'
+import { PDFExportService } from '../services/PDFExportService'
 import type { HealthData } from '../services/GoogleFitService'
 import type { HealthInsight } from '../services/HealthInsightsService'
 import HealthChat from './HealthChat.vue'
@@ -360,6 +368,7 @@ import HealthTipsPanel from './HealthTipsPanel.vue'
 const isConnected = ref(false)
 const isConnecting = ref(false)
 const isSyncing = ref(false)
+const isExporting = ref(false)
 const isChatOpen = ref(false)
 const isSampleDataMode = ref(false)
 const selectedUserId = ref('')
@@ -401,6 +410,7 @@ const modalState = ref({
 const demoService = new DemoHealthService()
 const sampleDataService = new SampleDataService()
 const healthInsightsService = new HealthInsightsService()
+const pdfExportService = new PDFExportService()
 let currentService = demoService // Default to demo mode
 
 // Check connection status on mount
@@ -507,6 +517,31 @@ const syncHealthData = async () => {
     alert('Failed to sync health data. Please try again.')
   } finally {
     isSyncing.value = false
+  }
+}
+
+// Export health data as PDF
+const exportToPDF = async () => {
+  if (!isConnected.value) return
+  
+  try {
+    isExporting.value = true
+    
+    // Generate filename with current date
+    const currentDate = new Date().toISOString().split('T')[0]
+    const filename = `health-report-${currentDate}.pdf`
+    
+    // Export the current page as PDF
+    await pdfExportService.exportPage({
+      filename,
+      format: 'A4',
+      orientation: 'portrait'
+    })
+  } catch (error) {
+    console.error('Failed to export PDF:', error)
+    alert('Failed to export PDF. Please try again.')
+  } finally {
+    isExporting.value = false
   }
 }
 
@@ -733,10 +768,28 @@ const formatTime = (minutes: number) => {
   box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
 }
 
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.sync-btn, .export-btn {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 180px;
+}
+
 .sync-btn {
   background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
   color: white;
-  margin: 1rem 0;
 }
 
 .sync-btn:hover:not(:disabled) {
@@ -744,7 +797,17 @@ const formatTime = (minutes: number) => {
   box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
 }
 
-.sync-btn:disabled {
+.export-btn {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: white;
+}
+
+.export-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(5, 150, 105, 0.3);
+}
+
+.sync-btn:disabled, .export-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
@@ -1110,9 +1173,15 @@ const formatTime = (minutes: number) => {
   
   .connect-btn,
   .disconnect-btn,
-  .sync-btn {
+  .sync-btn,
+  .export-btn {
     min-width: 140px;
     padding: var(--spacing-sm) var(--spacing-lg);
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
   }
 }
 
@@ -1180,6 +1249,7 @@ const formatTime = (minutes: number) => {
   .connect-btn:hover,
   .disconnect-btn:hover,
   .sync-btn:hover,
+  .export-btn:hover,
   .chat-btn:hover {
     transform: none;
   }
@@ -1206,6 +1276,7 @@ const formatTime = (minutes: number) => {
   .connect-btn,
   .disconnect-btn,
   .sync-btn,
+  .export-btn,
   .chat-btn,
   .hourly-bar {
     transition: none;
