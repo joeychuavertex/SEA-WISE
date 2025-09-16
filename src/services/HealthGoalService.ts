@@ -3,8 +3,9 @@ import type { HealthData } from './GoogleFitService'
 export class HealthGoalService {
   async generatePersonalizedPlan(goal: string, healthData: HealthData): Promise<any> {
     // Mock implementation - replace with actual AI service integration
+    const dataSummary = healthData ? `Your current health metrics show various data points` : 'No current health data available';
     return {
-      overview: `Based on your goal "${goal}" and current health data, here's your personalized plan.`,
+      overview: `Based on your goal "${goal}" and current health data, here's your personalized plan. ${dataSummary}`,
       recommendations: [
         'Start with small, achievable steps',
         'Track your progress daily',
