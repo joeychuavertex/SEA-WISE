@@ -430,6 +430,7 @@ const isSampleDataMode = ref(false)
 const selectedUserId = ref('')
 const availableUsers = ref<string[]>([])
 const healthTipsPanel = ref<InstanceType<typeof HealthTipsPanel> | null>(null)
+const showStatusCard = ref(true)
 const healthData = ref<HealthData>({
   steps: 0,
   calories: 0,
@@ -501,6 +502,12 @@ const connectService = async () => {
       isSampleDataMode.value = false
       await demoService.connect()
       isConnected.value = true
+      
+      // Hide status card after 10 seconds for demo mode
+      showStatusCard.value = true
+      setTimeout(() => {
+        showStatusCard.value = false
+      }, 10000)
     }
     
     await syncHealthData()
@@ -913,13 +920,13 @@ const formatTime = (minutes: number) => {
   background: rgba(245, 158, 11, 0.2);
   border-radius: 8px;
   border-left: 4px solid #f59e0b;
-  color: #fef3c7;
+  color: #000000;
   font-size: 0.9rem;
   line-height: 1.5;
 }
 
 .note strong {
-  color: #fbbf24;
+  color: #000000;
 }
 
 .chat-section {
@@ -1014,20 +1021,20 @@ const formatTime = (minutes: number) => {
 }
 
 .data-card {
-  background: var(--primary-light);
+  background: #ffffff;
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
-  border: 1px solid var(--primary-color);
-  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
 }
 
 .data-card:hover {
   transform: translateY(-2px);
   background: #ffffff;
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
-  border-color: var(--primary-hover);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.2);
 }
 
 .data-card.tooltip-enabled {
@@ -1055,10 +1062,11 @@ const formatTime = (minutes: number) => {
 .data-card.tooltip-enabled:hover {
   transform: translateY(-4px) scale(1.02);
   box-shadow: 
-    0 20px 40px rgba(37, 99, 235, 0.4),
-    0 0 0 1px var(--primary-color),
+    0 20px 40px rgba(0, 0, 0, 0.2),
+    0 8px 25px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  border-color: var(--primary-color);
+  border-color: rgba(0, 0, 0, 0.2);
   background: #ffffff;
 }
 
