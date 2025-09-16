@@ -387,10 +387,14 @@ button:active {
   border-radius: 4px;
   font-weight: 600;
   transition: top 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .skip-link:focus {
   top: 6px;
+  opacity: 1;
+  pointer-events: auto;
   outline: 3px solid #fbbf24;
   outline-offset: 2px;
 }
