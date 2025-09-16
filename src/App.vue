@@ -6,6 +6,7 @@ import { onMounted, ref } from 'vue'
 // Connection state
 const isConnected = ref(false)
 const isConnecting = ref(false)
+const isSyncing = ref(false)
 const healthConnectorRef = ref()
 
 // Handle OAuth callback from Google
@@ -38,9 +39,12 @@ onMounted(() => {
 })
 
 // Handle connection state changes from HealthConnector
-const handleConnectionChanged = (connectionState: { isConnected: boolean, isConnecting: boolean }) => {
+const handleConnectionChanged = (connectionState: { isConnected: boolean, isConnecting: boolean, isSyncing?: boolean }) => {
   isConnected.value = connectionState.isConnected
   isConnecting.value = connectionState.isConnecting
+  if (connectionState.isSyncing !== undefined) {
+    isSyncing.value = connectionState.isSyncing
+  }
 }
 
 // Connection methods
@@ -53,6 +57,12 @@ const connectService = () => {
 const disconnectService = () => {
   if (healthConnectorRef.value) {
     healthConnectorRef.value.disconnectService()
+  }
+}
+
+const syncHealthData = () => {
+  if (healthConnectorRef.value) {
+    healthConnectorRef.value.syncHealthData()
   }
 }
 </script>
@@ -81,14 +91,25 @@ const disconnectService = () => {
               <span v-if="!isConnecting">Connect</span>
               <span v-else id="connecting-status">Connecting...</span>
             </button>
-            <button 
-              v-else
-              @click="disconnectService" 
-              class="header-disconnect-btn"
-              aria-label="Disconnect from health data service"
-            >
-              Disconnect
-            </button>
+            <div v-else class="header-connected-actions">
+              <button 
+                @click="syncHealthData" 
+                class="header-sync-btn"
+                :disabled="isSyncing"
+                :aria-describedby="isSyncing ? 'syncing-status' : undefined"
+                aria-label="Sync latest health data"
+              >
+                <span v-if="!isSyncing">Sync</span>
+                <span v-else id="syncing-status">Syncing...</span>
+              </button>
+              <button 
+                @click="disconnectService" 
+                class="header-disconnect-btn"
+                aria-label="Disconnect from health data service"
+              >
+                Disconnect
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -143,7 +164,7 @@ const disconnectService = () => {
   flex-shrink: 0;
 }
 
-.header-connect-btn, .header-disconnect-btn {
+.header-connect-btn, .header-disconnect-btn, .header-sync-btn {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
@@ -152,6 +173,12 @@ const disconnectService = () => {
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 120px;
+}
+
+.header-connected-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
 }
 
 .header-connect-btn {
@@ -166,6 +193,22 @@ const disconnectService = () => {
 }
 
 .header-connect-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.header-sync-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.header-sync-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.header-sync-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
@@ -194,7 +237,6 @@ const disconnectService = () => {
   font-size: clamp(0.875rem, 3vw, 1.1rem);
   color: #374151;
   max-width: 600px;
-  margin: 0 auto;
   line-height: 1.5;
 }
 
