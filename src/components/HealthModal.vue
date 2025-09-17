@@ -49,14 +49,14 @@
         </section>
 
         <!-- Cultural Health Practices -->
-        <section class="info-section" v-if="insight?.culturalSuggestions?.length" aria-labelledby="cultural-heading">
-          <h3 id="cultural-heading"><span aria-hidden="true">🌍</span> Cultural Health Practices</h3>
+        <section class="info-section" v-if="culturalContext" aria-labelledby="cultural-heading">
+          <h3 id="cultural-heading"><span aria-hidden="true">🌍</span> {{ culturalContext.region }} Health Traditions</h3>
           <div class="region-selector">
             <label for="region-select">View practices from:</label>
             <select 
               id="region-select" 
               v-model="selectedRegion" 
-              @change="updateCulturalContext"
+              @change="() => updateCulturalContext()"
               class="region-select"
               aria-describedby="region-help"
             >
@@ -73,13 +73,46 @@
             </select>
             <div id="region-help" class="sr-only">Select a region to view cultural health practices</div>
           </div>
-          <div class="cultural-practices">
-            <div 
-              v-for="(suggestion, index) in insight.culturalSuggestions.slice(0, 4)" 
-              :key="index"
-              class="cultural-practice"
-            >
-              {{ suggestion }}
+          
+          <!-- Traditional Practices -->
+          <div class="cultural-section" v-if="culturalContext.traditionalPractices?.length">
+            <h4 class="cultural-subheading">Traditional Practices</h4>
+            <div class="cultural-practices">
+              <div 
+                v-for="(practice, index) in culturalContext.traditionalPractices.slice(0, 4)" 
+                :key="`traditional-${index}`"
+                class="cultural-practice"
+              >
+                {{ practice }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Modern Adaptations -->
+          <div class="cultural-section" v-if="culturalContext.modernAdaptations?.length">
+            <h4 class="cultural-subheading">Modern Adaptations</h4>
+            <div class="cultural-practices">
+              <div 
+                v-for="(adaptation, index) in culturalContext.modernAdaptations.slice(0, 4)" 
+                :key="`modern-${index}`"
+                class="cultural-practice"
+              >
+                {{ adaptation }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Cultural Values -->
+          <div class="cultural-section" v-if="culturalContext.culturalValues?.length">
+            <h4 class="cultural-subheading">Cultural Values</h4>
+            <div class="cultural-practices">
+              <div 
+                v-for="(value, index) in culturalContext.culturalValues.slice(0, 4)" 
+                :key="`value-${index}`"
+                class="cultural-practice"
+              >
+                {{ value }}
+              </div>
             </div>
           </div>
         </section>
@@ -98,30 +131,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Cultural Context -->
-        <div class="info-section" v-if="culturalContext">
-          <h3>{{ culturalContext.region }} Health Traditions</h3>
-          <div class="cultural-context">
-            <div class="context-group">
-              <h4>Traditional Practices</h4>
-              <ul>
-                <li v-for="practice in culturalContext.traditionalPractices.slice(0, 3)" :key="practice">
-                  {{ practice }}
-                </li>
-              </ul>
-            </div>
-            <div class="context-group">
-              <h4>Cultural Values</h4>
-              <ul>
-                <li v-for="value in culturalContext.culturalValues.slice(0, 3)" :key="value">
-                  {{ value }}
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
         <!-- Action Buttons -->
         <footer class="modal-actions">
           <button 
@@ -147,7 +156,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import type { HealthInsight, CulturalHealthContext } from '../services/HealthInsightsService'
 import { HealthInsightsService } from '../services/HealthInsightsService'
 
@@ -238,13 +247,23 @@ const getProgressPercentage = (): number => {
   }
 }
 
-const updateCulturalContext = () => {
-  culturalContext.value = healthInsightsService.getCulturalHealthContext(selectedRegion.value)
+const updateCulturalContext = async () => {
+  try {
+    culturalContext.value = await healthInsightsService.getCulturalHealthContext(selectedRegion.value)
+  } catch (error) {
+    console.error('Failed to load cultural context:', error)
+    culturalContext.value = null
+  }
 }
 
+// Watch for changes in selectedRegion
+watch(selectedRegion, async () => {
+  await updateCulturalContext()
+})
+
 // Lifecycle
-onMounted(() => {
-  updateCulturalContext()
+onMounted(async () => {
+  await updateCulturalContext()
 })
 </script>
 
@@ -538,12 +557,38 @@ onMounted(() => {
 
 .cultural-practice {
   background: rgba(59, 130, 246, 0.1);
-  color: #93c5fd;
+  color: #1e40af;
   padding: var(--spacing-md);
   border-radius: 8px;
   border-left: 4px solid #3b82f6;
   font-size: clamp(0.875rem, 2.5vw, 0.9rem);
   line-height: 1.4;
+}
+
+.cultural-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.cultural-section:last-child {
+  margin-bottom: 0;
+}
+
+.cultural-subheading {
+  color: #000000;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.cultural-subheading::before {
+  content: '';
+  width: 4px;
+  height: 16px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 2px;
 }
 
 .recommendations {
@@ -556,7 +601,7 @@ onMounted(() => {
   align-items: center;
   gap: var(--spacing-sm);
   background: rgba(34, 197, 94, 0.1);
-  color: #86efac;
+  color: #166534;
   padding: var(--spacing-md);
   border-radius: 8px;
   border-left: 4px solid #22c55e;

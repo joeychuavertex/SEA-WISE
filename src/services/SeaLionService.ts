@@ -18,13 +18,9 @@ export class SeaLionService {
   private model: string
 
   constructor() {
-    this.apiKey = import.meta.env.VITE_SEA_LION_API_KEY
+    this.apiKey = import.meta.env.VITE_SEA_LION_API_KEY || ''
     this.baseUrl = 'https://api.sea-lion.ai/v1'
     this.model = import.meta.env.VITE_SEA_LION_MODEL || 'aisingapore/Llama-SEA-LION-v3.5-8B-R'
-    
-    if (!this.apiKey) {
-      throw new Error('SEA-LION API key not found. Please set VITE_SEA_LION_API_KEY in your .env file.')
-    }
   }
 
   /**

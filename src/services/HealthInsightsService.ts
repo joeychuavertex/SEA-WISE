@@ -1,3 +1,6 @@
+import { SeaLionService } from './SeaLionService'
+import type { SeaLionMessage } from './SeaLionService'
+
 export interface HealthInsight {
   metric: string
   value: number
@@ -17,6 +20,16 @@ export interface CulturalHealthContext {
 }
 
 export class HealthInsightsService {
+  private seaLionService: SeaLionService
+
+  constructor() {
+    try {
+      this.seaLionService = new SeaLionService()
+    } catch (error) {
+      console.warn('SEA-LION service not available:', error)
+      this.seaLionService = null as any
+    }
+  }
   
   /**
    * Get comprehensive health insights for a metric
@@ -591,10 +604,63 @@ export class HealthInsightsService {
   }
 
   /**
-   * Get cultural health context for a region
+   * Get cultural health context for a region using SEALION LLM
    */
-  getCulturalHealthContext(region: string): CulturalHealthContext | null {
-    const contexts: Record<string, CulturalHealthContext> = {
+  async getCulturalHealthContext(region: string): Promise<CulturalHealthContext | null> {
+    try {
+      if (!this.seaLionService || !this.seaLionService.isConfigured()) {
+        console.warn('SEALION service not configured, falling back to basic context')
+        return this.getFallbackCulturalContext(region)
+      }
+
+      const messages: SeaLionMessage[] = [
+        {
+          role: 'system',
+          content: `You are a cultural health expert specializing in Southeast Asian health practices. Provide detailed cultural health context for the specified region in JSON format with the following structure:
+{
+  "region": "Full region name",
+  "traditionalPractices": ["practice1", "practice2", "practice3", "practice4"],
+  "modernAdaptations": ["adaptation1", "adaptation2", "adaptation3", "adaptation4"],
+  "culturalValues": ["value1", "value2", "value3", "value4"]
+}
+
+Focus on authentic, culturally appropriate health practices, modern adaptations that respect traditional values, and core cultural values that influence health decisions.`
+        },
+        {
+          role: 'user',
+          content: `Provide cultural health context for ${region}. Include traditional health practices, modern adaptations that integrate with contemporary healthcare, and cultural values that influence health and wellness decisions in this region.`
+        }
+      ]
+
+      const response = await this.seaLionService.sendMessage(messages, 0.7)
+      
+      try {
+        const culturalContext = JSON.parse(response.content)
+        
+        // Validate the response structure
+        if (culturalContext.region && 
+            Array.isArray(culturalContext.traditionalPractices) &&
+            Array.isArray(culturalContext.modernAdaptations) &&
+            Array.isArray(culturalContext.culturalValues)) {
+          return culturalContext as CulturalHealthContext
+        } else {
+          throw new Error('Invalid response structure')
+        }
+      } catch (parseError) {
+        console.error('Failed to parse SEALION response:', parseError)
+        return this.getFallbackCulturalContext(region)
+      }
+    } catch (error) {
+      console.error('Error getting cultural context from SEALION:', error)
+      return this.getFallbackCulturalContext(region)
+    }
+  }
+
+  /**
+   * Fallback cultural context when SEALION is unavailable
+   */
+  private getFallbackCulturalContext(region: string): CulturalHealthContext | null {
+    const fallbackContexts: Record<string, CulturalHealthContext> = {
       thailand: {
         region: 'Thailand',
         traditionalPractices: [
@@ -636,177 +702,14 @@ export class HealthInsightsService {
           'Innovation and technology adoption',
           'Community and social responsibility'
         ]
-      },
-      malaysia: {
-        region: 'Malaysia',
-        traditionalPractices: [
-          'Traditional Malay medicine (jamu) and herbal remedies',
-          'Silat martial arts for physical and mental discipline',
-          'Islamic health practices and dietary guidelines',
-          'Traditional Chinese and Indian healing practices'
-        ],
-        modernAdaptations: [
-          'Integration of traditional medicine with modern healthcare',
-          'Multi-cultural wellness approaches',
-          'Halal-certified health and fitness products',
-          'Community-based health programs'
-        ],
-        culturalValues: [
-          'Religious and spiritual aspects of health',
-          'Cultural diversity and tolerance',
-          'Family-centered health decisions',
-          'Respect for traditional healing knowledge'
-        ]
-      },
-      indonesia: {
-        region: 'Indonesia',
-        traditionalPractices: [
-          'Jamu traditional herbal medicine',
-          'Pencak Silat martial arts for physical fitness',
-          'Balinese healing and spiritual practices',
-          'Traditional Indonesian massage and bodywork'
-        ],
-        modernAdaptations: [
-          'Digital health platforms and telemedicine',
-          'Traditional medicine research and validation',
-          'Community health programs and outreach',
-          'Integration of traditional and modern approaches'
-        ],
-        culturalValues: [
-          'Spiritual and holistic approach to health',
-          'Community and family support systems',
-          'Respect for natural and traditional remedies',
-          'Balance between modern and traditional practices'
-        ]
-      },
-      philippines: {
-        region: 'Philippines',
-        traditionalPractices: [
-          'Hilot traditional massage and healing',
-          'Arnis martial arts for physical fitness',
-          'Traditional Filipino herbal medicine',
-          'Community-based health practices and bayanihan spirit'
-        ],
-        modernAdaptations: [
-          'Community health programs and outreach',
-          'Integration of traditional healing with modern medicine',
-          'Digital health initiatives and telemedicine',
-          'Family-centered health education'
-        ],
-        culturalValues: [
-          'Family and community-centered health',
-          'Resilience and adaptability',
-          'Faith and spirituality in healing',
-          'Mutual aid and community support'
-        ]
-      },
-      vietnam: {
-        region: 'Vietnam',
-        traditionalPractices: [
-          'Traditional Vietnamese medicine and acupuncture',
-          'Vietnamese martial arts (Vovinam) for fitness',
-          'Herbal medicine and natural remedies',
-          'Meditation and mindfulness practices'
-        ],
-        modernAdaptations: [
-          'Integration of traditional and modern medicine',
-          'Digital health and telemedicine services',
-          'Community health programs and education',
-          'Traditional medicine research and development'
-        ],
-        culturalValues: [
-          'Balance and harmony in health practices',
-          'Respect for traditional knowledge and wisdom',
-          'Community and family support',
-          'Prevention and holistic wellness'
-        ]
-      },
-      myanmar: {
-        region: 'Myanmar',
-        traditionalPractices: [
-          'Traditional Myanmar medicine and herbal remedies',
-          'Bando martial arts for physical discipline',
-          'Buddhist meditation and mindfulness practices',
-          'Traditional massage and healing techniques'
-        ],
-        modernAdaptations: [
-          'Community health initiatives and outreach',
-          'Integration of traditional and modern healthcare',
-          'Digital health and mobile health services',
-          'Traditional medicine preservation and research'
-        ],
-        culturalValues: [
-          'Spiritual and religious aspects of health',
-          'Community support and mutual aid',
-          'Respect for traditional healing practices',
-          'Balance between physical and mental well-being'
-        ]
-      },
-      cambodia: {
-        region: 'Cambodia',
-        traditionalPractices: [
-          'Traditional Khmer medicine and herbal remedies',
-          'Bokator martial arts for physical fitness',
-          'Buddhist meditation and spiritual practices',
-          'Traditional Khmer massage and healing'
-        ],
-        modernAdaptations: [
-          'Community health programs and education',
-          'Integration of traditional and modern medicine',
-          'Digital health initiatives and mobile services',
-          'Traditional medicine research and validation'
-        ],
-        culturalValues: [
-          'Spiritual and holistic approach to health',
-          'Community and family support systems',
-          'Respect for traditional knowledge and practices',
-          'Resilience and cultural preservation'
-        ]
-      },
-      laos: {
-        region: 'Laos',
-        traditionalPractices: [
-          'Traditional Lao medicine and herbal remedies',
-          'Muay Lao martial arts for physical fitness',
-          'Buddhist meditation and mindfulness practices',
-          'Traditional Lao massage and healing techniques'
-        ],
-        modernAdaptations: [
-          'Community health programs and outreach',
-          'Integration of traditional and modern healthcare',
-          'Digital health and telemedicine services',
-          'Traditional medicine research and development'
-        ],
-        culturalValues: [
-          'Spiritual and religious aspects of health',
-          'Community and family-centered care',
-          'Respect for traditional healing knowledge',
-          'Balance between modern and traditional practices'
-        ]
-      },
-      brunei: {
-        region: 'Brunei',
-        traditionalPractices: [
-          'Traditional Malay medicine and herbal remedies',
-          'Silat martial arts for physical discipline',
-          'Islamic health practices and dietary guidelines',
-          'Traditional healing and spiritual practices'
-        ],
-        modernAdaptations: [
-          'Modern healthcare with traditional medicine integration',
-          'Digital health and wellness technologies',
-          'Halal-certified health and fitness products',
-          'Community health programs and education'
-        ],
-        culturalValues: [
-          'Religious and spiritual aspects of health',
-          'Cultural preservation and respect for traditions',
-          'Family and community support',
-          'Balance between modern and traditional approaches'
-        ]
       }
     }
 
-    return contexts[region] || null
+    return fallbackContexts[region] || {
+      region: region.charAt(0).toUpperCase() + region.slice(1),
+      traditionalPractices: ['Traditional healing practices', 'Cultural wellness approaches', 'Community health traditions', 'Spiritual health practices'],
+      modernAdaptations: ['Integration with modern healthcare', 'Digital health tools', 'Contemporary wellness programs', 'Technology-enhanced traditional practices'],
+      culturalValues: ['Community support', 'Respect for traditions', 'Holistic health approach', 'Family-centered care']
+    }
   }
 }

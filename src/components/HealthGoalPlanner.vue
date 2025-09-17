@@ -70,18 +70,66 @@
         </div>
 
         <div class="plan-details">
-          <div v-if="generatedPlan.overview" class="plan-section-item">
-            <h4>📋 Overview</h4>
-            <p>{{ generatedPlan.overview }}</p>
+          <div v-if="generatedPlan.dailyRoutine" class="plan-section-item">
+            <h4>🏃‍♂️ {{ generatedPlan.dailyRoutine.title }}</h4>
+            <div class="daily-routine">
+              <div class="routine-commitment">
+                <p><strong>Duration:</strong> {{ generatedPlan.dailyRoutine.duration }}</p>
+                <p><strong>Commitment:</strong> {{ generatedPlan.dailyRoutine.commitment }}</p>
+              </div>
+              
+              <div class="exercises-section">
+                <h5>💪 Daily Exercises</h5>
+                <div class="exercises-grid">
+                  <div v-for="(exercise, index) in generatedPlan.dailyRoutine.exercises" :key="index" class="exercise-item">
+                    <div class="exercise-header">
+                      <span class="exercise-name">{{ exercise.exercise }}</span>
+                      <span class="exercise-reps">{{ exercise.reps }} reps</span>
+                    </div>
+                    <div class="exercise-details">
+                      <span class="exercise-sets">{{ exercise.sets }} sets</span>
+                      <span class="exercise-timing">{{ exercise.timing }}</span>
+                    </div>
+                    <p class="exercise-notes">{{ exercise.notes }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="lifestyle-section">
+                <h5>🏠 Lifestyle Rules</h5>
+                <ul class="lifestyle-list">
+                  <li v-for="(rule, index) in generatedPlan.dailyRoutine.lifestyle" :key="index">
+                    {{ rule }}
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
 
-          <div v-if="generatedPlan.recommendations && generatedPlan.recommendations.length > 0" class="plan-section-item">
-            <h4>💡 Recommendations</h4>
-            <ul class="recommendations-list">
-              <li v-for="(rec, index) in generatedPlan.recommendations" :key="index">
-                {{ rec }}
-              </li>
-            </ul>
+          <div v-if="generatedPlan.nutrition" class="plan-section-item">
+            <h4>🍎 Nutrition Guidelines</h4>
+            <div class="nutrition-plan">
+              <div class="meal-item">
+                <h5>🌅 Breakfast</h5>
+                <p>{{ generatedPlan.nutrition.breakfast }}</p>
+              </div>
+              <div class="meal-item">
+                <h5>🌞 Lunch</h5>
+                <p>{{ generatedPlan.nutrition.lunch }}</p>
+              </div>
+              <div class="meal-item">
+                <h5>🌙 Dinner</h5>
+                <p>{{ generatedPlan.nutrition.dinner }}</p>
+              </div>
+              <div class="meal-item">
+                <h5>💧 Hydration</h5>
+                <p>{{ generatedPlan.nutrition.hydration }}</p>
+              </div>
+              <div class="meal-item">
+                <h5>💊 Supplements</h5>
+                <p>{{ generatedPlan.nutrition.supplements }}</p>
+              </div>
+            </div>
           </div>
 
           <div v-if="generatedPlan.weeklyPlan && generatedPlan.weeklyPlan.length > 0" class="plan-section-item">
@@ -89,7 +137,11 @@
             <div class="weekly-plan">
               <div v-for="(day, index) in generatedPlan.weeklyPlan" :key="index" class="day-plan">
                 <h5>{{ day.day }}</h5>
-                <p>{{ day.activities }}</p>
+                <p class="day-activities">{{ day.activities }}</p>
+                <div class="day-details">
+                  <span class="day-timing">⏰ {{ day.timing }}</span>
+                  <span class="day-calories">🔥 {{ day.calories }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -102,7 +154,10 @@
                 <div class="milestone-content">
                   <h5>{{ milestone.title }}</h5>
                   <p>{{ milestone.description }}</p>
-                  <span class="milestone-timeline">{{ milestone.timeline }}</span>
+                  <div class="milestone-details">
+                    <span class="milestone-timeline">⏱️ {{ milestone.timeline }}</span>
+                    <span class="milestone-measurement">📊 {{ milestone.measurement }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -115,6 +170,17 @@
                 {{ tip }}
               </li>
             </ul>
+          </div>
+
+          <div v-if="generatedPlan.warnings && generatedPlan.warnings.length > 0" class="plan-section-item">
+            <h4>⚠️ Important Warnings</h4>
+            <div class="warnings-section">
+              <ul class="warnings-list">
+                <li v-for="(warning, index) in generatedPlan.warnings" :key="index" class="warning-item">
+                  {{ warning }}
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -730,6 +796,206 @@ const formatDate = (date: Date) => {
     flex-direction: column;
     text-align: center;
   }
+  
+  .exercises-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .day-details, .milestone-details {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* New detailed plan styles */
+.daily-routine {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.routine-commitment {
+  background: #e0f2fe;
+  border: 1px solid #0ea5e9;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.routine-commitment p {
+  margin: 0.5rem 0;
+  color: #0c4a6e;
+  font-weight: 500;
+}
+
+.exercises-section {
+  margin-bottom: 1.5rem;
+}
+
+.exercises-section h5 {
+  color: #1f2937;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.exercises-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.exercise-item {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.exercise-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.exercise-name {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 1rem;
+}
+
+.exercise-reps {
+  background: #3b82f6;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.exercise-details {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.exercise-notes {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #4b5563;
+  font-style: italic;
+}
+
+.lifestyle-section h5 {
+  color: #1f2937;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.lifestyle-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lifestyle-list li {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.nutrition-plan {
+  background: #f0fdf4;
+  border: 1px solid #22c55e;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.meal-item {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.meal-item:last-child {
+  margin-bottom: 0;
+}
+
+.meal-item h5 {
+  margin: 0 0 0.5rem 0;
+  color: #1f2937;
+  font-size: 1rem;
+}
+
+.meal-item p {
+  margin: 0;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.day-details {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.day-timing, .day-calories {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.milestone-details {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.milestone-timeline, .milestone-measurement {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #6b7280;
+}
+
+.warnings-section {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.warnings-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.warning-item {
+  background: white;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.warning-item:last-child {
+  margin-bottom: 0;
 }
 
 /* Screen reader only content */
