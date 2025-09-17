@@ -6,7 +6,12 @@
         <h3>Personalized Health Tips</h3>
         <span v-if="isGenerating" class="generating-indicator">Generating...</span>
       </div>
-      <button @click="debouncedRefreshTips" class="refresh-btn" :disabled="isLoading">
+      <button 
+        class="refresh-btn" 
+        @click="debouncedRefreshTips"
+        :disabled="isLoading"
+        title="Refresh tips"
+      >
         <span class="refresh-icon" :class="{ spinning: isLoading }">🔄</span>
       </button>
     </div>
@@ -202,7 +207,7 @@ defineExpose({
 }
 
 .refresh-btn {
-  background: var(--primary-color);
+  background: none;
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -215,7 +220,7 @@ defineExpose({
 }
 
 .refresh-btn:hover:not(:disabled) {
-  background: var(--primary-hover);
+  background: none;
   transform: scale(1.05);
 }
 
