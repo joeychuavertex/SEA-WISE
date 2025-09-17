@@ -689,7 +689,7 @@ defineExpose({
 .health-connector {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 16px;
-  padding: 2rem;
+  padding: var(--spacing-lg);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -697,11 +697,11 @@ defineExpose({
 .status-card {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
   background: var(--primary-light);
   border-radius: 12px;
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-lg);
   border: 1px solid var(--primary-color);
   box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
 }
@@ -800,6 +800,47 @@ defineExpose({
   flex-wrap: wrap;
 }
 
+/* Responsive action buttons */
+@media (max-width: 480px) {
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .sync-btn,
+  .export-btn {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .sync-btn,
+  .export-btn {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+@media (min-width: 769px) {
+  .action-buttons {
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  .sync-btn,
+  .export-btn {
+    flex: 0 1 auto;
+    min-width: 180px;
+  }
+}
+
 .sync-btn, .export-btn {
   padding: 1rem 2rem;
   border: none;
@@ -881,9 +922,9 @@ defineExpose({
 
 .chat-section {
   text-align: center;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-  padding: 2rem;
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-lg);
   background: var(--primary-light);
   border-radius: 15px;
   border: 1px solid var(--primary-color);
@@ -947,17 +988,17 @@ defineExpose({
 }
 
 .metrics-section {
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-lg);
   background: var(--primary-light);
   border-radius: 15px;
-  padding: 1.5rem;
+  padding: var(--spacing-lg);
   border: 1px solid var(--primary-color);
   box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
 }
 
 .metrics-section h4 {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--spacing-lg);
   font-size: 1.25rem;
   color: #000000;
   font-weight: 600;
@@ -965,15 +1006,41 @@ defineExpose({
 
 .data-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 480px) {
+  .data-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .data-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  .data-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .data-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
 }
 
 .data-card {
   background: #ffffff;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: var(--spacing-lg);
   text-align: center;
   border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -1101,6 +1168,29 @@ defineExpose({
   backdrop-filter: blur(10px);
 }
 
+/* Responsive chart container */
+@media (max-width: 480px) {
+  .chart-container {
+    height: 150px;
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .chart-container {
+    height: 175px;
+    padding: 0.875rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .chart-container {
+    height: 200px;
+    padding: 1rem;
+  }
+}
+
 .hourly-chart {
   display: flex;
   align-items: flex-end;
@@ -1164,13 +1254,13 @@ defineExpose({
 
 @media (max-width: 480px) {
   .health-connector {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
     border-radius: 12px;
   }
   
   .status-card {
-    padding: var(--spacing-md);
-    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    gap: var(--spacing-xs);
   }
   
   .status-icon {
@@ -1180,20 +1270,20 @@ defineExpose({
   }
   
   .data-card {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
     min-height: 100px;
   }
   
   .metrics-section {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
   }
   
   .chat-section {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
   }
   
   .instructions {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
   }
   
   .sync-btn,

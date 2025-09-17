@@ -142,7 +142,7 @@ const syncHealthData = () => {
 }
 
 .app-header {
-  padding: var(--spacing-lg) var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-sm);
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -241,14 +241,14 @@ const syncHealthData = () => {
 }
 
 .app-main {
-  padding: var(--spacing-lg) var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-sm);
   width: 100%;
 }
 
 .main-layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
   align-items: start;
 }
 
@@ -264,7 +264,7 @@ const syncHealthData = () => {
 @media (min-width: 1024px) {
   .main-layout {
     grid-template-columns: 350px 1fr;
-    gap: var(--spacing-xl);
+    gap: var(--spacing-lg);
   }
   
   .sidebar {
@@ -276,7 +276,7 @@ const syncHealthData = () => {
 @media (min-width: 1400px) {
   .main-layout {
     grid-template-columns: 400px 1fr;
-    gap: var(--spacing-2xl);
+    gap: var(--spacing-xl);
   }
   
   .sidebar {
@@ -287,13 +287,13 @@ const syncHealthData = () => {
 /* Mobile-first responsive adjustments */
 @media (max-width: 480px) {
   .app-header {
-    padding: var(--spacing-md) var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-xs);
   }
   
   .header-content {
     flex-direction: column;
     align-items: stretch;
-    gap: 1rem;
+    gap: var(--spacing-md);
   }
   
   .header-text {
@@ -311,7 +311,54 @@ const syncHealthData = () => {
   
   .app-header p {
     font-size: 0.875rem;
-    padding: 0 var(--spacing-sm);
+    padding: 0 var(--spacing-xs);
+  }
+  
+  .app-main {
+    padding: var(--spacing-sm) var(--spacing-xs);
+  }
+  
+  .main-layout {
+    gap: var(--spacing-sm);
+  }
+  
+  .header-connect-btn, .header-disconnect-btn, .header-sync-btn {
+    min-width: 100px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+  }
+  
+  .header-connected-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  .header-connected-actions .header-sync-btn,
+  .header-connected-actions .header-disconnect-btn {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 640px) {
+  .app-header {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+  
+  .header-content {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+  
+  .header-text {
+    text-align: center;
+  }
+  
+  .header-actions {
+    display: flex;
+    justify-content: center;
   }
   
   .app-main {
@@ -322,10 +369,64 @@ const syncHealthData = () => {
     gap: var(--spacing-md);
   }
   
-  .header-connect-btn, .header-disconnect-btn {
-    min-width: 100px;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.85rem;
+  .header-connected-actions {
+    flex-direction: row;
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .app-header {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+  
+  .header-content {
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+  }
+  
+  .header-text {
+    text-align: left;
+    flex: 1;
+  }
+  
+  .header-actions {
+    flex-shrink: 0;
+  }
+  
+  .app-main {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+  
+  .main-layout {
+    gap: var(--spacing-lg);
+  }
+  
+  .header-connected-actions {
+    flex-direction: row;
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  .app-header {
+    padding: var(--spacing-xl) var(--spacing-lg);
+  }
+  
+  .app-main {
+    padding: var(--spacing-xl) var(--spacing-lg);
+  }
+  
+  .main-layout {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+  
+  .sidebar {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
   }
 }
 
