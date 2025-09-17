@@ -595,88 +595,214 @@ export class HealthInsightsService {
    */
   getCulturalHealthContext(region: string): CulturalHealthContext | null {
     const contexts: Record<string, CulturalHealthContext> = {
-      asian: {
-        region: 'Asian',
+      thailand: {
+        region: 'Thailand',
         traditionalPractices: [
-          'Traditional Chinese Medicine (TCM)',
-          'Ayurvedic practices',
-          'Mind-body balance through meditation',
-          'Herbal remedies and natural healing'
+          'Thai traditional medicine and herbal remedies',
+          'Muay Thai martial arts for fitness',
+          'Buddhist meditation and mindfulness practices',
+          'Traditional Thai massage and bodywork'
         ],
         modernAdaptations: [
-          'Integration of TCM with modern medicine',
-          'Mindfulness and stress reduction techniques',
-          'Natural supplement usage',
-          'Holistic wellness approaches'
+          'Integration of traditional Thai medicine with modern healthcare',
+          'Muay Thai fitness classes and training',
+          'Meditation apps and digital wellness tools',
+          'Spa and wellness tourism'
         ],
         culturalValues: [
-          'Harmony and balance',
-          'Prevention over treatment',
-          'Respect for natural cycles',
-          'Community and family health'
+          'Balance between physical and spiritual health',
+          'Respect for elders and traditional knowledge',
+          'Community support and social harmony',
+          'Moderation and mindful living'
         ]
       },
-      mediterranean: {
-        region: 'Mediterranean',
+      singapore: {
+        region: 'Singapore',
         traditionalPractices: [
-          'Mediterranean diet rich in olive oil, fish, and vegetables',
-          'Social dining and meal sharing',
-          'Outdoor physical activities',
-          'Relaxation and siesta culture'
+          'Multi-cultural health practices from Chinese, Malay, Indian traditions',
+          'Hawker center culture promoting diverse, balanced eating',
+          'Community exercise in parks and public spaces',
+          'Traditional Chinese medicine and Ayurvedic practices'
         ],
         modernAdaptations: [
-          'Scientific validation of Mediterranean diet benefits',
-          'Social fitness activities and group sports',
-          'Stress reduction through lifestyle design',
-          'Sustainable and seasonal eating'
+          'Smart city health monitoring and digital health initiatives',
+          'High-tech fitness tracking and personalized wellness',
+          'Integration of traditional and modern medicine',
+          'Urban wellness and green space utilization'
         ],
         culturalValues: [
-          'Social connection and community',
-          'Enjoyment of food and life',
-          'Balance between activity and rest',
-          'Connection to nature and seasons'
+          'Efficiency and productivity in health management',
+          'Cultural diversity and inclusion in wellness',
+          'Innovation and technology adoption',
+          'Community and social responsibility'
         ]
       },
-      nordic: {
-        region: 'Nordic',
+      malaysia: {
+        region: 'Malaysia',
         traditionalPractices: [
-          'Outdoor activities in all weather conditions',
-          'Sauna and cold water therapy',
-          'Forest bathing and nature connection',
-          'Simple, functional living'
+          'Traditional Malay medicine (jamu) and herbal remedies',
+          'Silat martial arts for physical and mental discipline',
+          'Islamic health practices and dietary guidelines',
+          'Traditional Chinese and Indian healing practices'
         ],
         modernAdaptations: [
-          'Hygge lifestyle and comfort',
-          'Outdoor sports and recreation',
-          'Environmental consciousness',
-          'Work-life balance and leisure time'
+          'Integration of traditional medicine with modern healthcare',
+          'Multi-cultural wellness approaches',
+          'Halal-certified health and fitness products',
+          'Community-based health programs'
         ],
         culturalValues: [
+          'Religious and spiritual aspects of health',
+          'Cultural diversity and tolerance',
+          'Family-centered health decisions',
+          'Respect for traditional healing knowledge'
+        ]
+      },
+      indonesia: {
+        region: 'Indonesia',
+        traditionalPractices: [
+          'Jamu traditional herbal medicine',
+          'Pencak Silat martial arts for physical fitness',
+          'Balinese healing and spiritual practices',
+          'Traditional Indonesian massage and bodywork'
+        ],
+        modernAdaptations: [
+          'Digital health platforms and telemedicine',
+          'Traditional medicine research and validation',
+          'Community health programs and outreach',
+          'Integration of traditional and modern approaches'
+        ],
+        culturalValues: [
+          'Spiritual and holistic approach to health',
+          'Community and family support systems',
+          'Respect for natural and traditional remedies',
+          'Balance between modern and traditional practices'
+        ]
+      },
+      philippines: {
+        region: 'Philippines',
+        traditionalPractices: [
+          'Hilot traditional massage and healing',
+          'Arnis martial arts for physical fitness',
+          'Traditional Filipino herbal medicine',
+          'Community-based health practices and bayanihan spirit'
+        ],
+        modernAdaptations: [
+          'Community health programs and outreach',
+          'Integration of traditional healing with modern medicine',
+          'Digital health initiatives and telemedicine',
+          'Family-centered health education'
+        ],
+        culturalValues: [
+          'Family and community-centered health',
           'Resilience and adaptability',
-          'Connection to nature',
-          'Simplicity and functionality',
-          'Equality and social welfare'
+          'Faith and spirituality in healing',
+          'Mutual aid and community support'
         ]
       },
-      latin: {
-        region: 'Latin American',
+      vietnam: {
+        region: 'Vietnam',
         traditionalPractices: [
-          'Traditional herbal medicine',
-          'Dance and rhythmic movement',
-          'Family-centered health practices',
-          'Spiritual and religious healing traditions'
+          'Traditional Vietnamese medicine and acupuncture',
+          'Vietnamese martial arts (Vovinam) for fitness',
+          'Herbal medicine and natural remedies',
+          'Meditation and mindfulness practices'
         ],
         modernAdaptations: [
           'Integration of traditional and modern medicine',
-          'Dance fitness and cultural movement',
-          'Community health initiatives',
-          'Holistic wellness approaches'
+          'Digital health and telemedicine services',
+          'Community health programs and education',
+          'Traditional medicine research and development'
         ],
         culturalValues: [
-          'Family and community bonds',
-          'Joy and celebration of life',
-          'Spiritual and emotional well-being',
-          'Respect for traditional knowledge'
+          'Balance and harmony in health practices',
+          'Respect for traditional knowledge and wisdom',
+          'Community and family support',
+          'Prevention and holistic wellness'
+        ]
+      },
+      myanmar: {
+        region: 'Myanmar',
+        traditionalPractices: [
+          'Traditional Myanmar medicine and herbal remedies',
+          'Bando martial arts for physical discipline',
+          'Buddhist meditation and mindfulness practices',
+          'Traditional massage and healing techniques'
+        ],
+        modernAdaptations: [
+          'Community health initiatives and outreach',
+          'Integration of traditional and modern healthcare',
+          'Digital health and mobile health services',
+          'Traditional medicine preservation and research'
+        ],
+        culturalValues: [
+          'Spiritual and religious aspects of health',
+          'Community support and mutual aid',
+          'Respect for traditional healing practices',
+          'Balance between physical and mental well-being'
+        ]
+      },
+      cambodia: {
+        region: 'Cambodia',
+        traditionalPractices: [
+          'Traditional Khmer medicine and herbal remedies',
+          'Bokator martial arts for physical fitness',
+          'Buddhist meditation and spiritual practices',
+          'Traditional Khmer massage and healing'
+        ],
+        modernAdaptations: [
+          'Community health programs and education',
+          'Integration of traditional and modern medicine',
+          'Digital health initiatives and mobile services',
+          'Traditional medicine research and validation'
+        ],
+        culturalValues: [
+          'Spiritual and holistic approach to health',
+          'Community and family support systems',
+          'Respect for traditional knowledge and practices',
+          'Resilience and cultural preservation'
+        ]
+      },
+      laos: {
+        region: 'Laos',
+        traditionalPractices: [
+          'Traditional Lao medicine and herbal remedies',
+          'Muay Lao martial arts for physical fitness',
+          'Buddhist meditation and mindfulness practices',
+          'Traditional Lao massage and healing techniques'
+        ],
+        modernAdaptations: [
+          'Community health programs and outreach',
+          'Integration of traditional and modern healthcare',
+          'Digital health and telemedicine services',
+          'Traditional medicine research and development'
+        ],
+        culturalValues: [
+          'Spiritual and religious aspects of health',
+          'Community and family-centered care',
+          'Respect for traditional healing knowledge',
+          'Balance between modern and traditional practices'
+        ]
+      },
+      brunei: {
+        region: 'Brunei',
+        traditionalPractices: [
+          'Traditional Malay medicine and herbal remedies',
+          'Silat martial arts for physical discipline',
+          'Islamic health practices and dietary guidelines',
+          'Traditional healing and spiritual practices'
+        ],
+        modernAdaptations: [
+          'Modern healthcare with traditional medicine integration',
+          'Digital health and wellness technologies',
+          'Halal-certified health and fitness products',
+          'Community health programs and education'
+        ],
+        culturalValues: [
+          'Religious and spiritual aspects of health',
+          'Cultural preservation and respect for traditions',
+          'Family and community support',
+          'Balance between modern and traditional approaches'
         ]
       }
     }

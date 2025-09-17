@@ -60,10 +60,16 @@
               class="region-select"
               aria-describedby="region-help"
             >
-              <option value="asian">Asian Traditions</option>
-              <option value="mediterranean">Mediterranean</option>
-              <option value="nordic">Nordic</option>
-              <option value="latin_american">Latin American</option>
+              <option value="thailand">Thailand</option>
+              <option value="singapore">Singapore</option>
+              <option value="malaysia">Malaysia</option>
+              <option value="indonesia">Indonesia</option>
+              <option value="philippines">Philippines</option>
+              <option value="vietnam">Vietnam</option>
+              <option value="myanmar">Myanmar</option>
+              <option value="cambodia">Cambodia</option>
+              <option value="laos">Laos</option>
+              <option value="brunei">Brunei</option>
             </select>
             <div id="region-help" class="sr-only">Select a region to view cultural health practices</div>
           </div>
@@ -158,7 +164,7 @@ const emit = defineEmits<{
 }>()
 
 // Reactive state
-const selectedRegion = ref('asian')
+const selectedRegion = ref('thailand')
 const culturalContext = ref<CulturalHealthContext | null>(null)
 const healthInsightsService = new HealthInsightsService()
 
