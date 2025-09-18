@@ -298,16 +298,6 @@
           <span v-if="!isSyncing">Sync Latest Data</span>
           <span v-else>Syncing...</span>
         </button>
-        
-        <button 
-          @click="exportToPDF" 
-          class="export-btn" 
-          :disabled="isExporting"
-          :aria-label="isExporting ? 'Exporting PDF' : 'Export health data as PDF'"
-        >
-          <span v-if="!isExporting"><span aria-hidden="true">📄</span> Export as PDF</span>
-          <span v-else>Exporting...</span>
-        </button>
       </section>
 
     </div>
@@ -352,7 +342,7 @@ import { ref, onMounted, defineExpose, defineEmits } from 'vue'
 
 // Define emits
 const emit = defineEmits<{
-  'connection-changed': [connectionState: { isConnected: boolean, isConnecting: boolean }]
+  'connection-changed': [connectionState: { isConnected: boolean, isConnecting: boolean, isSyncing?: boolean, isExporting?: boolean }]
 }>()
 import { DemoHealthService } from '../services/DemoHealthService'
 import { SampleDataService } from '../services/SampleDataService'
@@ -418,7 +408,9 @@ let currentService = demoService // Default to demo mode
 const emitConnectionState = () => {
   emit('connection-changed', {
     isConnected: isConnected.value,
-    isConnecting: isConnecting.value
+    isConnecting: isConnecting.value,
+    isSyncing: isSyncing.value,
+    isExporting: isExporting.value
   })
 }
 
@@ -547,6 +539,7 @@ const exportToPDF = async () => {
   
   try {
     isExporting.value = true
+    emitConnectionState() // Emit state change
     
     // Generate filename with current date
     const currentDate = new Date().toISOString().split('T')[0]
@@ -563,6 +556,7 @@ const exportToPDF = async () => {
     alert('Failed to export PDF. Please try again.')
   } finally {
     isExporting.value = false
+    emitConnectionState() // Emit state change
   }
 }
 
@@ -641,7 +635,8 @@ const formatTime = (minutes: number) => {
 defineExpose({
   connectService,
   disconnectService,
-  openChat
+  openChat,
+  exportToPDF
 })
 </script>
 
@@ -772,8 +767,7 @@ defineExpose({
     gap: 0.75rem;
   }
   
-  .sync-btn,
-  .export-btn {
+  .sync-btn {
     width: 100%;
     max-width: 280px;
   }
@@ -785,8 +779,7 @@ defineExpose({
     align-items: center;
   }
   
-  .sync-btn,
-  .export-btn {
+  .sync-btn {
     width: 100%;
     max-width: 320px;
   }
@@ -798,14 +791,13 @@ defineExpose({
     justify-content: center;
   }
   
-  .sync-btn,
-  .export-btn {
+  .sync-btn {
     flex: 0 1 auto;
     min-width: 180px;
   }
 }
 
-.sync-btn, .export-btn {
+.sync-btn {
   padding: 1rem 2rem;
   border: none;
   border-radius: 12px;
@@ -814,9 +806,6 @@ defineExpose({
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 180px;
-}
-
-.sync-btn {
   background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
   color: white;
 }
@@ -826,17 +815,7 @@ defineExpose({
   box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
 }
 
-.export-btn {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  color: white;
-}
-
-.export-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(5, 150, 105, 0.3);
-}
-
-.sync-btn:disabled, .export-btn:disabled {
+.sync-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;

@@ -9,6 +9,7 @@ import type { HealthData } from './services/GoogleFitService'
 const isConnected = ref(false)
 const isConnecting = ref(false)
 const isSyncing = ref(false)
+const isExporting = ref(false)
 const healthConnectorRef = ref()
 
 // Health data
@@ -49,11 +50,14 @@ onMounted(() => {
 })
 
 // Handle connection state changes from HealthConnector
-const handleConnectionChanged = (connectionState: { isConnected: boolean, isConnecting: boolean, isSyncing?: boolean }) => {
+const handleConnectionChanged = (connectionState: { isConnected: boolean, isConnecting: boolean, isSyncing?: boolean, isExporting?: boolean }) => {
   isConnected.value = connectionState.isConnected
   isConnecting.value = connectionState.isConnecting
   if (connectionState.isSyncing !== undefined) {
     isSyncing.value = connectionState.isSyncing
+  }
+  if (connectionState.isExporting !== undefined) {
+    isExporting.value = connectionState.isExporting
   }
 }
 
@@ -90,6 +94,12 @@ const syncHealthData = () => {
 const openChat = () => {
   if (healthConnectorRef.value) {
     healthConnectorRef.value.openChat()
+  }
+}
+
+const exportToPDF = () => {
+  if (healthConnectorRef.value) {
+    healthConnectorRef.value.exportToPDF()
   }
 }
 </script>
@@ -143,6 +153,18 @@ const openChat = () => {
               >
                 <span class="chat-icon" aria-hidden="true">💬</span>
                 Chat
+              </button>
+              <button 
+                @click="exportToPDF" 
+                class="header-export-btn"
+                :disabled="isExporting"
+                :aria-label="isExporting ? 'Exporting PDF' : 'Export health data as PDF'"
+              >
+                <span v-if="!isExporting">
+                  <span class="export-icon" aria-hidden="true">📄</span>
+                  Export PDF
+                </span>
+                <span v-else>Exporting...</span>
               </button>
             </div>
           </div>
@@ -214,7 +236,7 @@ const openChat = () => {
   overflow: hidden;
 }
 
-.header-connect-btn, .header-disconnect-btn, .header-sync-btn, .header-chat-btn {
+.header-connect-btn, .header-disconnect-btn, .header-sync-btn, .header-chat-btn, .header-export-btn {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
@@ -290,7 +312,23 @@ const openChat = () => {
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
-.chat-icon {
+.header-export-btn {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: white;
+}
+
+.header-export-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.header-export-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.chat-icon, .export-icon {
   font-size: 1rem;
 }
 
@@ -432,7 +470,7 @@ const openChat = () => {
     overflow-y: visible;
   }
   
-  .header-connect-btn, .header-disconnect-btn, .header-sync-btn, .header-chat-btn {
+  .header-connect-btn, .header-disconnect-btn, .header-sync-btn, .header-chat-btn, .header-export-btn {
     min-width: 100px;
     padding: 0.75rem 1rem;
     font-size: 0.85rem;
@@ -450,6 +488,7 @@ const openChat = () => {
   
   .header-connected-actions .header-sync-btn,
   .header-connected-actions .header-chat-btn,
+  .header-connected-actions .header-export-btn,
   .header-connected-actions .header-disconnect-btn {
     flex: 1;
     min-width: 100px;
@@ -499,7 +538,7 @@ const openChat = () => {
     justify-content: center;
   }
   
-  .header-connect-btn, .header-disconnect-btn, .header-sync-btn, .header-chat-btn {
+  .header-connect-btn, .header-disconnect-btn, .header-sync-btn, .header-chat-btn, .header-export-btn {
     min-width: 120px;
     padding: 0.75rem 1.25rem;
     font-size: 0.9rem;
@@ -546,7 +585,7 @@ const openChat = () => {
     flex-wrap: wrap;
   }
   
-  .header-connect-btn, .header-disconnect-btn, .header-sync-btn, .header-chat-btn {
+  .header-connect-btn, .header-disconnect-btn, .header-sync-btn, .header-chat-btn, .header-export-btn {
     min-width: 120px;
     padding: 0.75rem 1.5rem;
     font-size: 0.9rem;

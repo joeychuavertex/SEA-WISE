@@ -21,9 +21,6 @@
           rows="3"
           aria-describedby="goal-help"
         ></textarea>
-        <div id="goal-help" class="input-help">
-          Press Ctrl+Enter to generate your plan, or click the button below.
-        </div>
       </div>
 
       <div class="goal-actions">

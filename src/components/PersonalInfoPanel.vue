@@ -8,7 +8,7 @@
           class="generate-btn"
           aria-label="Generate new mock data"
         >
-          Generate Data
+          Swop
         </button>
         <button 
           @click="toggleEdit" 
