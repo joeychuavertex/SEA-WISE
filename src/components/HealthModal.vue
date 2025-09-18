@@ -58,11 +58,11 @@
           </div>
         </section>
 
-        <!-- Cultural Health Practices -->
+        <!-- Cultural Health Traditions -->
         <section class="info-section" v-if="culturalContext" aria-labelledby="cultural-heading">
-          <h3 id="cultural-heading"><span aria-hidden="true">🌍</span> {{ culturalContext.region }} Health Traditions</h3>
+          <h3 id="cultural-heading"><span aria-hidden="true">🌍</span> {{ culturalContext.region }} Health Traditions for {{ getMetricTitle(insight?.metric) }}</h3>
           <div class="region-selector">
-            <label for="region-select">View practices from:</label>
+            <label for="region-select">View traditions from:</label>
             <select 
               id="region-select" 
               v-model="selectedRegion" 
@@ -81,12 +81,12 @@
               <option value="laos">Laos</option>
               <option value="brunei">Brunei</option>
             </select>
-            <div id="region-help" class="sr-only">Select a region to view cultural health practices</div>
+            <div id="region-help" class="sr-only">Select a region to view cultural health traditions</div>
           </div>
           
-          <!-- Traditional Practices -->
+          <!-- Metric-Specific Cultural Traditions -->
           <div class="cultural-section" v-if="culturalContext.traditionalPractices?.length">
-            <h4 class="cultural-subheading">Traditional Practices</h4>
+            <h4 class="cultural-subheading">{{ getMetricTitle(insight?.metric) }} Traditions</h4>
             <div class="cultural-practices">
               <div 
                 v-for="(practice, index) in culturalContext.traditionalPractices.slice(0, 4)" 
@@ -98,33 +98,6 @@
             </div>
           </div>
 
-          <!-- Modern Adaptations -->
-          <div class="cultural-section" v-if="culturalContext.modernAdaptations?.length">
-            <h4 class="cultural-subheading">Modern Adaptations</h4>
-            <div class="cultural-practices">
-              <div 
-                v-for="(adaptation, index) in culturalContext.modernAdaptations.slice(0, 4)" 
-                :key="`modern-${index}`"
-                class="cultural-practice"
-              >
-                {{ adaptation }}
-              </div>
-            </div>
-          </div>
-
-          <!-- Cultural Values -->
-          <div class="cultural-section" v-if="culturalContext.culturalValues?.length">
-            <h4 class="cultural-subheading">Cultural Values</h4>
-            <div class="cultural-practices">
-              <div 
-                v-for="(value, index) in culturalContext.culturalValues.slice(0, 4)" 
-                :key="`value-${index}`"
-                class="cultural-practice"
-              >
-                {{ value }}
-              </div>
-            </div>
-          </div>
         </section>
 
         <!-- Recommendations -->
@@ -259,7 +232,7 @@ const getProgressPercentage = (): number => {
 
 const updateCulturalContext = async () => {
   try {
-    culturalContext.value = await healthInsightsService.getCulturalHealthContext(selectedRegion.value)
+    culturalContext.value = await healthInsightsService.getCulturalHealthContext(selectedRegion.value, props.insight?.metric || 'steps')
   } catch (error) {
     console.error('Failed to load cultural context:', error)
     culturalContext.value = null

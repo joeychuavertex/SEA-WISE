@@ -15,8 +15,6 @@ export interface HealthInsight {
 export interface CulturalHealthContext {
   region: string
   traditionalPractices: string[]
-  modernAdaptations: string[]
-  culturalValues: string[]
 }
 
 export class HealthInsightsService {
@@ -606,29 +604,36 @@ export class HealthInsightsService {
   /**
    * Get cultural health context for a region using SEALION LLM
    */
-  async getCulturalHealthContext(region: string): Promise<CulturalHealthContext | null> {
+  async getCulturalHealthContext(region: string, metric: string): Promise<CulturalHealthContext | null> {
     try {
       if (!this.seaLionService || !this.seaLionService.isConfigured()) {
         console.warn('SEALION service not configured, falling back to basic context')
-        return this.getFallbackCulturalContext(region)
+        return this.getFallbackCulturalContext(region, metric)
       }
 
       const messages: SeaLionMessage[] = [
         {
           role: 'system',
-          content: `You are a cultural health expert specializing in Southeast Asian health practices. Provide detailed cultural health context for the specified region in JSON format with the following structure:
+          content: `You are a cultural health expert specializing in Southeast Asian health practices. Provide detailed cultural health traditions for the specified region and health metric in JSON format with the following structure:
 {
   "region": "Full region name",
-  "traditionalPractices": ["practice1", "practice2", "practice3", "practice4"],
-  "modernAdaptations": ["adaptation1", "adaptation2", "adaptation3", "adaptation4"],
-  "culturalValues": ["value1", "value2", "value3", "value4"]
+  "traditionalPractices": ["practice1", "practice2", "practice3", "practice4"]
 }
 
-Focus on authentic, culturally appropriate health practices, modern adaptations that respect traditional values, and core cultural values that influence health decisions.`
+Focus on authentic, culturally appropriate health traditions that are specifically related to ${metric} health practices. For example:
+- If metric is "steps": suggest walking traditions, temple walks, park visits, BTS usage, traditional walking practices
+- If metric is "sleep": suggest traditional sleep practices, meditation, relaxation techniques
+- If metric is "calories": suggest traditional foods, cooking methods, eating practices
+- If metric is "heartRate": suggest traditional exercise, martial arts, breathing techniques
+- If metric is "weight": suggest traditional body practices, herbal remedies, lifestyle habits
+- If metric is "activity": suggest traditional physical activities, cultural sports, community practices
+- If metric is "bmi": suggest traditional body wellness practices, herbal treatments, lifestyle approaches
+
+Make the suggestions specific to the region and culturally authentic.`
         },
         {
           role: 'user',
-          content: `Provide cultural health context for ${region}. Include traditional health practices, modern adaptations that integrate with contemporary healthcare, and cultural values that influence health and wellness decisions in this region.`
+          content: `Provide cultural health traditions for ${region} specifically related to ${metric} health practices. Focus on traditional practices that people in this region use for ${metric} health and wellness.`
         }
       ]
 
@@ -648,68 +653,121 @@ Focus on authentic, culturally appropriate health practices, modern adaptations 
         }
       } catch (parseError) {
         console.error('Failed to parse SEALION response:', parseError)
-        return this.getFallbackCulturalContext(region)
+        return this.getFallbackCulturalContext(region, metric)
       }
     } catch (error) {
       console.error('Error getting cultural context from SEALION:', error)
-      return this.getFallbackCulturalContext(region)
+      return this.getFallbackCulturalContext(region, metric)
     }
   }
 
   /**
    * Fallback cultural context when SEALION is unavailable
    */
-  private getFallbackCulturalContext(region: string): CulturalHealthContext | null {
-    const fallbackContexts: Record<string, CulturalHealthContext> = {
-      thailand: {
-        region: 'Thailand',
-        traditionalPractices: [
-          'Thai traditional medicine and herbal remedies',
-          'Muay Thai martial arts for fitness',
-          'Buddhist meditation and mindfulness practices',
-          'Traditional Thai massage and bodywork'
-        ],
-        modernAdaptations: [
-          'Integration of traditional Thai medicine with modern healthcare',
-          'Muay Thai fitness classes and training',
-          'Meditation apps and digital wellness tools',
-          'Spa and wellness tourism'
-        ],
-        culturalValues: [
-          'Balance between physical and spiritual health',
-          'Respect for elders and traditional knowledge',
-          'Community support and social harmony',
-          'Moderation and mindful living'
-        ]
-      },
-      singapore: {
-        region: 'Singapore',
-        traditionalPractices: [
-          'Multi-cultural health practices from Chinese, Malay, Indian traditions',
-          'Hawker center culture promoting diverse, balanced eating',
-          'Community exercise in parks and public spaces',
-          'Traditional Chinese medicine and Ayurvedic practices'
-        ],
-        modernAdaptations: [
-          'Smart city health monitoring and digital health initiatives',
-          'High-tech fitness tracking and personalized wellness',
-          'Integration of traditional and modern medicine',
-          'Urban wellness and green space utilization'
-        ],
-        culturalValues: [
-          'Efficiency and productivity in health management',
-          'Cultural diversity and inclusion in wellness',
-          'Innovation and technology adoption',
-          'Community and social responsibility'
-        ]
+  private getFallbackCulturalContext(region: string, metric: string): CulturalHealthContext | null {
+    const getMetricSpecificPractices = (region: string, metric: string): string[] => {
+      const practices: Record<string, Record<string, string[]>> = {
+        thailand: {
+          steps: [
+            'Take a morning walk in Lumpini Park or Chatuchak Park',
+            'Use BTS Skytrain for daily commuting and walking between stations',
+            'Visit temples like Wat Pho for peaceful walking meditation',
+            'Join local morning exercise groups in public parks'
+          ],
+          sleep: [
+            'Practice Buddhist meditation before bedtime',
+            'Use traditional herbal pillows with jasmine or lavender',
+            'Follow traditional sleep schedule aligned with natural light',
+            'Create a peaceful bedroom with Buddhist elements'
+          ],
+          calories: [
+            'Enjoy traditional Thai street food in moderation',
+            'Cook with fresh herbs like lemongrass and galangal',
+            'Practice mindful eating during family meals',
+            'Include traditional fermented foods like pickled vegetables'
+          ],
+          heartRate: [
+            'Practice Muay Thai for cardiovascular fitness',
+            'Learn traditional Thai breathing techniques',
+            'Join community aerobics in public parks',
+            'Practice traditional Thai dance for heart health'
+          ],
+          weight: [
+            'Use traditional Thai herbal remedies for metabolism',
+            'Practice portion control with traditional serving methods',
+            'Include traditional Thai vegetables in daily meals',
+            'Follow traditional meal timing and eating habits'
+          ],
+          activity: [
+            'Participate in traditional Thai festivals and ceremonies',
+            'Join community sports like takraw (traditional volleyball)',
+            'Practice traditional Thai martial arts',
+            'Engage in community gardening and farming activities'
+          ],
+          bmi: [
+            'Consult with traditional Thai medicine practitioners',
+            'Use traditional body measurement techniques',
+            'Follow traditional dietary guidelines for body balance',
+            'Practice traditional exercises for body harmony'
+          ]
+        },
+        singapore: {
+          steps: [
+            'Walk through Marina Bay Sands and Gardens by the Bay',
+            'Use MRT system for daily commuting with walking between stations',
+            'Visit Singapore Botanic Gardens for nature walks',
+            'Join community walking groups in East Coast Park'
+          ],
+          sleep: [
+            'Practice mindfulness meditation in quiet spaces',
+            'Use traditional Chinese herbal teas for better sleep',
+            'Follow traditional sleep hygiene practices',
+            'Create a calming bedroom environment with feng shui principles'
+          ],
+          calories: [
+            'Enjoy diverse hawker center food in balanced portions',
+            'Cook with traditional Chinese, Malay, and Indian spices',
+            'Practice portion control with traditional serving sizes',
+            'Include traditional fermented foods and probiotics'
+          ],
+          heartRate: [
+            'Practice Tai Chi in public parks',
+            'Join community fitness classes in HDB void decks',
+            'Learn traditional breathing exercises',
+            'Participate in cultural dance and martial arts'
+          ],
+          weight: [
+            'Consult with traditional Chinese medicine practitioners',
+            'Use traditional body measurement and assessment methods',
+            'Follow traditional dietary principles for body balance',
+            'Practice traditional exercises for weight management'
+          ],
+          activity: [
+            'Participate in multi-cultural festivals and events',
+            'Join community sports clubs and recreational activities',
+            'Practice traditional martial arts and dance',
+            'Engage in community gardening and urban farming'
+          ],
+          bmi: [
+            'Seek advice from traditional medicine practitioners',
+            'Use traditional body assessment techniques',
+            'Follow cultural dietary guidelines for body harmony',
+            'Practice traditional exercises for overall wellness'
+          ]
+        }
       }
+
+      return practices[region]?.[metric] || [
+        `Traditional ${metric} health practices in ${region}`,
+        `Cultural approaches to ${metric} wellness`,
+        `Community-based ${metric} health traditions`,
+        `Traditional methods for ${metric} health management`
+      ]
     }
 
-    return fallbackContexts[region] || {
+    return {
       region: region.charAt(0).toUpperCase() + region.slice(1),
-      traditionalPractices: ['Traditional healing practices', 'Cultural wellness approaches', 'Community health traditions', 'Spiritual health practices'],
-      modernAdaptations: ['Integration with modern healthcare', 'Digital health tools', 'Contemporary wellness programs', 'Technology-enhanced traditional practices'],
-      culturalValues: ['Community support', 'Respect for traditions', 'Holistic health approach', 'Family-centered care']
+      traditionalPractices: getMetricSpecificPractices(region, metric)
     }
   }
 }
