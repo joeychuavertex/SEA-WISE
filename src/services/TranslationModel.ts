@@ -296,7 +296,7 @@ Convert this JSON response into a natural, conversational response that directly
    */
   private translateResponseLocally(
     originalResponse: string,
-    userQuery: string
+    _userQuery: string
   ): TranslatedResponse {
     try {
       // Try to parse JSON and convert to natural language
@@ -312,7 +312,7 @@ Convert this JSON response into a natural, conversational response that directly
       // Add insights
       if (parsed.insights && Array.isArray(parsed.insights) && parsed.insights.length > 0) {
         response += 'Key insights:\n'
-        parsed.insights.forEach((insight: string, index: number) => {
+        parsed.insights.forEach((insight: string, _index: number) => {
           response += `• ${insight}\n`
         })
         response += '\n'
@@ -321,7 +321,7 @@ Convert this JSON response into a natural, conversational response that directly
       // Add trends
       if (parsed.trends && Array.isArray(parsed.trends) && parsed.trends.length > 0) {
         response += 'Trends I noticed:\n'
-        parsed.trends.forEach((trend: string, index: number) => {
+        parsed.trends.forEach((trend: string, _index: number) => {
           response += `• ${trend}\n`
         })
         response += '\n'
@@ -330,7 +330,7 @@ Convert this JSON response into a natural, conversational response that directly
       // Add recommendations
       if (parsed.recommendations && Array.isArray(parsed.recommendations) && parsed.recommendations.length > 0) {
         response += 'Recommendations:\n'
-        parsed.recommendations.forEach((rec: string, index: number) => {
+        parsed.recommendations.forEach((rec: string, _index: number) => {
           response += `• ${rec}\n`
         })
       }
