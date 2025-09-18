@@ -1,5 +1,5 @@
 import type { TranslatedQuery } from './TranslationModel'
-import { OpenAIService } from './OpenAIService'
+import { ModelSelectionService } from './ModelSelectionService'
 
 // This interface is no longer needed in this file
 // It's defined in HealthChatService.ts
@@ -13,15 +13,10 @@ export interface HealthAnalysis {
 }
 
 export class ReasoningModel {
-  private openAIService: OpenAIService
+  private modelService: ModelSelectionService
 
   constructor() {
-    try {
-      this.openAIService = new OpenAIService()
-    } catch (error) {
-      console.warn('OpenAI service not available for reasoning model:', error)
-      this.openAIService = null as any
-    }
+    this.modelService = new ModelSelectionService()
   }
 
   /**
@@ -34,7 +29,7 @@ export class ReasoningModel {
       const relevantData = await this.extractHealthData(translatedQuery)
       
       // Generate comprehensive analysis using AI if available
-      if (this.openAIService && this.openAIService.isConfigured()) {
+      if (this.modelService.isAnyModelAvailable()) {
         return await this.analyzeWithAI(translatedQuery, relevantData)
       }
       
@@ -69,7 +64,7 @@ Respond with JSON:
   "technicalDetails": "Technical analysis for translation"
 }`
 
-    const response = await this.openAIService.sendMessage([
+    const response = await this.modelService.sendMessage([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: 'Please analyze this health data and provide comprehensive insights.' }
     ], 0.3) // Low temperature for consistent analysis
@@ -258,6 +253,13 @@ Respond with JSON:
    * Check if the reasoning model is available
    */
   isAvailable(): boolean {
-    return this.openAIService !== null && this.openAIService.isConfigured()
+    return this.modelService.isAnyModelAvailable()
+  }
+
+  /**
+   * Get the model status for debugging
+   */
+  getModelStatus() {
+    return this.modelService.getModelStatus()
   }
 } 

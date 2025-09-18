@@ -28,6 +28,10 @@ export class HealthChatService {
     this.reasoningModel = new ReasoningModel()
     this.isAnalyticsEnabled = enableAnalytics
     
+    // Log model status for debugging
+    console.log('HealthChatService: Model status - Translation:', this.translationModel.getModelStatus())
+    console.log('HealthChatService: Model status - Reasoning:', this.reasoningModel.getModelStatus())
+    
     if (this.isAnalyticsEnabled) {
       console.log('HealthChatService: Initializing Firebase Analytics')
       this.analyticsService = new FirebaseAnalyticsService()
@@ -105,7 +109,7 @@ export class HealthChatService {
       // Step 3: Model B (Translation) - Translate technical response into user-friendly language
       const conversationContext = this.getConversationContext()
       const translatedResponse = await this.translationModel.translateModelResponse(
-        JSON.stringify(healthAnalysis),
+        healthAnalysis,
         userMessage,
         conversationContext,
         translatedQuery.languageCode

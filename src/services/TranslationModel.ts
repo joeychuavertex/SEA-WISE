@@ -1,4 +1,4 @@
-import { SeaLionService } from './SeaLionService'
+import { ModelSelectionService } from './ModelSelectionService'
 
 export interface TranslatedQuery {
   originalQuery: string
@@ -18,15 +18,10 @@ export interface TranslatedResponse {
 }
 
 export class TranslationModel {
-  private seaLionService: SeaLionService
+  private modelService: ModelSelectionService
 
   constructor() {
-    try {
-      this.seaLionService = new SeaLionService()
-    } catch (error) {
-      console.warn('SEA-LION service not available for translation model:', error)
-      this.seaLionService = null as any
-    }
+    this.modelService = new ModelSelectionService()
   }
 
   /**
@@ -88,7 +83,7 @@ export class TranslationModel {
    */
   async translateUserInput(userMessage: string): Promise<TranslatedQuery> {
     try {
-      if (this.seaLionService && this.seaLionService.isConfigured()) {
+      if (this.modelService.isAnyModelAvailable()) {
         return await this.translateWithAI(userMessage)
       }
       
@@ -116,23 +111,27 @@ export class TranslationModel {
    * Translate Model A's technical response into user-friendly language
    */
   async translateModelResponse(
-    originalResponse: string,
+    originalResponse: any,
     userQuery: string,
     conversationContext: string,
     targetLanguage: string = 'en'
   ): Promise<TranslatedResponse> {
     try {
-      if (this.seaLionService && this.seaLionService.isConfigured()) {
-        return await this.translateResponseWithAI(originalResponse, userQuery, conversationContext, targetLanguage)
+      // Convert object to string for processing
+      const responseString = typeof originalResponse === 'string' ? originalResponse : JSON.stringify(originalResponse)
+      
+      if (this.modelService.isAnyModelAvailable()) {
+        return await this.translateResponseWithAI(responseString, userQuery, conversationContext, targetLanguage)
       }
       
       // Fallback to local translation
-      return this.translateResponseLocally(originalResponse, userQuery)
+      return this.translateResponseLocally(responseString, userQuery)
     } catch (error) {
       console.error('Error translating model response:', error)
+      const responseString = typeof originalResponse === 'string' ? originalResponse : JSON.stringify(originalResponse)
       return {
-        originalResponse,
-        translatedResponse: originalResponse
+        originalResponse: responseString,
+        translatedResponse: responseString
       }
     }
   }
@@ -155,7 +154,7 @@ Respond with JSON:
   "confidence": 0.0-1.0
 }`
 
-    const response = await this.seaLionService.sendMessage([
+    const response = await this.modelService.sendMessage([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userMessage }
     ], 0.1) // Low temperature for consistent parsing
@@ -192,11 +191,18 @@ Respond with JSON:
     const systemPrompt = `You are a translation model that converts technical health data responses into user-friendly, conversational language.
 
 Your task is to:
-1. Take the technical response from a reasoning model
+1. Parse the JSON response from a health reasoning model
 2. Convert it into natural, easy-to-understand language in ${targetLanguage === 'en' ? 'English' : `the language with code ${targetLanguage}`}
-3. Maintain all the important information and insights
+3. Structure the response in a conversational way that directly answers the user's question
 4. Keep the tone helpful and encouraging
-5. Ensure the response directly answers the user's original question
+5. Present insights, trends, and recommendations in a natural flow
+
+The JSON response contains:
+- dataSummary: A summary of the health data
+- insights: Array of key insights
+- trends: Array of identified trends  
+- recommendations: Array of actionable recommendations
+- technicalDetails: Technical analysis (usually not needed for user)
 
 User's Original Question: "${userQuery}"
 Conversation Context: "${conversationContext}"
@@ -205,9 +211,9 @@ Target Language: ${targetLanguage}
 Technical Response to Translate:
 "${originalResponse}"
 
-Translate this into clear, helpful, conversational language in the target language that a regular user would understand.`
+Convert this JSON response into a natural, conversational response that directly answers the user's question. Don't just list the fields - weave them together into a coherent, helpful response.`
 
-    const response = await this.seaLionService.sendMessage([
+    const response = await this.modelService.sendMessage([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: 'Please translate this technical response into user-friendly language.' }
     ], 0.7) // Moderate temperature for natural language
@@ -290,13 +296,55 @@ Translate this into clear, helpful, conversational language in the target langua
    */
   private translateResponseLocally(
     originalResponse: string,
-    _userQuery: string
+    userQuery: string
   ): TranslatedResponse {
-    // Simple local translation - just return the original for now
-    // In a real implementation, this could have basic text processing
-    return {
-      originalResponse,
-      translatedResponse: originalResponse
+    try {
+      // Try to parse JSON and convert to natural language
+      const parsed = JSON.parse(originalResponse)
+      
+      let response = ''
+      
+      // Add data summary
+      if (parsed.dataSummary) {
+        response += parsed.dataSummary + '\n\n'
+      }
+      
+      // Add insights
+      if (parsed.insights && Array.isArray(parsed.insights) && parsed.insights.length > 0) {
+        response += 'Key insights:\n'
+        parsed.insights.forEach((insight: string, index: number) => {
+          response += `• ${insight}\n`
+        })
+        response += '\n'
+      }
+      
+      // Add trends
+      if (parsed.trends && Array.isArray(parsed.trends) && parsed.trends.length > 0) {
+        response += 'Trends I noticed:\n'
+        parsed.trends.forEach((trend: string, index: number) => {
+          response += `• ${trend}\n`
+        })
+        response += '\n'
+      }
+      
+      // Add recommendations
+      if (parsed.recommendations && Array.isArray(parsed.recommendations) && parsed.recommendations.length > 0) {
+        response += 'Recommendations:\n'
+        parsed.recommendations.forEach((rec: string, index: number) => {
+          response += `• ${rec}\n`
+        })
+      }
+      
+      return {
+        originalResponse,
+        translatedResponse: response.trim() || originalResponse
+      }
+    } catch (error) {
+      // If not JSON, return original
+      return {
+        originalResponse,
+        translatedResponse: originalResponse
+      }
     }
   }
 
@@ -304,6 +352,13 @@ Translate this into clear, helpful, conversational language in the target langua
    * Check if the translation model is available
    */
   isAvailable(): boolean {
-    return this.seaLionService !== null && this.seaLionService.isConfigured()
+    return this.modelService.isAnyModelAvailable()
+  }
+
+  /**
+   * Get the model status for debugging
+   */
+  getModelStatus() {
+    return this.modelService.getModelStatus()
   }
 } 
