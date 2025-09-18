@@ -19,7 +19,7 @@
 
       <!-- Modal Content -->
       <div class="modal-content">
-        <!-- Health Status Overview -->
+        <!-- Combined Health Status & Fitness Overview -->
         <section class="status-section" aria-labelledby="status-heading">
           <h3 id="status-heading" class="sr-only">Health Status</h3>
           <div class="status-card" :class="`status-${insight?.healthStatus}`" role="status" aria-live="polite">
@@ -30,20 +30,30 @@
                 <p class="status-description">{{ insight?.context }}</p>
               </div>
             </div>
-            <div class="metric-display">
-              <span class="metric-value" :aria-label="`Current value: ${insight?.value}${insight?.unit ? ` ${insight?.unit}` : ''}`">{{ insight?.value }}{{ insight?.unit ? ` ${insight?.unit}` : '' }}</span>
-              <span class="metric-label">{{ insight?.metric }}</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Fitness Standards -->
-        <section class="info-section" aria-labelledby="fitness-heading">
-          <h3 id="fitness-heading"><span aria-hidden="true">🏆</span> Fitness Standards</h3>
-          <div class="fitness-info">
-            <p><strong>Current Level:</strong> {{ insight?.fitnessStandard }}</p>
-            <div class="progress-bar" role="progressbar" :aria-valuenow="getProgressPercentage()" aria-valuemin="0" aria-valuemax="100" :aria-label="`Progress: ${getProgressPercentage()}%`">
-              <div class="progress-fill" :style="{ width: getProgressPercentage() + '%' }"></div>
+            
+            <div class="metric-and-progress">
+              <div class="metric-display">
+                <div class="metric-header">
+                  <span class="fitness-label">Current Value</span>
+                </div>
+                <div class="metric-content">
+                  <span class="metric-value" :aria-label="`Current value: ${insight?.value}${insight?.unit ? ` ${insight?.unit}` : ''}`">{{ insight?.value }}{{ insight?.unit ? ` ${insight?.unit}` : '' }}</span>
+                  <span class="metric-label">{{ insight?.metric }}</span>
+                </div>
+              </div>
+              
+              <div class="fitness-progress">
+                <div class="progress-header">
+                  <span class="fitness-label">Recommendation</span>
+                  <span class="fitness-value">{{ insight?.fitnessStandard }}</span>
+                </div>
+                <div class="progress-container">
+                  <div class="progress-bar" role="progressbar" :aria-valuenow="getProgressPercentage()" aria-valuemin="0" aria-valuemax="100" :aria-label="`Progress: ${getProgressPercentage()}%`">
+                    <div class="progress-fill" :style="{ width: getProgressPercentage() + '%' }"></div>
+                  </div>
+                  <div class="progress-percentage">{{ getProgressPercentage() }}%</div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -444,12 +454,100 @@ onMounted(async () => {
   line-height: 1.5;
 }
 
+.metric-and-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
 .metric-display {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-lg);
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
-  padding: var(--spacing-md);
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-display::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border-radius: 16px 16px 0 0;
+}
+
+.metric-header {
+  margin-bottom: var(--spacing-sm);
+}
+
+.metric-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.fitness-progress {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: var(--spacing-lg);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.fitness-progress::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+  border-radius: 16px 16px 0 0;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.fitness-label {
+  color: #374151;
+  font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+.fitness-value {
+  color: #22c55e;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .metric-value {
@@ -460,14 +558,20 @@ onMounted(async () => {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: var(--spacing-sm);
   line-height: 1.2;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .metric-label {
   display: block;
   font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-  color: #6b7280;
+  color: #374151;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  opacity: 0.9;
 }
 
 .info-section {
@@ -489,25 +593,52 @@ onMounted(async () => {
   line-height: 1.3;
 }
 
-.fitness-info p {
-  margin: 0 0 var(--spacing-md) 0;
-  color: #374151;
-  font-size: clamp(0.875rem, 2.5vw, 1rem);
-}
-
 .progress-bar {
-  width: 100%;
-  height: 8px;
-  background: #e5e7eb;
-  border-radius: 4px;
+  flex: 1;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
   overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
-  border-radius: 4px;
-  transition: width 0.5s ease;
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+  border-radius: 6px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.progress-percentage {
+  color: #22c55e;
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  font-weight: 700;
+  min-width: 3ch;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .region-selector {
@@ -758,6 +889,25 @@ onMounted(async () => {
     gap: var(--spacing-sm);
   }
   
+  .metric-and-progress {
+    gap: var(--spacing-md);
+  }
+  
+  .progress-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+  
+  .progress-container {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .progress-percentage {
+    text-align: left;
+  }
+  
   .info-section {
     padding: var(--spacing-md);
   }
@@ -850,6 +1000,25 @@ onMounted(async () => {
   
   .status-card {
     padding: var(--spacing-lg);
+  }
+  
+  .metric-and-progress {
+    gap: var(--spacing-lg);
+  }
+  
+  .progress-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .progress-container {
+    flex-direction: row;
+    gap: var(--spacing-md);
+  }
+  
+  .progress-percentage {
+    text-align: right;
   }
   
   .info-section {
