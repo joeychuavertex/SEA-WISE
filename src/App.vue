@@ -1,13 +1,23 @@
 <script setup lang="ts">
 import HealthConnector from './components/HealthConnector.vue'
 import PersonalInfoPanel from './components/PersonalInfoPanel.vue'
+import HealthGoalPlanner from './components/HealthGoalPlanner.vue'
 import { onMounted, ref } from 'vue'
+import type { HealthData } from './services/GoogleFitService'
 
 // Connection state
 const isConnected = ref(false)
 const isConnecting = ref(false)
 const isSyncing = ref(false)
 const healthConnectorRef = ref()
+
+// Health data
+const healthData = ref<HealthData>({
+  steps: 0,
+  calories: 0,
+  activeMinutes: 0,
+  heartRate: 0
+})
 
 // Handle OAuth callback from Google
 onMounted(() => {
@@ -45,6 +55,17 @@ const handleConnectionChanged = (connectionState: { isConnected: boolean, isConn
   if (connectionState.isSyncing !== undefined) {
     isSyncing.value = connectionState.isSyncing
   }
+}
+
+// Handle health goal planner events
+const handlePlanGenerated = (plan: any) => {
+  console.log('Plan generated:', plan)
+  // You can add additional logic here if needed
+}
+
+const handlePlanSaved = (plan: any) => {
+  console.log('Plan saved:', plan)
+  // You can add additional logic here if needed
 }
 
 // Connection methods
@@ -120,6 +141,12 @@ const syncHealthData = () => {
         <div class="main-layout">
           <div class="sidebar">
             <PersonalInfoPanel />
+            <HealthGoalPlanner 
+              :isConnected="isConnected"
+              :healthData="healthData"
+              @planGenerated="handlePlanGenerated"
+              @planSaved="handlePlanSaved"
+            />
           </div>
           <div class="main-content">
             <HealthConnector 

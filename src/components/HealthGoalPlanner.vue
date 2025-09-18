@@ -386,16 +386,17 @@ const formatDate = (date: Date) => {
 
 <style scoped>
 .health-goal-planner {
-  margin-top: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .goal-section {
   background: var(--primary-light);
   border-radius: 15px;
-  padding: 2rem;
+  padding: 1.5rem;
   border: 1px solid var(--primary-color);
   box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .goal-section h3 {
@@ -774,36 +775,24 @@ const formatDate = (date: Date) => {
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
+  .health-goal-planner {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
   .goal-section, .plan-section {
     padding: 1rem;
   }
-  
-  .goal-actions, .plan-actions {
-    flex-direction: column;
-    align-items: center;
+}
+
+/* Desktop sidebar adjustments */
+@media (min-width: 1024px) {
+  .health-goal-planner {
+    margin-top: 1.5rem;
   }
   
-  .generate-btn, .clear-btn, .save-btn, .share-btn, .regenerate-btn {
-    width: 100%;
-    max-width: 300px;
-  }
-  
-  .weekly-plan {
-    grid-template-columns: 1fr;
-  }
-  
-  .milestone {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .exercises-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .day-details, .milestone-details {
-    flex-direction: column;
-    gap: 0.5rem;
+  .goal-section {
+    padding: 1.25rem;
   }
 }
 

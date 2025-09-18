@@ -39,13 +39,6 @@
         </p>
       </section>
       
-      <!-- Health Goal Planner -->
-      <HealthGoalPlanner 
-        :isConnected="isConnected"
-        :healthData="healthData"
-        @planGenerated="handlePlanGenerated"
-        @planSaved="handlePlanSaved"
-      />
 
       <!-- Health Tips Panel -->
       <HealthTipsPanel 
@@ -395,7 +388,6 @@ import type { HealthInsight } from '../services/HealthInsightsService'
 import HealthChat from './HealthChat.vue'
 import HealthModal from './HealthModal.vue'
 import HealthTipsPanel from './HealthTipsPanel.vue'
-import HealthGoalPlanner from './HealthGoalPlanner.vue'
 
 // Reactive state
 const isConnected = ref(false)
@@ -647,16 +639,6 @@ const refreshHealthTips = async () => {
   }
 }
 
-// Goal planner event handlers
-const handlePlanGenerated = (plan: any) => {
-  console.log('HealthConnector: Plan generated:', plan)
-  // You can add additional logic here, such as analytics tracking
-}
-
-const handlePlanSaved = (plan: any) => {
-  console.log('HealthConnector: Plan saved:', plan)
-  // You can add additional logic here, such as showing a success message
-}
 
 const getMetricValue = (metric: string): number => {
   switch (metric) {
