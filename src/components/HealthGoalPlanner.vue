@@ -515,7 +515,7 @@ const formatDate = (date: Date) => {
 .plan-section {
   background: #ffffff;
   border-radius: 15px;
-  padding: 2rem;
+  padding: 1rem;
   border: 1px solid #e5e7eb;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
