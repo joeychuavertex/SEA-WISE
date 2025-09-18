@@ -264,7 +264,7 @@ initializeChat()
   top: var(--spacing-lg);
   right: var(--spacing-lg);
   width: clamp(320px, 90vw, 400px);
-  height: clamp(300px, 60vh, 500px);
+  height: clamp(400px, 75vh, 700px);
   z-index: 1000;
   background: var(--primary-light);
   border-radius: 16px;
@@ -350,20 +350,27 @@ initializeChat()
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
   min-height: 0;
 }
 
+/* Messages container - this should be scrollable */
 .messages-container {
+  flex: 1;
   padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden; /* Disable horizontal scrolling */
+  min-height: 0;
+  max-height: 100%;
 }
 
+/* Individual message wrapper - should NOT be scrollable */
 .message {
   display: flex;
   margin-bottom: var(--spacing-sm);
+  overflow: visible; /* Ensure no scrolling */
 }
 
 .message.user {
@@ -374,12 +381,15 @@ initializeChat()
   justify-content: flex-start;
 }
 
+/* Message content - this should NOT be scrollable */
 .message-content {
   max-width: 85%;
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: 18px;
   position: relative;
   word-wrap: break-word;
+  overflow: visible; /* Ensure no scrolling */
+  white-space: normal; /* Allow text to wrap naturally */
 }
 
 .message.user .message-content {
@@ -521,21 +531,21 @@ initializeChat()
 }
 
 /* Scrollbar styling */
-.chat-interface::-webkit-scrollbar {
+.messages-container::-webkit-scrollbar {
   width: 6px;
 }
 
-.chat-interface::-webkit-scrollbar-track {
+.messages-container::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
 }
 
-.chat-interface::-webkit-scrollbar-thumb {
+.messages-container::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
   border-radius: 3px;
 }
 
-.chat-interface::-webkit-scrollbar-thumb:hover {
+.messages-container::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
 }
 
@@ -564,7 +574,7 @@ initializeChat()
   }
   
   .chat-interface {
-    height: clamp(250px, 50vh, 400px);
+    height: clamp(350px, 65vh, 500px);
   }
   
   .messages-container {
@@ -601,7 +611,7 @@ initializeChat()
   }
   
   .chat-interface {
-    height: clamp(350px, 55vh, 450px);
+    height: clamp(450px, 70vh, 600px);
   }
 }
 
@@ -613,7 +623,7 @@ initializeChat()
   }
   
   .chat-interface {
-    height: 500px;
+    height: 650px;
   }
 }
 
@@ -728,7 +738,8 @@ initializeChat()
   }
   
   .messages-container {
-    overflow: visible;
+    overflow-y: auto; /* Keep scrolling enabled */
+    overflow-x: hidden;
   }
 }
 </style> 
