@@ -86,6 +86,12 @@ const syncHealthData = () => {
     healthConnectorRef.value.syncHealthData()
   }
 }
+
+const openChat = () => {
+  if (healthConnectorRef.value) {
+    healthConnectorRef.value.openChat()
+  }
+}
 </script>
 
 <template>
@@ -129,6 +135,14 @@ const syncHealthData = () => {
                 aria-label="Disconnect from health data service"
               >
                 Disconnect
+              </button>
+              <button 
+                @click="openChat" 
+                class="header-chat-btn"
+                aria-label="Open chat with health data assistant"
+              >
+                <span class="chat-icon" aria-hidden="true">💬</span>
+                Chat
               </button>
             </div>
           </div>
@@ -191,7 +205,7 @@ const syncHealthData = () => {
   flex-shrink: 0;
 }
 
-.header-connect-btn, .header-disconnect-btn, .header-sync-btn {
+.header-connect-btn, .header-disconnect-btn, .header-sync-btn, .header-chat-btn {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
@@ -200,6 +214,9 @@ const syncHealthData = () => {
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 120px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .header-connected-actions {
@@ -249,6 +266,20 @@ const syncHealthData = () => {
 .header-disconnect-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.header-chat-btn {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+}
+
+.header-chat-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.chat-icon {
+  font-size: 1rem;
 }
 
 .app-header h1 {
@@ -362,6 +393,7 @@ const syncHealthData = () => {
   }
   
   .header-connected-actions .header-sync-btn,
+  .header-connected-actions .header-chat-btn,
   .header-connected-actions .header-disconnect-btn {
     width: 100%;
     max-width: 200px;

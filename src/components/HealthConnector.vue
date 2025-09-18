@@ -22,22 +22,6 @@
     <!-- Health Data Display -->
     <div v-if="isConnected" class="health-data">
 
-      <section class="chat-section" aria-labelledby="chat-heading">
-        <h3 id="chat-heading" class="sr-only">Health Data Chat</h3>
-        <button 
-          @click="openChat" 
-          class="chat-btn" 
-          type="button"
-          aria-label="Open chat with health data assistant"
-          aria-describedby="chat-description"
-        >
-          <span class="chat-icon" aria-hidden="true">💬</span>
-          Chat with Your Health Data
-        </button>
-        <p id="chat-description" class="chat-description">
-          Ask questions about your health metrics, get insights, and track your progress
-        </p>
-      </section>
       
 
       <!-- Health Tips Panel -->
@@ -326,17 +310,7 @@
         </button>
       </section>
 
-      <!-- Chat with Health Data Button -->
-      <HealthChat 
-        v-if="isConnected && isChatOpen"
-        v-model="isChatOpen" 
-        :isConnected="isConnected"
-        @close="isChatOpen = false"
-        @generateTips="handleGenerateTips"
-      />
     </div>
-
-
 
     <!-- Instructions -->
     <div v-if="!isConnected" class="instructions">
@@ -360,6 +334,7 @@
       v-model="isChatOpen" 
       :isConnected="isConnected"
       @close="isChatOpen = false"
+      @generateTips="handleGenerateTips"
     />
 
     <!-- Health Modal -->
@@ -595,8 +570,10 @@ const exportToPDF = async () => {
 const openChat = () => {
   console.log('Chat button clicked!')
   console.log('Current isChatOpen value:', isChatOpen.value)
+  console.log('Current isConnected value:', isConnected.value)
   isChatOpen.value = true
   console.log('New isChatOpen value:', isChatOpen.value)
+  console.log('Chat should be visible:', isConnected.value && isChatOpen.value)
 }
 
 // Modal methods
@@ -663,7 +640,8 @@ const formatTime = (minutes: number) => {
 // Expose methods to parent component
 defineExpose({
   connectService,
-  disconnectService
+  disconnectService,
+  openChat
 })
 </script>
 
@@ -902,62 +880,6 @@ defineExpose({
   color: #000000;
 }
 
-.chat-section {
-  text-align: center;
-  margin-top: var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
-  padding: var(--spacing-lg);
-  background: var(--primary-light);
-  border-radius: 15px;
-  border: 1px solid var(--primary-color);
-  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
-  position: relative;
-  z-index: 5;
-}
-
-.chat-btn {
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  pointer-events: auto;
-  z-index: 10;
-  position: relative;
-}
-
-.chat-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
-}
-
-.chat-btn:focus {
-  outline: 2px solid #fbbf24;
-  outline-offset: 2px;
-}
-
-.chat-btn:active {
-  transform: translateY(0);
-}
-
-.chat-icon {
-  font-size: 1.2rem;
-}
-
-.chat-description {
-  margin: 0;
-  color: #000000;
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
 
 .health-data {
   margin-top: 2rem;
@@ -1260,9 +1182,6 @@ defineExpose({
     padding: var(--spacing-sm);
   }
   
-  .chat-section {
-    padding: var(--spacing-sm);
-  }
   
   .instructions {
     padding: var(--spacing-sm);
@@ -1342,8 +1261,7 @@ defineExpose({
   }
   
   .sync-btn:hover,
-  .export-btn:hover,
-  .chat-btn:hover {
+  .export-btn:hover {
     transform: none;
   }
 }
@@ -1381,7 +1299,6 @@ defineExpose({
   .data-card,
   .sync-btn,
   .export-btn,
-  .chat-btn,
   .hourly-bar {
     transition: none;
   }

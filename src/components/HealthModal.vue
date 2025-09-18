@@ -117,20 +117,20 @@
         <!-- Action Buttons -->
         <footer class="modal-actions">
           <button 
-            @click="closeModal" 
-            class="btn-secondary"
-            aria-label="Close modal and return to health data"
-            type="button"
-          >
-            Close
-          </button>
-          <button 
             @click="openChat" 
             class="btn-primary"
             aria-label="Open chat with AI health assistant"
             type="button"
           >
             Ask AI Health Assistant
+          </button>
+          <button 
+            @click="closeModal" 
+            class="btn-secondary"
+            aria-label="Close modal and return to health data"
+            type="button"
+          >
+            Close
           </button>
         </footer>
       </div>
@@ -751,6 +751,7 @@ onMounted(async () => {
   padding-top: var(--spacing-lg);
   border-top: 2px solid rgba(148, 163, 184, 0.2);
   flex-wrap: wrap;
+  flex-direction: row-reverse;
 }
 
 .btn-secondary, .btn-primary {
@@ -896,7 +897,7 @@ onMounted(async () => {
   }
   
   .modal-actions {
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: var(--spacing-sm);
   }
   
@@ -943,7 +944,7 @@ onMounted(async () => {
   }
   
   .modal-actions {
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: var(--spacing-sm);
   }
   

@@ -19,7 +19,7 @@
     </header>
 
     <!-- Chat Interface -->
-    <div v-if="isOpen" class="chat-interface">
+    <div v-if="modelValue" class="chat-interface">
       <!-- Messages Container -->
       <div 
         class="messages-container" 
@@ -149,6 +149,7 @@ const closeChat = async () => {
   const sessionId = sessionInfo?.sessionId
   
   isOpen.value = false
+  emit('update:modelValue', false)
   emit('close')
   
   // Trigger health tips generation
