@@ -57,27 +57,12 @@
     <!-- Generated Plan Display -->
     <section v-if="generatedPlan" class="plan-section" aria-labelledby="plan-heading">
       <h3 id="plan-heading">Your Personalized Health Plan</h3>
+      <span class="plan-date">Generated on {{ formatDate(new Date()) }}</span>
       
       <div class="plan-content">
-        <div class="plan-header">
-          <div class="goal-summary">
-            <h4>Your Goal:</h4>
-            <p class="goal-text">{{ userGoal }}</p>
-          </div>
-          <div class="plan-meta">
-            <span class="plan-date">Generated on {{ formatDate(new Date()) }}</span>
-          </div>
-        </div>
-
         <div class="plan-details">
           <div v-if="generatedPlan.dailyRoutine" class="plan-section-item">
-            <h4>🏃‍♂️ {{ generatedPlan.dailyRoutine.title }}</h4>
             <div class="daily-routine">
-              <div class="routine-commitment">
-                <p><strong>Duration:</strong> {{ generatedPlan.dailyRoutine.duration }}</p>
-                <p><strong>Commitment:</strong> {{ generatedPlan.dailyRoutine.commitment }}</p>
-              </div>
-              
               <div class="exercises-section">
                 <h5>💪 Daily Exercises</h5>
                 <div class="exercises-grid">
@@ -388,6 +373,10 @@ const formatDate = (date: Date) => {
 .health-goal-planner {
   margin-top: 1rem;
   margin-bottom: 1rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .goal-section {
@@ -461,6 +450,9 @@ const formatDate = (date: Date) => {
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .generate-btn, .clear-btn {
@@ -689,6 +681,9 @@ const formatDate = (date: Date) => {
   flex-wrap: wrap;
   padding-top: 1rem;
   border-top: 1px solid #e5e7eb;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .save-btn, .share-btn, .regenerate-btn {
@@ -782,6 +777,124 @@ const formatDate = (date: Date) => {
   
   .goal-section, .plan-section {
     padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .goal-section h3 {
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
+    margin-bottom: 0.75rem;
+  }
+  
+  .section-description {
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+    margin-bottom: 1rem;
+  }
+  
+  .goal-input {
+    min-height: 80px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .goal-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .generate-btn, .clear-btn {
+    width: 100%;
+    min-width: auto;
+    padding: 0.875rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .plan-section h3 {
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
+  }
+  
+  .plan-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .save-btn, .share-btn, .regenerate-btn {
+    width: 100%;
+    min-width: auto;
+    padding: 0.875rem 1.5rem;
+  }
+  
+  .exercises-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .weekly-plan {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .milestones {
+    gap: 0.75rem;
+  }
+  
+  .milestone {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .milestone-icon {
+    font-size: 2rem;
+  }
+}
+
+/* Tablet responsiveness */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .health-goal-planner {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .goal-section, .plan-section {
+    padding: 1.25rem;
+  }
+  
+  .goal-actions {
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: center;
+  }
+  
+  .generate-btn, .clear-btn {
+    flex: 1;
+    max-width: 200px;
+  }
+  
+  .plan-actions {
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .save-btn, .share-btn, .regenerate-btn {
+    flex: 1;
+    min-width: 140px;
+    max-width: 180px;
+  }
+  
+  .exercises-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  
+  .weekly-plan {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  
+  .milestone {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
   }
 }
 

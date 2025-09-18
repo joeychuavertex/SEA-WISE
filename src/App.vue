@@ -100,7 +100,7 @@ const openChat = () => {
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
     <header class="app-header" role="banner">
-      <div class="container container-xl">
+      <div class="container">
         <div class="header-content">
           <div class="header-text">
             <h1>SEA-WISE Health Connector</h1>
@@ -151,7 +151,7 @@ const openChat = () => {
     </header>
     
     <main id="main-content" class="app-main" role="main" tabindex="-1">
-      <div class="container container-xl">
+      <div class="container">
         <div class="main-layout">
           <div class="sidebar">
             <PersonalInfoPanel />
@@ -180,6 +180,9 @@ const openChat = () => {
   background: #f5f5f5;
   color: #000000;
   width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .app-header {
@@ -194,6 +197,10 @@ const openChat = () => {
   justify-content: space-between;
   align-items: center;
   gap: 2rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
 }
 
 .header-text {
@@ -203,6 +210,8 @@ const openChat = () => {
 
 .header-actions {
   flex-shrink: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .header-connect-btn, .header-disconnect-btn, .header-sync-btn, .header-chat-btn {
@@ -223,6 +232,9 @@ const openChat = () => {
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  flex-wrap: wrap;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .header-connect-btn {
@@ -308,14 +320,29 @@ const openChat = () => {
   grid-template-columns: 1fr;
   gap: var(--spacing-md);
   align-items: start;
+  min-height: calc(100vh - 200px); /* Ensure minimum height for scrolling */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .main-content {
   min-width: 0; /* Prevents grid overflow */
+  max-width: 100%;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .sidebar {
   width: 100%;
+  max-width: 100%;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 /* Desktop layout - sidebar on the left */
@@ -323,10 +350,18 @@ const openChat = () => {
   .main-layout {
     grid-template-columns: 350px 1fr;
     gap: var(--spacing-lg);
+    min-height: calc(100vh - 200px);
   }
   
   .sidebar {
     width: 350px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+  }
+  
+  .main-content {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
   }
 }
 
@@ -335,10 +370,18 @@ const openChat = () => {
   .main-layout {
     grid-template-columns: 400px 1fr;
     gap: var(--spacing-xl);
+    min-height: calc(100vh - 200px);
   }
   
   .sidebar {
     width: 400px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+  }
+  
+  .main-content {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
   }
 }
 
@@ -361,15 +404,18 @@ const openChat = () => {
   .header-actions {
     display: flex;
     justify-content: center;
+    width: 100%;
   }
   
   .app-header h1 {
-    font-size: 1.75rem;
+    font-size: clamp(1.5rem, 8vw, 2rem);
+    margin-bottom: var(--spacing-xs);
   }
   
   .app-header p {
-    font-size: 0.875rem;
-    padding: 0 var(--spacing-xs);
+    font-size: clamp(0.8rem, 3.5vw, 1rem);
+    padding: 0;
+    line-height: 1.4;
   }
   
   .app-main {
@@ -378,25 +424,36 @@ const openChat = () => {
   
   .main-layout {
     gap: var(--spacing-sm);
+    min-height: auto;
   }
   
-  .header-connect-btn, .header-disconnect-btn, .header-sync-btn {
+  .sidebar, .main-content {
+    max-height: none;
+    overflow-y: visible;
+  }
+  
+  .header-connect-btn, .header-disconnect-btn, .header-sync-btn, .header-chat-btn {
     min-width: 100px;
-    padding: 0.6rem 1.2rem;
+    padding: 0.75rem 1rem;
     font-size: 0.85rem;
+    flex: 1;
+    max-width: 150px;
   }
   
   .header-connected-actions {
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.5rem;
     width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   
   .header-connected-actions .header-sync-btn,
   .header-connected-actions .header-chat-btn,
   .header-connected-actions .header-disconnect-btn {
-    width: 100%;
-    max-width: 200px;
+    flex: 1;
+    min-width: 100px;
+    max-width: 120px;
   }
 }
 
@@ -418,6 +475,7 @@ const openChat = () => {
   .header-actions {
     display: flex;
     justify-content: center;
+    width: 100%;
   }
   
   .app-main {
@@ -426,11 +484,25 @@ const openChat = () => {
   
   .main-layout {
     gap: var(--spacing-md);
+    min-height: auto;
+  }
+  
+  .sidebar, .main-content {
+    max-height: none;
+    overflow-y: visible;
   }
   
   .header-connected-actions {
     flex-direction: row;
     gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .header-connect-btn, .header-disconnect-btn, .header-sync-btn, .header-chat-btn {
+    min-width: 120px;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -460,11 +532,24 @@ const openChat = () => {
   
   .main-layout {
     gap: var(--spacing-lg);
+    min-height: auto;
+  }
+  
+  .sidebar, .main-content {
+    max-height: none;
+    overflow-y: visible;
   }
   
   .header-connected-actions {
     flex-direction: row;
     gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  
+  .header-connect-btn, .header-disconnect-btn, .header-sync-btn, .header-chat-btn {
+    min-width: 120px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -480,12 +565,18 @@ const openChat = () => {
   .main-layout {
     grid-template-columns: 1fr;
     gap: var(--spacing-xl);
+    max-width: 800px;
+    margin: 0 auto;
   }
   
   .sidebar {
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
+  }
+  
+  .main-content {
+    width: 100%;
   }
 }
 

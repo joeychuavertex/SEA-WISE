@@ -418,10 +418,10 @@ onMounted(() => {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: var(--spacing-md);
   height: fit-content;
-  max-height: calc(100vh - 2rem);
-  overflow-y: auto;
-  position: sticky;
-  top: 1rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .panel-header {
@@ -588,6 +588,10 @@ onMounted(() => {
   justify-content: flex-end;
   padding-top: var(--spacing-md);
   border-top: 1px solid #e5e7eb;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
 }
 
 .cancel-btn {
@@ -639,6 +643,10 @@ onMounted(() => {
     gap: var(--spacing-sm);
   }
   
+  .panel-header h2 {
+    font-size: clamp(1.1rem, 4vw, 1.25rem);
+  }
+  
   .header-actions {
     width: 100%;
     flex-direction: column;
@@ -649,23 +657,32 @@ onMounted(() => {
   .edit-btn {
     width: 100%;
     margin: 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .info-section h3 {
+    font-size: clamp(0.9rem, 3vw, 1rem);
   }
   
   .info-item {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-xs);
+    padding: var(--spacing-sm) 0;
   }
   
   .info-item label {
     min-width: auto;
     margin-right: 0;
     font-size: 0.875rem;
+    font-weight: 600;
   }
   
   .info-item span {
     text-align: left;
     font-size: 0.875rem;
+    word-break: break-word;
   }
   
   .form-actions {
@@ -676,12 +693,20 @@ onMounted(() => {
   .cancel-btn,
   .save-btn {
     width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-size: 0.9rem;
   }
   
   .form-group input,
   .form-group select,
   .form-group textarea {
     font-size: 16px; /* Prevent zoom on iOS */
+    padding: 0.875rem;
+  }
+  
+  .form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
   }
 }
 
@@ -690,6 +715,7 @@ onMounted(() => {
     position: static;
     max-height: none;
     margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-lg);
   }
   
   .panel-header {
@@ -698,50 +724,65 @@ onMounted(() => {
     gap: var(--spacing-md);
   }
   
+  .panel-header h2 {
+    font-size: clamp(1.2rem, 3vw, 1.25rem);
+  }
+  
   .header-actions {
     flex-direction: row;
     gap: var(--spacing-sm);
+    flex-wrap: wrap;
   }
   
   .generate-btn,
   .edit-btn {
     flex: 1;
-    margin: 0 var(--spacing-xs);
+    margin: 0;
+    min-width: 120px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .info-section h3 {
+    font-size: clamp(1rem, 2.5vw, 1rem);
   }
   
   .info-item {
     flex-direction: row;
     align-items: flex-start;
     gap: var(--spacing-sm);
+    padding: var(--spacing-sm) 0;
   }
   
   .info-item label {
     min-width: 120px;
     margin-right: var(--spacing-sm);
+    font-size: 0.9rem;
   }
   
   .info-item span {
     text-align: right;
+    font-size: 0.9rem;
   }
   
   .form-actions {
     flex-direction: row;
     justify-content: flex-end;
+    gap: var(--spacing-md);
   }
   
   .cancel-btn,
   .save-btn {
     flex: 0 1 auto;
     min-width: 120px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
   }
 }
 
 @media (min-width: 769px) {
   .personal-info-panel {
-    position: sticky;
-    top: 1rem;
-    max-height: calc(100vh - 2rem);
-    overflow-y: auto;
+    /* Removed sticky positioning to allow scrolling */
   }
   
   .panel-header {
