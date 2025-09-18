@@ -132,9 +132,27 @@ const chatService = new HealthChatService(true)
 
 // Initialize with welcome message
 const initializeChat = () => {
+  // Get a personalized welcome message based on health data
+  const getWelcomeMessage = () => {
+    try {
+      // Try to get health data for a personalized greeting
+      const healthData = chatService.getLatestHealthData?.()
+      if (healthData) {
+        const hasRecentData = healthData.steps > 0 || healthData.calories > 0
+        if (hasRecentData) {
+          return "Hello! I'm your health assistant. I can see you have some recent health data available. I can help you understand your health metrics, track your progress, and provide personalized insights. What would you like to know about your health today?"
+        }
+      }
+    } catch (error) {
+      console.log('Could not get health data for welcome message:', error)
+    }
+    
+    return "Hello! I'm your health assistant. I can help you understand your health data, track your progress, and provide insights. What would you like to know about your health today?"
+  }
+
   messages.value = [{
     type: 'ai',
-    text: "Hello! I'm your health assistant. I can help you understand your health data, track your progress, and provide insights. What would you like to know about your health today?",
+    text: getWelcomeMessage(),
     timestamp: new Date()
   }]
 }
@@ -167,7 +185,7 @@ const sendMessage = async () => {
   // Log user interaction analytics
   await chatService.logUserInteraction('button_click', 'send-btn', 'button')
 
-  // Add user message
+  // Add user message to UI
   messages.value.push({
     type: 'user',
     text: message,
@@ -179,10 +197,10 @@ const sendMessage = async () => {
   isLoading.value = true
 
   try {
-    // Get AI response
+    // Get AI response - the service will handle conversation history internally
     const response = await chatService.sendMessage(message)
     
-    // Add AI response
+    // Add AI response to UI
     messages.value.push({
       type: 'ai',
       text: response,
